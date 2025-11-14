@@ -44,7 +44,9 @@
   .btn-blue:hover{background:#1e61d4;}
   #feedback{margin-top:14px;font-weight:600;min-height:24px;}
   #timer{
-    position:fixed;bottom:14px;left:20px;
+    position:fixed;
+    top:20px;
+    left:20px;
     background:rgba(255,255,255,0.9);
     padding:8px 10px;border-radius:10px;
     font-weight:600;color:#334155;
@@ -65,6 +67,29 @@
     #word{font-size:48px;}
     .wrap{padding:18px;}
   }
+
+  /* Teacher buttons */
+  .teacher-buttons{
+    position:fixed;
+    bottom:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+  }
+  .teacher-btn{
+    pointer-events:auto;
+    border:none;
+    padding:14px 22px;
+    font-size:18px;
+    border-radius:14px;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    margin:0 20px;
+  }
+  .teacher-btn.correct{background:var(--green);}
+  .teacher-btn.incorrect{background:var(--red);}
 </style>
 </head>
 <body>
@@ -81,7 +106,14 @@
   <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect. 100 digraph words randomized.</div>
   <div id="summary" aria-live="polite"></div>
 </div>
+
 <div id="timer">Time: 0s</div>
+
+<!-- Teacher buttons -->
+<div class="teacher-buttons">
+  <button class="teacher-btn incorrect" id="teacherIncorrect">Incorrect</button>
+  <button class="teacher-btn correct" id="teacherCorrect">Correct</button>
+</div>
 
 <script>
 (function(){
@@ -104,12 +136,14 @@
   const resetBtn = document.getElementById('resetBtn');
   const stopBtn = document.getElementById('stopBtn');
   const summaryDiv = document.getElementById('summary');
+  const teacherCorrect = document.getElementById('teacherCorrect');
+  const teacherIncorrect = document.getElementById('teacherIncorrect');
 
   let current=null,total=0,correctCount=0,history=[],started=false,answered=false,startTime=null,timerInterval=null,elapsed=0;
 
-  function showWord(w){current=w;wordEl.textContent=w;feedbackEl.textContent='';answered=false;}
-  function pickNext(){if(pool.length===0)pool=shuffle([...words]);return pool.pop();}
   function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function pickNext(){if(pool.length===0)pool=shuffle([...words]);return pool.pop();}
+  function showWord(w){current=w;wordEl.textContent=w;feedbackEl.textContent='';answered=false;}
 
   function startTimer(){
     if(started)return;
@@ -135,11 +169,12 @@
 
   document.addEventListener('keydown',e=>{
     if(e.repeat)return;
-    if(e.key==='1'||e.key==='2'){
-      if(!started)startTimer();
-      if(e.key==='1')markAnswer(true); else markAnswer(false);
-    }
+    if(e.key==='1')markAnswer(true);
+    else if(e.key==='2')markAnswer(false);
   });
+
+  teacherCorrect.addEventListener('click',()=>markAnswer(true));
+  teacherIncorrect.addEventListener('click',()=>markAnswer(false));
 
   function stopSession(){
     stopTimer();
@@ -178,7 +213,11 @@
 
   resetBtn.addEventListener('click',resetAll);
   stopBtn.addEventListener('click',stopSession);
+
+  // Auto-start timer and first word
+  startTimer();
   showWord(pickNext());
+
   window._qps={resetAll,stopSession,getHistory:()=>history.slice()};
 })();
 </script>
