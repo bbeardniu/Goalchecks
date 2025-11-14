@@ -79,10 +79,10 @@
     min-height:24px;
   }
 
-  /* timer */
+  /* timer in upper-left */
   #timer {
     position:fixed;
-    bottom:14px;
+    top:20px;
     left:20px;
     background: rgba(255,255,255,0.9);
     padding:8px 10px;
@@ -91,7 +91,7 @@
     color:#334155;
   }
 
-  /* Full-page summary (no scroll needed) */
+  /* Full-page summary */
   #summary {
     display:none;
     background:var(--card);
@@ -124,21 +124,22 @@
   .incorrect { color:var(--red); font-weight:700; font-size:1.5rem; display:inline-block; margin:4px 6px; }
 
   .hint { color:#475569; margin-top:6px; font-size:14px; }
+
   @media (max-width:420px){
     #letter { font-size:92px; }
     .wrap{ padding:18px; }
   }
 
-  /* 👇 NEW: Teacher touch-buttons on bottom corners */
+  /* Teacher tap buttons */
   .teacher-buttons {
     position: fixed;
     bottom: 20px;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 0 20px;
     pointer-events: none;
   }
+
   .teacher-btn {
     pointer-events: auto;
     border: none;
@@ -148,13 +149,12 @@
     color: #fff;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    margin: 0 20px;
   }
+
   .teacher-btn.correct { background: var(--green); }
   .teacher-btn.incorrect { background: var(--red); }
 
-  @media (min-width: 700px) {
-    .teacher-btn { font-size: 18px; padding: 12px 16px; }
-  }
 </style>
 </head>
 <body>
@@ -175,7 +175,7 @@
   <div id="summary" aria-live="polite"></div>
   <div id="timer">Time: 0s</div>
 
-  <!-- 👇 NEW BUTTONS FOR PHONE SUPPORT -->
+  <!-- Teacher Touch Buttons -->
   <div class="teacher-buttons">
     <button class="teacher-btn incorrect" id="btnIncorrect">Incorrect</button>
     <button class="teacher-btn correct" id="btnCorrect">Correct</button>
@@ -242,9 +242,7 @@
   }
 
   function markAnswer(isCorrect){
-    if(!started) startTimer();
     if(answered) return;
-    answered = true;
     total++;
     if(isCorrect){
       correctCount++;
@@ -254,10 +252,12 @@
       feedbackEl.textContent='❌ Marked incorrect';
       feedbackEl.style.color='var(--red)';
     }
+    answered = true;
     history.push({char:currentChar,correct:!!isCorrect});
     setTimeout(()=>{showLetter(pickNext());},350);
   }
 
+  // keyboard support
   document.addEventListener('keydown',(e)=>{
     if(e.repeat) return;
     if(e.key==='1') markAnswer(true);
@@ -269,14 +269,18 @@
     letterEl.style.display='none';
     stopBtn.style.display='none';
     feedbackEl.textContent='';
+
     const percent = total?Math.round((correctCount/total)*100):0;
+
     let html=`<h2>Session Summary</h2>`;
     html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
     html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
     html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
     html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
     html+=`<p><strong>Score:</strong> ${percent}%</p><hr style="margin:20px 0;">`;
+
     html+=`<div><strong>Responses (in order)</strong></div><div style="margin-top:20px;">`;
+
     if(history.length===0) html+=`<p>No responses yet.</p>`;
     else{
       history.forEach(item=>{
@@ -286,6 +290,7 @@
       });
     }
     html+=`</div><div style="margin-top:40px;"><button id="playAgain" class="btn-red" style="padding:12px 20px;font-size:1.2rem;border-radius:8px;color:#fff;border:none;cursor:pointer;">Play Again</button></div>`;
+
     summaryDiv.innerHTML=html;
     summaryDiv.style.display='flex';
     summaryDiv.style.flexDirection='column';
@@ -307,21 +312,20 @@
     stopBtn.style.display='inline-block';
     pool=shuffle([...letters]);
     showLetter(pickNext());
+    startTimer(); // restart timer on reset
   }
 
   resetBtn.addEventListener('click',resetAll);
   stopBtn.addEventListener('click',stopSession);
 
-  /* 👇 NEW: Teacher mobile buttons */
-  document.getElementById("btnCorrect").addEventListener("click", () => {
-    markAnswer(true);
-  });
+  // Teacher buttons
+  document.getElementById("btnCorrect").addEventListener("click", ()=>markAnswer(true));
+  document.getElementById("btnIncorrect").addEventListener("click", ()=>markAnswer(false));
 
-  document.getElementById("btnIncorrect").addEventListener("click", () => {
-    markAnswer(false);
-  });
-
+  // show first letter & auto-start timer
   showLetter(pickNext());
+  startTimer();
+
 })();
 </script>
 </body>
