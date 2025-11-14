@@ -79,7 +79,7 @@
 
   #timer {
     position:fixed;
-    bottom:14px;
+    top:20px;
     left:20px;
     background: rgba(255,255,255,0.9);
     padding:8px 10px;
@@ -88,7 +88,6 @@
     color:#334155;
   }
 
-  /* Larger, scroll-free summary area */
   #summary {
     display:none;
     background:var(--card);
@@ -117,6 +116,35 @@
   .correct { color:var(--green); font-weight:700; font-size:1.5rem; }
   .incorrect { color:var(--red); font-weight:700; font-size:1.5rem; }
   .hint { color:#475569; margin-top:6px; font-size:14px; }
+
+  /* Teacher buttons */
+  .teacher-buttons{
+    position:fixed;
+    bottom:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+    padding:0 20px;
+    box-sizing:border-box;
+  }
+  .teacher-btn{
+    pointer-events:auto;
+    border:none;
+    padding:14px 22px;
+    font-size:18px;
+    border-radius:14px;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+  }
+  .teacher-btn.correct{background:var(--green);}
+  .teacher-btn.incorrect{background:var(--red);}
+
+  @media (max-width:420px){
+    #word{font-size:60px;}
+    .teacher-btn{padding:10px 14px;font-size:16px;}
+  }
 </style>
 </head>
 <body>
@@ -133,6 +161,12 @@
 
   <div id="summary" aria-live="polite"></div>
   <div id="timer">Time: 0s</div>
+
+  <!-- Teacher buttons -->
+  <div class="teacher-buttons">
+    <button class="teacher-btn incorrect" id="teacherIncorrect">Incorrect</button>
+    <button class="teacher-btn correct" id="teacherCorrect">Correct</button>
+  </div>
 
 <script>
 (function(){
@@ -158,6 +192,8 @@
   const stopBtn = document.getElementById('stopBtn');
   const summaryDiv = document.getElementById('summary');
   const mainWrap = document.getElementById('mainWrap');
+  const teacherCorrect = document.getElementById('teacherCorrect');
+  const teacherIncorrect = document.getElementById('teacherIncorrect');
 
   let currentWord = null;
   let total = 0;
@@ -169,11 +205,12 @@
   let timerInterval = null;
   let elapsed = 0;
 
-  function showWord(word){
-    currentWord = word;
-    wordEl.textContent = word;
-    feedbackEl.textContent = '';
-    answered = false;
+  function shuffle(a){
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
   }
 
   function pickNext(){
@@ -181,12 +218,11 @@
     return pool.pop();
   }
 
-  function shuffle(a){
-    for(let i=a.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [a[i],a[j]]=[a[j],a[i]];
-    }
-    return a;
+  function showWord(word){
+    currentWord = word;
+    wordEl.textContent = word;
+    feedbackEl.textContent = '';
+    answered = false;
   }
 
   function startTimer(){
@@ -226,6 +262,9 @@
     if(e.key==='1') markAnswer(true);
     else if(e.key==='2') markAnswer(false);
   });
+
+  teacherCorrect.addEventListener('click',()=>markAnswer(true));
+  teacherIncorrect.addEventListener('click',()=>markAnswer(false));
 
   function stopSession(){
     stopTimer();
@@ -272,6 +311,7 @@
   resetBtn.addEventListener('click',resetAll);
   stopBtn.addEventListener('click',stopSession);
 
+  startTimer();
   showWord(pickNext());
 })();
 </script>
