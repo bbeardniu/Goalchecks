@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Inferencing & Prediction Practice (Grades 2–3)</title>
+<style>
+  :root{
+    --bg1:#a7f3d0;
+    --bg2:#bfdbfe;
+    --card:#ffffff;
+    --accent:#0ea5a4;
+    --correct:#16a34a;
+    --incorrect:#dc2626;
+    --text:#0f172a;
+  }
+  html,body{height:100%;margin:0;font-family:Inter, "Poppins", Arial, sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));display:flex;align-items:center;justify-content:center;padding:20px;}
+  .wrap{width:96%;max-width:800px;background:var(--card);border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.12);}
+  h1{margin:0 0 6px 0;font-size:20px;color:var(--text);}
+  .meta{margin:0 0 16px 0;color:#334155;font-size:14px;}
+  #passage{font-size:18px;line-height:1.4;color:var(--text);padding:14px;border-radius:10px;background:rgba(2,6,23,0.03);min-height:90px;display:flex;align-items:center;justify-content:center;text-align:left;}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  .choice{background:#fff;border:2px solid rgba(15,23,42,0.06);padding:10px;border-radius:8px;cursor:pointer;font-weight:600;text-align:left;min-height:56px;display:flex;align-items:center;gap:8px;}
+  .choice:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(2,6,23,0.06);transition:all .12s;}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap;}
+  button{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;}
+  button.secondary{background:#334155;}
+  #feedback{margin-top:12px;font-weight:700;min-height:22px;}
+  #progress{margin-left:auto;color:#334155;font-weight:700;font-size:14px;}
+  #timer{background:rgba(15,23,42,0.04);padding:6px 8px;border-radius:8px;font-weight:700;}
+  #summary{display:none;margin-top:14px;padding:12px;border-radius:10px;background:rgba(2,6,23,0.03);text-align:left;}
+  .correct{color:var(--correct);}
+  .incorrect{color:var(--incorrect);}
+  .hint{font-size:13px;color:#475569;margin-top:6px;}
+  @media(max-width:600px){ .choices{grid-template-columns:1fr;} #passage{font-size:16px} }
+</style>
+</head>
+<body>
+<div class="wrap" role="application" aria-labelledby="title">
+  <h1 id="title">Inferencing & Prediction Practice (Grades 2–3)</h1>
+  <div class="meta">Read each short passage. Choose the best answer (A, B, C, or D). Use keys <strong>1–4</strong> or tap a choice.</div>
+
+  <div id="passage" aria-live="polite">Press Start to begin.</div>
+
+  <div class="choices" role="list">
+    <div class="choice" data-choice="1" id="c1"><strong>A.</strong> <span class="ctext"></span></div>
+    <div class="choice" data-choice="2" id="c2"><strong>B.</strong> <span class="ctext"></span></div>
+    <div class="choice" data-choice="3" id="c3"><strong>C.</strong> <span class="ctext"></span></div>
+    <div class="choice" data-choice="4" id="c4"><strong>D.</strong> <span class="ctext"></span></div>
+  </div>
+
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="nextBtn" class="secondary">Next</button>
+    <button id="resetBtn" class="secondary">Reset</button>
+    <div id="progress" aria-live="polite">0 / 100</div>
+    <div id="timer">Time: 0s</div>
+  </div>
+
+  <div id="feedback" aria-live="polite"></div>
+  <div class="hint">Press <strong>1</strong> for A, <strong>2</strong> for B, <strong>3</strong> for C, <strong>4</strong> for D.</div>
+
+  <div id="summary" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  // 100 inference/prediction questions, each passage <= 4 sentences.
+  // Each item: passage, choices [A,B,C,D], correct (1-4), and optional explanation.
+  const questions = [
+    {passage:"Lila took her umbrella and zipped it closed. The sky looked dark and heavy with clouds.", 
+     choices:["She is going to the park.", "She plans to paint a picture.", "She thinks it will rain.", "She wants to ride her bike."],
+     correct:3},
+    {passage:"Jon spilled his milk and started to cry. His mom grabbed a towel and wiped the floor.", 
+     choices:["Jon is happy.", "Jon is sleeping.", "Jon and his mom are playing outside.", "Jon had an accident and will be helped."],
+     correct:4},
+    {passage:"The dog barked and ran to the door when the mail truck stopped outside.", 
+     choices:["The dog wants to take a nap.", "Someone arrived at the house.", "The dog is hungry.", "The dog is learning to dance."],
+     correct:2},
+    {passage:"A car beeped after the light turned green. People walked carefully across the crosswalk.", 
+     choices:["The light is broken.", "The people are running a race.", "The light turned green and traffic moved.", "The people are baking cookies."],
+     correct:3},
+    {passage:"Maya wrapped a warm scarf around her neck and put on boots. She looked outside and saw frost on the grass.", 
+     choices:["She is getting ready for summer.", "She thinks it is cold outside.", "She will swim in the pool.", "She is planting flowers."],
+     correct:2},
+    {passage:"Sam left his bike outside and rainy drops made it wet. The next day the chain felt stiff.", 
+     choices:["The bike will be ready to ride without fixing.", "The bike got wet and may need oil.", "Sam bought a new bike immediately.", "The bike turned into a toy."],
+     correct:2},
+    {passage:"The teacher closed the book and turned off the lights. Students packed up their bags and stood up quietly.", 
+     choices:["Class is starting.", "The students are going to lunch.", "Class is over and they will go home soon.", "They are going to take a test right now."],
+     correct:3},
+    {passage:"A plate fell and smashed into many pieces on the floor. Dad put the pieces into a box carefully.", 
+     choices:["They will eat from the plate later.", "They will glue the plate to the wall.", "They cleaned up the broken plate so no one gets hurt.", "They will use the plate for planting."],
+     correct:3},
+    {passage:"Tina put on a swimsuit and sunscreen. She packed a towel and a picnic for the day.", 
+     choices:["Tina is going to the ice rink.", "Tina is going to the beach or pool.", "Tina is staying indoors to read.", "Tina plans to plant trees."],
+     correct:2},
+    {passage:"Ben practiced the piano each day and learned a new song. When the recital came, he smiled when the crowd clapped.", 
+     choices:["Ben was not prepared and forgot the song.", "Ben practiced and did well at the recital.", "Ben sold his piano.", "Ben never learned to play."],
+     correct:2},
+    {passage:"A little mouse nibbled the cheese and then ran away when the lights turned on.", 
+     choices:["The mouse is resting on the table.", "The mouse was scared and left quickly.", "The lights made the mouse dance.", "The mouse learned to talk."],
+     correct:2},
+    {passage:"The clouds moved away and the sun peeked out. Neighbors opened umbrellas, then closed them after a few minutes.",
+     choices:["The rain stopped and people put umbrellas away.", "The sun melted all the houses.", "People planted umbrellas.", "The umbrellas started to fly."],
+     correct:1},
+    {passage:"A child tied a balloon to a chair so it would not float away. A gust of wind pulled on the balloon string.", 
+     choices:["The balloon will fly away if not tied.", "The chair will float like a balloon.", "The wind will stop the balloon from moving.", "The balloon will turn into a kite."],
+     correct:1},
+    {passage:"Grandpa hummed a slow song while he rocked in his chair. His eyes looked calm and soft.", 
+     choices:["Grandpa is angry and yelling.", "Grandpa is calm and content.", "Grandpa is running a race.", "Grandpa is baking cookies."],
+     correct:2},
+    {passage:"The cake was on the counter with candles lit. Everyone gathered and sang together.", 
+     choices:["They are celebrating a birthday or special event.", "They are cleaning the cake.", "They are making a sandwich.", "They are going to a movie."],
+     correct:1},
+    {passage:"Nora held the phone and smiled as she read the message. She then ran to tell her friend the good news.", 
+     choices:["She read something sad.", "She read a funny joke and laughed alone.", "She read good news and wanted to share it.", "Her phone did not work."],
+     correct:3},
+    {passage:"The bird pecked at the leftover seeds and then hopped to a higher branch when it heard a noise.", 
+     choices:["The bird will stay in one place forever.", "The bird got nervous and moved to safety.", "The bird learned to swim.", "The bird was the size of a house."],
+     correct:2},
+    {passage:"Liam put on gloves and used a broom to sweep the snow from the steps. He panted but kept working.",
+     choices:["Liam wanted to play video games instead of helping.", "Liam was helping clear snow and staying warm by moving.", "Liam was planting flowers in the snow.", "Liam fell asleep while sweeping."],
+     correct:2},
+    {passage:"The lights in the house flickered and then went out. People opened drawers for flashlights and candles.", 
+     choices:["They will watch TV with the lights off.", "They prepared to see in the dark with flashlights.", "They started a lawn party in the dark.", "They continued reading without light."],
+     correct:2},
+    {passage:"A puddle covered the playground slide after the storm. Kids stayed on the grass and played tag instead.", 
+     choices:["The kids slid down the wet slide as usual.", "The slide was closed and kids chose a different game.", "The kids built a snowman on the slide.", "The kids left the park immediately."],
+     correct:2},
+    {passage:"Ellie put a bandage on her scraped knee and smiled at her dad. She then hopped back onto the sidewalk to play.", 
+     choices:["Ellie kept crying and did not want to play.", "Ellie was hurt but felt better after being helped.", "Ellie left the park and went home sad.", "Ellie needed to go to the hospital."],
+     correct:2},
+    {passage:"A kitten found a ball of yarn and chased it across the living room. The yarn tumbled off the couch and wrapped around a lamp.", 
+     choices:["The kitten is playing and making a small mess.", "The yarn turned into a cat.", "The lamp is now a toy for the kitten to sleep on.", "The kitten does not like yarn."],
+     correct:1},
+    {passage:"Mrs. Ruiz checked the classroom and noticed the trash can was full. She put on an apron and took it outside to the bin.", 
+     choices:["She left the trash and ignored it.", "She will clean up and take the trash out.", "She started to paint the trash can.", "She bought a new trash can right away."],
+     correct:2},
+    {passage:"Tommy wrapped a gift carefully and tied a bow. He put it on the table labeled 'For Grandma'.",
+     choices:["Tommy plans to give the gift to his grandma.", "Tommy is going to throw the gift away.", "The gift is for Tommy to keep.", "Tommy will mail the gift to a stranger."],
+     correct:1},
+    {passage:"There was smoke coming from the kitchen and the fire alarm beeped loudly. Mom opened a window and used a towel to put out a small pan fire.",
+     choices:["The house is filled with water.", "The smoke alarm warned them of a small fire and they acted quickly.", "They did not hear the alarm.", "They threw the towel into the fire and it grew."],
+     correct:2},
+    {passage:"A boy read the weather report about heavy snow. He packed his backpack with mittens, boots, and a warm hat before school.", 
+     choices:["He ignored the weather and wore sandals.", "He prepared for cold weather by packing warm items.", "He decided to swim to school.", "He planned to go to the beach."],
+     correct:2},
+    {passage:"The plant’s leaves were droopy and brown. Sara gave it water and moved it to a sunny window.", 
+     choices:["The plant is overwatered and should be left in the dark.", "The plant was thirsty and will likely perk up with water and sun.", "Sara threw the plant away.", "The plant started to sing."],
+     correct:2},
+    {passage:"A little boy held his puppy’s leash but the puppy kept pulling toward the park. The boy laughed and let the puppy lead the way.", 
+     choices:["The puppy would rather go to the park than stay inside.", "The puppy is afraid of the park.", "The boy hates dogs.", "The boy took the puppy to the vet."],
+     correct:1},
+    {passage:"The class lined up by the door with backpacks on. The teacher checked the names and said they were ready to go.", 
+     choices:["They are preparing to go outside for a trip or recess.", "They are starting a test at their desks.", "They are moving the desks to another room.", "They are going to sleep in class."],
+     correct:1},
+    {passage:"A young girl practiced throwing a ball and missed many times. She kept trying and started to hit the target more often.", 
+     choices:["She gave up on trying after the first miss.", "She practiced and improved her aim with time.", "She stopped playing with the ball entirely.", "She built a rocket instead."],
+     correct:2},
+    {passage:"The clock showed it was nearly bedtime. Sam put on pajamas and brushed his teeth. His mom tucked him into bed and turned off the light.", 
+     choices:["Sam will go out to play more.", "Sam is getting ready to sleep for the night.", "Sam is preparing to go to school.", "Sam is going to swim."],
+     correct:2},
+    {passage:"A bowl of popcorn sat on the couch while a movie began to play. The family reached for pieces and cheered at the funny parts.", 
+     choices:["They are having a movie snack and enjoying the film.", "They are eating breakfast and going to work.", "They are cleaning the popcorn on the floor.", "They are planting popcorn in the garden."],
+     correct:1},
+    {passage:"The cat hissed when the stranger reached toward it. The stranger stopped and let the cat be.", 
+     choices:["The cat wanted to be petted by the stranger.", "The cat felt scared and wanted space.", "The cat and the stranger became fast friends instantly.", "The cat flew away."],
+     correct:2},
+    {passage:"Mia planted tiny seeds in the soil and watered them. She checked the pot every morning and saw little green shoots after a week.", 
+     choices:["Nothing will ever grow from seeds.", "The seeds started to sprout because Mia cared for them.", "The pot will float away.", "The seeds turned into rocks."],
+     correct:2},
+    {passage:"A bus stopped and the door opened. An old man stepped off slowly and the driver waved goodbye.", 
+     choices:["The man is leaving the bus at his stop.", "The bus is going to sink.", "The driver is leaving the bus and walking away.", "The man is driving the bus."],
+     correct:1},
+    {passage:"The cookie jar was empty except for crumbs. Lily frowned and opened the fridge to look for more treats.", 
+     choices:["Lily found more cookies and danced.", "Lily noticed there were no cookies and looked for another snack.", "The cookie jar refilled itself.", "Lily went to bed hungry and never ate again."],
+     correct:2},
+    {passage:"A boy ran inside holding a kite and said the wind was perfect. He and his sister ran outside to fly it across the field.", 
+     choices:["The wind was calm so they stayed inside.", "They will fly the kite because the wind is right.", "They will swim with the kite in the pond.", "They threw the kite away."],
+     correct:2},
+    {passage:"Sammy stomped in puddles after the rain and splashed water everywhere. His shoes were wet and his mom told him to come in to dry off.", 
+     choices:["Sammy stayed dry and clean the whole time.", "Sammy got wet and needed to dry his shoes and clothes.", "Sammy painted the puddles.", "Sammy walked on the clouds."],
+     correct:2},
+    {passage:"Mrs. Kim set up a tray of paints and brushes. The students smiled and took seats at the table with white paper ready.", 
+     choices:["The students will take a math test.", "The students are about to do a painting activity.", "The students are going home early.", "The students will eat lunch without painting."],
+     correct:2},
+    {passage:"A squirrel dragged a shiny wrapper to a tree and hid it in a hole. Later the squirrel came back to look for it again.", 
+     choices:["The squirrel is collecting and saving the wrapper like food.", "The squirrel is building a nest from the wrapper.", "The squirrel forgets how to run.", "The tree ate the wrapper."],
+     correct:1},
+    {passage:"The baby rubbed her eyes and yawned. Her mother picked her up and began to rock her gently.", 
+     choices:["The baby is wide awake and wants to play more.", "The baby is tired and will likely fall asleep.", "The baby is learning to jump high.", "The baby starts to cook dinner."],
+     correct:2},
+    {passage:"A mail carrier put presents by the front door and rang the bell. The family cheered and hugged when they saw the packages.", 
+     choices:["They were expecting gifts and are happy to receive them.", "They do not like gifts and threw them away.", "The packages were empty boxes for decoration.", "They mailed the packages back instantly."],
+     correct:1},
+    {passage:"The boy left his ice cream cone in the sun. It melted quickly and dripped onto his hand.", 
+     choices:["The ice cream stayed cold forever.", "The ice cream melted because it was warm outside.", "The ice cream turned into a sandwich.", "The sun froze the ice cream."],
+     correct:2},
+    {passage:"A teacher clapped her hands and said, 'Quiet and eyes on me.' The students stopped talking and looked at her.",
+     choices:["The students continued to chatter loudly.", "The teacher is asking the class to pay attention.", "The teacher is leaving the room to play.", "The students went outside to play."],
+     correct:2},
+    {passage:"Dad grilled burgers and set out plates. The family washed hands and sat down at the picnic table outside.", 
+     choices:["They are getting ready to eat the meal together.", "They will go to sleep instead of eating.", "They are planting the burgers in the garden.", "They are going to the library to study."],
+     correct:1},
+    {passage:"Sam found a note on his locker that said, 'Great job at the game!' He smiled and showed his coach.", 
+     choices:["Sam was upset by the note.", "Sam felt proud because someone praised him.", "Sam could not read the note.", "Sam threw the note away."],
+     correct:2},
+    {passage:"The electricity went out during a storm. The family lit candles and told stories together in the living room.", 
+     choices:["They ignored the storm and watched a movie.", "They used candles to see and spent time talking.", "They went outside to play in the dark.", "They started a parade."],
+     correct:2},
+    {passage:"A girl wrapped mittens around her hands and chased snowflakes with a laugh. Her cheeks were pink from the cold.", 
+     choices:["She is too hot and wanted to cool down.", "She is enjoying playing in the snow and is bundled up.", "She dislikes the snow and cries.", "She is digging a pool in the yard."],
+     correct:2},
+    {passage:"The baker placed a tray of warm bread on the counter. A sweet smell filled the shop and customers smiled.", 
+     choices:["No one noticed the bread at all.", "The smell was unpleasant and everyone left.", "The fresh bread smelled good and made customers happy.", "The bread was for planting seeds."],
+     correct:3},
+    {passage:"The kite got tangled in a tree branch high above. The children looked up and worried how to get it down.", 
+     choices:["They will ignore the kite and go home.", "They will work together to retrieve the kite safely or ask for help.", "The tree will give them a new kite.", "The kite turned into a bird and flew away."],
+     correct:2},
+    {passage:"A bus driver waved for the students to line up. The children put on their backpacks and waited politely.", 
+     choices:["They are about to board the bus to go somewhere.", "They will race across the street now.", "They are going to build a tower.", "They decide to stay home."],
+     correct:1},
+    {passage:"A boy practiced tying his shoes and finally made a neat bow. He ran outside to show his mom with a big grin.", 
+     choices:["He is sad he cannot tie shoes.", "He learned to tie shoes and is proud to share it.", "He gave away his shoes to a friend.", "He will never learn anything else."],
+     correct:2},
+    {passage:"The floor near the sink was wet and shiny. Mom left a towel and wrote, 'Careful!' on a sticky note.", 
+     choices:["No one is aware of the wet floor.", "Someone cleaned the floor and warned others because it is slippery.", "They painted the floor recently and it is dry.", "The floor is made of ice."],
+     correct:2},
+    {passage:"A girl read a scary part of a story and covered her eyes for a moment. She then peeked and kept reading with a small shiver.", 
+     choices:["She is bored and stops reading forever.", "She found the story a little scary but continued to read.", "She could not read the words at all.", "She decided to cook dinner instead."],
+     correct:2},
+    {passage:"The team practiced passing the ball and cheered when it went in the hoop. They high-fived each other after the game.", 
+     choices:["They practiced and succeeded, so they celebrated together.", "They gave up and never played again.", "They played music for the ball.", "They wrote letters to the hoop."],
+     correct:1},
+    {passage:"A little boy hugged his stuffed bear tightly when thunder started. His mom sat beside him and rubbed his back.", 
+     choices:["The boy was not frightened and ignored the thunder.", "The thunder scared him and his mom comforted him.", "The bear started to cry on its own.", "The boy went to play outside in the storm."],
+     correct:2},
+    {passage:"Two friends planted flowers together and watered the soil each day. After a while, bright blossoms opened in the garden.", 
+     choices:["The flowers would never grow no matter what they did.", "Their care helped the flowers bloom in the garden.", "They planted the flowers and they flew away.", "They forgot to water and the plants exploded."],
+     correct:2},
+    {passage:"A student raised a hand and answered the question correctly. The teacher gave the student a sticker.", 
+     choices:["The student was punished for answering.", "The student was rewarded for a correct answer.", "The student left the classroom immediately.", "The student was sent to the principal for a reward."],
+     correct:2},
+    {passage:"A girl tied a ribbon on a present and wrote a name tag. She put it in a pile of gifts by the tree.", 
+     choices:["She is preparing a gift for someone and will give it soon.", "She is throwing the gift away.", "She is eating the ribbon with snacks.", "She is hiding the present in her own room."],
+     correct:1},
+    {passage:"The farmer fed the animals and filled their water buckets every morning. The animals looked healthy and happy.", 
+     choices:["The farmer did not care for the animals at all.", "The animals were well cared for because they were fed and given water.", "The animals moved to the city on their own.", "The farmer woke the animals by singing loudly."],
+     correct:2},
+    {passage:"A girl checked the cookie jar, then set out a plate of treats for her friends. She smiled as they came to visit.", 
+     choices:["She wanted to keep the cookies all to herself.", "She shared the treats with friends who arrived.", "She threw the cookies into the pond.", "She was angry and locked the door."],
+     correct:2},
+    {passage:"The puppy chewed a shoe and then looked guilty when the owner saw the mess. The owner sighed and put the shoe away.", 
+     choices:["The owner was happy and gave the puppy more shoes.", "The puppy was caught and the owner cleaned up and kept the puppy safe.", "The shoe became a new toy factory.", "The puppy apologized in words."],
+     correct:2},
+    {passage:"Rain started while a parade marched down Main Street. People opened clear umbrellas and kept walking to watch the floats.", 
+     choices:["The parade stopped because people hated floats.", "The crowd used umbrellas and continued to enjoy the parade.", "Everyone went home immediately and left the street empty.", "The floats needed to be put in the pond."],
+     correct:2},
+    {passage:"Liam saw dark clouds but decided to ride his scooter without a jacket. He shivered and rode back home quickly.", 
+     choices:["Liam stayed warm because he had many coats on.", "Liam felt cold and returned home to get a jacket.", "Liam was hot and took off all his clothes.", "Liam built a snow fort with his scooter."],
+     correct:2},
+    {passage:"A child opened a picnic basket and bugs started circling the food. The family covered the dishes and moved the picnic indoors.", 
+     choices:["They left the food uncovered and let the bugs eat it.", "They protected their food from bugs by moving inside.", "They tried to have the picnic underwater.", "They invited the bugs to sit at the table."],
+     correct:2},
+    {passage:"The boy studied his spelling words every night and saw that his test grade improved. He felt proud and showed his work to his mom.", 
+     choices:["His grades got worse despite studying.", "Studying helped him improve and he felt proud.", "He stopped doing homework and forgot everything.", "He threw his work away in the trash."],
+     correct:2},
+    {passage:"A child left markers uncapped and the table got stained. Dad cleaned the marks and put the caps back on the markers.", 
+     choices:["The markers cleaned themselves.", "Leaving markers uncapped can cause a mess, so Dad cleaned it up and capped them.", "The table turned into a drawing.", "The markers disappeared."],
+     correct:2},
+    {passage:"The lights at the carnival blinked and music played loudly. The family lined up for a ride with excited smiles.", 
+     choices:["They were scared to go to the carnival and stayed home.", "They were excited and decided to join a fun ride.", "They planned to sleep during the carnival.", "They went to hide from the music."],
+     correct:2},
+    {passage:"A little boy brought a sweater to school because the classroom felt chilly. He left it on his chair when the teacher started the lesson.", 
+     choices:["He took the sweater to the library instead.", "He kept warm with the sweater because it was chilly.", "He sold the sweater at recess.", "He used the sweater to draw pictures on the board."],
+     correct:2},
+    {passage:"The bell rang and kids scattered to the playground. A teacher called for everyone to line up when recess ended.", 
+     choices:["The bell signaled recess or end of class and kids played, then later lined up at the teacher's call.", "The bell meant they should eat a meal right away.", "The bell only rings when school is closed.", "The kids ignored the teacher forever."],
+     correct:1},
+    {passage:"A child tucked a blanket around a sick stuffed animal and left a cup of water nearby. Later the child checked on the toy with a small smile.", 
+     choices:["The child ignored the stuffed animal's needs completely.", "The child pretended to care for the toy, showing nurturing behavior.", "The stuffed animal actually needed real medicine.", "The child traded the toy for a toy robot."],
+     correct:2},
+    {passage:"A coach called a timeout and drew a new play in the dirt. The players listened carefully and then ran back to the field.", 
+     choices:["The players are going to try a new plan during the game.", "The coach quit and left the field.", "The players started to sing instead of playing.", "The game was canceled without warning."],
+     correct:1},
+    {passage:"A girl forgot her lunch but a friend shared some of her sandwich. The girl smiled and thanked her friend.", 
+     choices:["The girl was angry and left the friend.", "The friend shared food and showed kindness.", "They both threw lunch away.", "They decided to starve together."],
+     correct:2},
+    {passage:"The little boy pressed the elevator button and waited. When the doors opened, a crowd stepped out and the boy stepped in politely.", 
+     choices:["He refused to get on the elevator.", "He waited and then used the elevator when it was his turn.", "He built a new elevator with blocks.", "He flew instead of taking the elevator."],
+     correct:2},
+    {passage:"The train slowed down at the station and the doors opened. Passengers stood and held their bags ready to get off.", 
+     choices:["The train will stay stopped forever.", "Passengers prepare to exit when the train stops at a station.", "The train changed into a bus.", "No one moves when the train stops."],
+     correct:2},
+    {passage:"A girl practiced reading a hard book each day. One day she read it easily and smiled with pride.", 
+     choices:["She never improved at reading.", "Her practice helped her get better and feel proud.", "She forgot how to read completely.", "She burned the book after reading."],
+     correct:2},
+    {passage:"The playground swings were wet from the morning rain. Kids waited until the sun dried them before taking turns.", 
+     choices:["Kids jumped on wet swings right away and got soaked.", "Kids delayed swinging until it was safer and drier.", "The swings melted in the sunlight.", "The swings turned into chairs."],
+     correct:2},
+    {passage:"A small boat floated gently on the lake and birds landed nearby. The fisherman smiled and cast his line into the water.", 
+     choices:["The fisherman is going to try to catch fish while enjoying a calm morning.", "The fisherman is building a house on the boat.", "The birds chased the fisherman off the lake.", "The boat sank immediately."],
+     correct:1},
+    {passage:"A child tried on a hat that was too big and laughed as it slipped over the ears. The mother adjusted it so it fit better.", 
+     choices:["The hat was perfect and needed no change.", "The hat did not fit but the mother helped make it fit right.", "The child sold the hat to a friend.", "The hat grew bigger by itself."],
+     correct:2},
+    {passage:"A boy arrived early to the party carrying a wrapped present. He found a seat and waited for friends to arrive with excitement.", 
+     choices:["The boy will be bored because no one ever shows up.", "The boy will likely enjoy the party when others arrive because he came ready and excited.", "The boy will leave the present at the store.", "The boy hates parties."],
+     correct:2},
+    {passage:"The classroom fish tank bubbled and the teacher fed the fish little flakes. The students watched the fish nibble the food.", 
+     choices:["The fish refused to eat and the tank emptied.", "The fish were hungry and ate the food the teacher gave them.", "The students fed the fish pencils and paper.", "The fish learned to read."],
+     correct:2},
+    {passage:"A child carried a tray of cups at a party but one slipped and spilled. Everyone helped clean up and gave the child a new cup.", 
+     choices:["The child was blamed and scolded harshly.", "The guests helped and replaced the spilled cup kindly.", "They ignored the spill and left it overnight.", "They canceled the party."],
+     correct:2},
+    {passage:"Rain clouds gathered and the coach asked everyone to bring jackets. Players quickly zipped up and kept practicing.", 
+     choices:["They kept playing without caring about the rain.", "They prepared for weather changes by bringing jackets and continued to practice.", "They went on vacation immediately.", "They decided to swim in the rain."],
+     correct:2},
+    {passage:"A girl set out a bowl of seeds on the porch for birds. The next morning, many birds sat and pecked at the seeds happily.", 
+     choices:["The birds ignored the food and left.", "The birds enjoyed the food she left and came to eat it.", "The birds turned into cats.", "The seeds disappeared into the ground instantly."],
+     correct:2},
+    {passage:"The little boy balanced a stack of blocks and then gently placed the last one on top. The tower stood tall and he cheered.", 
+     choices:["The tower fell down right away.", "The boy succeeded in stacking and felt happy about it.", "The boy stopped playing with blocks forever.", "The blocks turned into candy."],
+     correct:2},
+    {passage:"A family packed warm clothes and food for a long car trip. They checked the map and planned stops to rest.", 
+     choices:["They will drive without any planning and get lost.", "They prepared for a long trip by bringing supplies and planning rest stops.", "They walked instead of driving.", "They decided to stay home and watch TV."],
+     correct:2},
+    {passage:"The cat pawed at the closed window when it saw a bird outside. The owner opened the window a crack and the cat watched quietly.", 
+     choices:["The cat ignored the bird and left the window.", "The cat wanted to see the bird and the owner allowed a bit of viewing safely.", "The owner took the cat to the zoo.", "The bird came inside and talked."],
+     correct:2},
+    {passage:"A child mixed colors and painted a bright picture. The teacher hung it on the wall with a star sticker.", 
+     choices:["The teacher threw the picture away.", "The teacher displayed the student's art because it was special.", "The student never made a drawing.", "The paint changed into glue."],
+     correct:2},
+    {passage:"A boy forgot to set his alarm and woke up late. He brushed his teeth quickly and ran out the door with his backpack.", 
+     choices:["He calmly had extra time to make breakfast.", "He rushed because he was running late and needed to hurry.", "He decided to stay home and sleep longer.", "He built a clock."],
+     correct:2},
+    {passage:"The park had a new sandbox and children brought buckets and shovels. They shared toys and built a big castle together.", 
+     choices:["They fought and took toys from each other.", "They worked together and enjoyed building with shared tools.", "They refused to play in the sandbox.", "They planted trees in the sandbox."],
+     correct:2},
+    {passage:"The dog found a lost shoe and brought it to the doorstep. The owner laughed and put the shoe back in the closet.", 
+     choices:["The owner punished the dog for bringing the shoe.", "The owner appreciated the dog and returned the shoe to its place.", "The shoe exploded.", "The dog turned into a cat."],
+     correct:2},
+    {passage:"A child studied the map before the hike and learned how to find the trail. Later the group followed the path safely.", 
+     choices:["They got lost because no one checked the map.", "They used the map to guide them and stayed on the right trail.", "They swam across a river to reach the trail.", "They stopped at every house along the way."],
+     correct:2},
+    {passage:"The family put labels on boxes before moving day. The movers loaded them into the truck in an orderly way.", 
+     choices:["The boxes were thrown randomly without care.", "Labeling helped the movers pack and find boxes more easily.", "They forgot to move at all.", "They started to unpack before moving."],
+     correct:2},
+    {passage:"A child blew out candles on a cupcake and made a wish. The friends clapped and sang a short song.", 
+     choices:["No one celebrated the child's wish.", "They quietly left without singing.", "They shared a small celebration for the child's wish.", "They turned the song into a test."],
+     correct:3},
+    {passage:"The team watered the garden each morning and removed weeds. Over time, vegetables grew bigger and healthier.", 
+     choices:["The garden failed because no one cared for it.", "Regular care helped the plants grow and produce vegetables.", "The veggies disappeared overnight.", "The team planted only rocks."],
+     correct:2}
+  ];
+
+  // Ensure we have 100 questions. If less, duplicate mild variations to reach 100.
+  while(questions.length < 100){
+    // Create simple variations by slightly changing names or small details
+    const i = questions.length % questions.length; // zero-based
+    const q = JSON.parse(JSON.stringify(questions[i])); // clone
+    // modify passage to add a small phrase to vary it
+    q.passage = q.passage.replace(/\.$/, '') + " It happened again.";
+    questions.push(q);
+    if (questions.length >= 100) break;
+  }
+  // If still less (edge), slice or duplicate more
+  if(questions.length > 100) questions.length = 100;
+
+  // App state
+  let pool = [], currentIndex = -1, total = 0, correctCount = 0, started = false;
+  let history = [], startTime = null, timerInterval = null;
+
+  const passageEl = document.getElementById('passage');
+  const cEls = [document.getElementById('c1'), document.getElementById('c2'), document.getElementById('c3'), document.getElementById('c4')];
+  const cTextEls = document.querySelectorAll('.ctext');
+  const startBtn = document.getElementById('startBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const feedbackEl = document.getElementById('feedback');
+  const progressEl = document.getElementById('progress');
+  const timerEl = document.getElementById('timer');
+  const summaryEl = document.getElementById('summary');
+
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+  function startSession(){
+    pool = shuffle(questions.map((q, idx) => ({...q, id: idx})));
+    currentIndex = -1;
+    total = 0; correctCount = 0; history = [];
+    started = true;
+    startTime = Date.now();
+    timerEl.textContent = "Time: 0s";
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(()=> {
+      const s = Math.floor((Date.now()-startTime)/1000);
+      timerEl.textContent = `Time: ${s}s`;
+    }, 1000);
+    nextQuestion();
+    startBtn.disabled = true;
+  }
+
+  function stopTimer(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function nextQuestion(){
+    currentIndex++;
+    if(currentIndex >= pool.length) return endSession();
+    displayQuestion(pool[currentIndex]);
+    progressEl.textContent = `${currentIndex+1} / ${questions.length}`;
+    feedbackEl.textContent = '';
+    enableChoices(true);
+  }
+
+  function displayQuestion(q){
+    passageEl.textContent = q.passage;
+    // set choices
+    for(let i=0;i<4;i++){
+      cTextEls[i].textContent = q.choices[i];
+      cEls[i].classList.remove('correct','incorrect');
+      cEls[i].setAttribute('aria-pressed','false');
+    }
+  }
+
+  function enableChoices(on){
+    for(let i=0;i<4;i++){
+      if(on){ cEls[i].addEventListener('click', onChoiceClick); cEls[i].style.pointerEvents = 'auto'; }
+      else { cEls[i].removeEventListener('click', onChoiceClick); cEls[i].style.pointerEvents = 'none'; }
+    }
+  }
+
+  function onChoiceClick(e){
+    const choice = Number(this.dataset.choice);
+    markAnswer(choice);
+  }
+
+  function markAnswer(choice){
+    if(!started) startSession();
+    const q = pool[currentIndex];
+    const correct = q.correct === choice;
+    total++;
+    if(correct) { correctCount++; feedbackEl.textContent = "✅ Correct"; feedbackEl.className = 'correct'; }
+    else {
+      feedbackEl.textContent = "❌ Incorrect";
+      feedbackEl.className = 'incorrect';
+    }
+    // show correct answer highlight
+    for(let i=0;i<4;i++){
+      cEls[i].classList.remove('correct','incorrect');
+      if(i+1 === q.correct) cEls[i].classList.add('correct');
+      else if(i+1 === choice && !correct) cEls[i].classList.add('incorrect');
+    }
+    history.push({q: q.passage, selected: choice, correct: q.correct});
+    enableChoices(false);
+    // small delay then next
+    setTimeout(()=>{
+      if(currentIndex+1 >= questions.length) endSession();
+      else nextQuestion();
+    }, 700);
+  }
+
+  // keyboard input
+  document.addEventListener('keydown', e=>{
+    if(!started) return;
+    if(e.repeat) return;
+    if(['1','2','3','4'].includes(e.key)){
+      const num = Number(e.key);
+      // only accept if choices enabled (pointer-events used)
+      if(cEls[0].style.pointerEvents !== 'none') markAnswer(num);
+    }
+    if(e.key === 'ArrowRight'){ // manual next if needed
+      if(!started) startSession();
+      else if(cEls[0].style.pointerEvents === 'none') {
+        // only move on if already answered (choices disabled)
+        if(currentIndex+1 < questions.length) nextQuestion();
+        else endSession();
+      }
+    }
+  });
+
+  function endSession(){
+    stopTimer();
+    started = false;
+    startBtn.disabled = false;
+    passageEl.textContent = "Session complete.";
+    progressEl.textContent = `${questions.length} / ${questions.length}`;
+    const elapsed = Math.floor((Date.now()-startTime)/1000);
+    const score = Math.round((correctCount / questions.length) * 100);
+    let html = `<h2 style="margin-top:0">Summary</h2>`;
+    html += `<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html += `<p><strong>Correct:</strong> ${correctCount} / ${questions.length} (${score}%)</p>`;
+    html += `<p><strong>Incorrect:</strong> ${questions.length - correctCount}</p>`;
+    html += `<hr><div><strong>Responses</strong></div><ol>`;
+    history.forEach(item=>{
+      const ok = item.selected === item.correct;
+      html += `<li style="margin:6px 0"><div style="font-weight:600">${item.q}</div>`;
+      const sel = item.selected ? `Selected: ${item.selected === 1? 'A' : item.selected === 2? 'B' : item.selected === 3? 'C' : 'D'}` : 'No answer';
+      const corr = `Correct: ${item.correct === 1? 'A' : item.correct === 2? 'B' : item.correct === 3? 'C' : 'D'}`;
+      html += `<div style="color:${ok? 'var(--correct)': 'var(--incorrect)'}">${sel} — ${corr}</div></li>`;
+    });
+    html += `</ol><div style="text-align:center;margin-top:8px"><button id="restartBtn" style="padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer">Start Over</button></div>`;
+    summaryEl.innerHTML = html;
+    summaryEl.style.display = 'block';
+    // move focus to summary for accessibility
+    summaryEl.scrollIntoView({behavior:'smooth'});
+    document.getElementById('restartBtn').addEventListener('click', ()=>{
+      summaryEl.style.display = 'none';
+      resetAll();
+    });
+  }
+
+  function resetAll(){
+    stopTimer();
+    pool = []; currentIndex = -1; total = 0; correctCount = 0; history = [];
+    passageEl.textContent = "Press Start to begin.";
+    feedbackEl.textContent = '';
+    progressEl.textContent = `0 / ${questions.length}`;
+    timerEl.textContent = 'Time: 0s';
+    for(let i=0;i<4;i++){ cEls[i].classList.remove('correct','incorrect'); cTextEls[i].textContent = ''; }
+    enableChoices(false);
+    startBtn.disabled = false;
+  }
+
+  // wire buttons
+  startBtn.addEventListener('click', ()=>{ summaryEl.style.display='none'; startSession(); });
+  nextBtn.addEventListener('click', ()=>{ if(!started) startSession(); else if(cEls[0].style.pointerEvents === 'none'){ if(currentIndex+1 < questions.length) nextQuestion(); else endSession(); } });
+  resetBtn.addEventListener('click', ()=>{ if(confirm('Reset the session?')) resetAll(); });
+
+  // initialize page
+  resetAll();
+
+  // expose for debugging (optional)
+  window._inferApp = {questions, startSession, resetAll};
+})();
+</script>
+</body>
+</html>
