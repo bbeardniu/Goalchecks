@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>QPS — Mixed Letter Names & Sounds</title>
+<style>
+  :root{
+    --bg1:#93c5fd;
+    --bg2:#bfdbfe;
+    --card:#ffffff;
+    --green:#16a34a;
+    --red:#dc2626;
+    --blue:#2563eb;
+    --text:#0f172a;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Poppins", Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .wrap{
+    width:92%;
+    max-width:480px;
+    background:var(--card);
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 8px 24px rgba(2,6,23,0.12);
+  }
+
+  h1{
+    margin:0 0 12px 0;
+    color:#1e3a8a;
+    font-size:20px;
+    letter-spacing:0.2px;
+  }
+
+  #letter {
+    font-size:120px;
+    line-height:1;
+    font-weight:700;
+    color:var(--text);
+    margin:28px 0;
+    user-select:none;
+  }
+
+  .controls{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:4px;
+    flex-wrap:wrap;
+  }
+
+  button {
+    border: none;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    color:white;
+    font-size:15px;
+  }
+  .btn-green { background:#16a34a; }
+  .btn-green:hover { background:#15803d; }
+  .btn-red { background:var(--red); }
+  .btn-red:hover { background:#c63025; }
+  .btn-blue { background:var(--blue); }
+  .btn-blue:hover { background:#1e61d4; }
+
+  #feedback {
+    margin-top:14px;
+    font-weight:600;
+    min-height:24px;
+  }
+
+  /* timer */
+  #timer {
+    position:fixed;
+    bottom:14px;
+    left:20px;
+    background: rgba(255,255,255,0.9);
+    padding:8px 10px;
+    border-radius:10px;
+    font-weight:600;
+    color:#334155;
+  }
+
+  /* Full-page summary (no scroll needed) */
+  #summary {
+    display:none;
+    background:var(--card);
+    border-radius:18px;
+    box-shadow:0 8px 24px rgba(2,6,23,0.12);
+    width:90vw;
+    max-width:900px;
+    min-height:80vh;
+    padding:40px;
+    text-align:center;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    overflow:hidden;
+  }
+
+  #summary h2 {
+    font-size:2rem;
+    color:#1e3a8a;
+    margin-bottom:20px;
+  }
+
+  #summary p {
+    margin:10px 0;
+    font-size:1.2rem;
+  }
+
+  .correct { color:var(--green); font-weight:700; font-size:1.5rem; display:inline-block; margin:4px 6px; }
+  .incorrect { color:var(--red); font-weight:700; font-size:1.5rem; display:inline-block; margin:4px 6px; }
+
+  .hint { color:#475569; margin-top:6px; font-size:14px; }
+  @media (max-width:420px){
+    #letter { font-size:92px; }
+    .wrap{ padding:18px; }
+  }
+
+  /* 👇 NEW: Teacher touch-buttons on bottom corners */
+  .teacher-buttons {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: none;
+  }
+  .teacher-btn {
+    pointer-events: auto;
+    border: none;
+    padding: 16px 22px;
+    font-size: 22px;
+    border-radius: 14px;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  .teacher-btn.correct { background: var(--green); }
+  .teacher-btn.incorrect { background: var(--red); }
+
+  @media (min-width: 700px) {
+    .teacher-btn { font-size: 18px; padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" role="application" aria-label="QPS mixed letters practice">
+    <h1>QPS — Mixed Letters (A–Z & a–z)</h1>
+
+    <div id="letter" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
+
+    <div class="controls" aria-hidden="false">
+      <button class="btn-red" id="resetBtn">Reset</button>
+      <button class="btn-blue" id="stopBtn">Stop</button>
+    </div>
+
+    <div id="feedback" aria-live="polite"></div>
+    <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect. Letters are random (52 total).</div>
+  </div>
+
+  <div id="summary" aria-live="polite"></div>
+  <div id="timer">Time: 0s</div>
+
+  <!-- 👇 NEW BUTTONS FOR PHONE SUPPORT -->
+  <div class="teacher-buttons">
+    <button class="teacher-btn incorrect" id="btnIncorrect">Incorrect</button>
+    <button class="teacher-btn correct" id="btnCorrect">Correct</button>
+  </div>
+
+<script>
+(function(){
+  const upper = Array.from({length:26}, (_,i) => String.fromCharCode(65 + i));
+  const lower = Array.from({length:26}, (_,i) => String.fromCharCode(97 + i));
+  const letters = upper.concat(lower);
+
+  let pool = shuffle([...letters]);
+
+  const letterEl = document.getElementById('letter');
+  const feedbackEl = document.getElementById('feedback');
+  const timerEl = document.getElementById('timer');
+  const resetBtn = document.getElementById('resetBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const summaryDiv = document.getElementById('summary');
+
+  let currentChar = null;
+  let total = 0;
+  let correctCount = 0;
+  let history = [];
+  let started = false;
+  let answered = false;
+  let startTime = null;
+  let timerInterval = null;
+  let elapsed = 0;
+
+  function showLetter(ch){
+    currentChar = ch;
+    letterEl.textContent = ch;
+    feedbackEl.textContent = '';
+    answered = false;
+  }
+
+  function pickNext(){
+    if(pool.length === 0) pool = shuffle([...letters]);
+    return pool.pop();
+  }
+
+  function shuffle(a){
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function startTimer(){
+    if(started) return;
+    started = true;
+    startTime = Date.now();
+    timerInterval = setInterval(()=>{
+      elapsed = Math.floor((Date.now()-startTime)/1000);
+      timerEl.textContent = `Time: ${elapsed}s`;
+    },1000);
+  }
+
+  function stopTimer(){
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval=null;
+  }
+
+  function markAnswer(isCorrect){
+    if(!started) startTimer();
+    if(answered) return;
+    answered = true;
+    total++;
+    if(isCorrect){
+      correctCount++;
+      feedbackEl.textContent='✅ Marked correct';
+      feedbackEl.style.color='var(--green)';
+    } else {
+      feedbackEl.textContent='❌ Marked incorrect';
+      feedbackEl.style.color='var(--red)';
+    }
+    history.push({char:currentChar,correct:!!isCorrect});
+    setTimeout(()=>{showLetter(pickNext());},350);
+  }
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.repeat) return;
+    if(e.key==='1') markAnswer(true);
+    else if(e.key==='2') markAnswer(false);
+  });
+
+  function stopSession(){
+    stopTimer();
+    letterEl.style.display='none';
+    stopBtn.style.display='none';
+    feedbackEl.textContent='';
+    const percent = total?Math.round((correctCount/total)*100):0;
+    let html=`<h2>Session Summary</h2>`;
+    html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
+    html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
+    html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
+    html+=`<p><strong>Score:</strong> ${percent}%</p><hr style="margin:20px 0;">`;
+    html+=`<div><strong>Responses (in order)</strong></div><div style="margin-top:20px;">`;
+    if(history.length===0) html+=`<p>No responses yet.</p>`;
+    else{
+      history.forEach(item=>{
+        html+=item.correct
+          ?`<div class="correct">${item.char}</div>`
+          :`<div class="incorrect">${item.char}</div>`;
+      });
+    }
+    html+=`</div><div style="margin-top:40px;"><button id="playAgain" class="btn-red" style="padding:12px 20px;font-size:1.2rem;border-radius:8px;color:#fff;border:none;cursor:pointer;">Play Again</button></div>`;
+    summaryDiv.innerHTML=html;
+    summaryDiv.style.display='flex';
+    summaryDiv.style.flexDirection='column';
+    summaryDiv.style.alignItems='center';
+    summaryDiv.style.justifyContent='center';
+    summaryDiv.style.gap='10px';
+
+    const pa=document.getElementById('playAgain');
+    if(pa) pa.addEventListener('click',resetAll);
+  }
+
+  function resetAll(){
+    stopTimer();
+    started=false; answered=false;
+    total=0; correctCount=0; history=[];
+    elapsed=0; timerEl.textContent='Time: 0s';
+    summaryDiv.style.display='none';
+    letterEl.style.display='block';
+    stopBtn.style.display='inline-block';
+    pool=shuffle([...letters]);
+    showLetter(pickNext());
+  }
+
+  resetBtn.addEventListener('click',resetAll);
+  stopBtn.addEventListener('click',stopSession);
+
+  /* 👇 NEW: Teacher mobile buttons */
+  document.getElementById("btnCorrect").addEventListener("click", () => {
+    markAnswer(true);
+  });
+
+  document.getElementById("btnIncorrect").addEventListener("click", () => {
+    markAnswer(false);
+  });
+
+  showLetter(pickNext());
+})();
+</script>
+</body>
+</html>
