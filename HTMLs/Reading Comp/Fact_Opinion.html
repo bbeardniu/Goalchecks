@@ -79,13 +79,14 @@
 
   #timer{
     position:fixed;
-    bottom:14px;
-    left:20px;
+    top:14px;
+    left:14px;
     background:rgba(255,255,255,0.9);
     padding:8px 10px;
     border-radius:10px;
     font-weight:600;
     color:#334155;
+    z-index:1000;
   }
 
   #summary{
@@ -121,8 +122,10 @@
 <body>
   <div class="wrap" id="mainWrap">
     <h1>Fact vs Opinion Practice</h1>
-    <div id="statement" aria-live="polite">Press 1 (Fact) or 2 (Opinion) to start</div>
+    <div id="statement" aria-live="polite"></div>
     <div class="controls">
+      <button class="btn-red" id="factBtn">Fact</button>
+      <button class="btn-blue" id="opinionBtn">Opinion</button>
       <button class="btn-red" id="resetBtn">Reset</button>
       <button class="btn-blue" id="stopBtn">Stop</button>
     </div>
@@ -197,6 +200,8 @@
   const stopBtn = document.getElementById('stopBtn');
   const summaryDiv = document.getElementById('summary');
   const mainWrap = document.getElementById('mainWrap');
+  const factBtn = document.getElementById('factBtn');
+  const opinionBtn = document.getElementById('opinionBtn');
 
   let current = null;
   let total = 0;
@@ -261,6 +266,9 @@
     setTimeout(()=>{showStatement(pickNext());},350);
   }
 
+  factBtn.addEventListener('click',()=>markAnswer(true));
+  opinionBtn.addEventListener('click',()=>markAnswer(false));
+
   document.addEventListener('keydown',(e)=>{
     if(e.repeat) return;
     if(e.key==='1') markAnswer(true);
@@ -312,7 +320,9 @@
   resetBtn.addEventListener('click',resetAll);
   stopBtn.addEventListener('click',stopSession);
 
+  // Auto-start
   showStatement(pickNext());
+  startTimer();
 })();
 </script>
 </body>
