@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>QPS — Final Section (Multisyllabic Words)</title>
+<style>
+  :root{
+    --bg1:#fde68a;
+    --bg2:#fcd34d;
+    --card:#ffffff;
+    --green:#16a34a;
+    --red:#dc2626;
+    --blue:#2563eb;
+    --text:#0f172a;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:"Poppins",Arial,sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+  .wrap{
+    width:92%;
+    max-width:520px;
+    background:var(--card);
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 8px 24px rgba(2,6,23,0.12);
+  }
+  h1{margin:0 0 12px;color:#b45309;font-size:20px;}
+  #word{font-size:48px;font-weight:700;color:var(--text);margin:24px 0;user-select:none;}
+  .controls{display:flex;justify-content:center;gap:12px;margin-top:4px;flex-wrap:wrap;}
+  button{border:none;padding:10px 20px;border-radius:10px;cursor:pointer;color:white;font-size:15px;}
+  .btn-green{background:#16a34a;}
+  .btn-green:hover{background:#15803d;}
+  .btn-red{background:var(--red);}
+  .btn-red:hover{background:#c63025;}
+  .btn-blue{background:var(--blue);}
+  .btn-blue:hover{background:#1e61d4;}
+  #feedback{margin-top:14px;font-weight:600;min-height:24px;}
+  #timer{
+    position:fixed;bottom:14px;left:20px;
+    background:rgba(255,255,255,0.9);
+    padding:8px 10px;border-radius:10px;
+    font-weight:600;color:#334155;
+  }
+  #summary{
+    display:none;
+    margin-top:18px;
+    text-align:left;
+    width:100%;
+    padding:20px;
+    border-radius:10px;
+    background:rgba(15,23,42,0.03);
+  }
+  .correct{color:var(--green);font-weight:700;}
+  .incorrect{color:var(--red);font-weight:700;}
+  .hint{color:#475569;margin-top:6px;font-size:14px;}
+  .teacher-buttons{
+    position:fixed;
+    bottom:20px;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+    padding:0 20px;
+    box-sizing:border-box;
+  }
+  .teacher-btn{
+    pointer-events:auto;
+    border:none;
+    padding:14px 22px;
+    font-size:18px;
+    border-radius:14px;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+  }
+  .teacher-btn.correct{background:var(--green);}
+  .teacher-btn.incorrect{background:var(--red);}
+  @media (max-width:420px){
+    #word{font-size:36px;}
+    .wrap{padding:18px;}
+    .teacher-btn{padding:10px 14px;font-size:16px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" role="application" aria-label="QPS Final Section Multisyllabic Words">
+  <h1>QPS — Final Section</h1>
+  <div id="word" aria-live="polite"></div>
+
+  <div class="controls">
+    <button class="btn-red" id="resetBtn">Reset</button>
+    <button class="btn-blue" id="stopBtn">Stop</button>
+  </div>
+
+  <div id="feedback" aria-live="polite"></div>
+  <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect. 100 multisyllabic words randomized.</div>
+  <div id="summary" aria-live="polite"></div>
+</div>
+<div id="timer">Time: 0s</div>
+
+<div class="teacher-buttons">
+  <button class="teacher-btn incorrect" id="teacherIncorrect">Incorrect</button>
+  <button class="teacher-btn correct" id="teacherCorrect">Correct</button>
+</div>
+
+<script>
+(function(){
+  const words = [
+    "rainbow","sunlight","playful","basketball","snowman","birthday","football","sunflower","blueberry","flashlight",
+    "fireplace","mailbox","daydream","handshake","homework","paintbrush","backpack","toothbrush","moonlight","butterfly",
+    "starlight","grandfather","grandmother","playground","classroom","daytime","headband","sandcastle","windmill","cupcake",
+    "storybook","newspaper","treehouse","birthdaycake","raincoat","teacup","seashore","footprint","birthdayparty","lifeboat",
+    "footballer","moonbeam","sunshine","flashcard","sweatshirt","blackboard","cheesecake","snowflake","rainstorm","footballgame",
+    "backyard","daylight","nighttime","headphones","bedtime","playmate","greenhouse","teaspoon","cupboard","teaspoonful",
+    "trainstation","schoolwork","snowball","handstand","toothpaste","seashell","bookshelf","playpen","rainwater","moonlighted",
+    "earthquake","hairbrush","sunflowerseed","snowplow","teacupboard","firetruck","basketballer","staircase","bedspread","cupcakebox",
+    "playgrounder","classmate","lightning","footstool","raincoatbox","newlywed","doorstep","headmaster","basketweaver","sunroof",
+    "backpacker","daydreamer","nightlight","sunbathe","firefighter","handwriting","toothfairy","bookseller","classleader","playhouse"
+  ];
+
+  let pool = shuffle([...words]);
+  const wordEl = document.getElementById('word');
+  const feedbackEl = document.getElementById('feedback');
+  const timerEl = document.getElementById('timer');
+  const resetBtn = document.getElementById('resetBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const summaryDiv = document.getElementById('summary');
+  const teacherCorrect = document.getElementById('teacherCorrect');
+  const teacherIncorrect = document.getElementById('teacherIncorrect');
+
+  let current=null,total=0,correctCount=0,history=[],started=false,answered=false,startTime=null,timerInterval=null,elapsed=0;
+
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function pickNext(){if(pool.length===0) pool=shuffle([...words]); return pool.pop();}
+  function showWord(w){current=w; wordEl.textContent=w; feedbackEl.textContent=''; answered=false;}
+  function startTimer(){if(started)return; started=true; startTime=Date.now(); timerInterval=setInterval(()=>{elapsed=Math.floor((Date.now()-startTime)/1000); timerEl.textContent=`Time: ${elapsed}s`;},1000);}
+  function stopTimer(){if(timerInterval) clearInterval(timerInterval); timerInterval=null;}
+
+  function markAnswer(isCorrect){
+    if(!started) startTimer();
+    if(answered) return;
+    answered=true;
+    total++;
+    if(isCorrect){correctCount++; feedbackEl.textContent='✅ Correct'; feedbackEl.style.color='var(--green)';}
+    else{feedbackEl.textContent='❌ Incorrect'; feedbackEl.style.color='var(--red)';}
+    history.push({word:current,correct:isCorrect});
+    setTimeout(()=>{showWord(pickNext());},350);
+  }
+
+  document.addEventListener('keydown',e=>{
+    if(e.repeat) return;
+    if(e.key==='1') markAnswer(true);
+    else if(e.key==='2') markAnswer(false);
+  });
+
+  teacherCorrect.addEventListener('click',()=>markAnswer(true));
+  teacherIncorrect.addEventListener('click',()=>markAnswer(false));
+
+  function stopSession(){
+    stopTimer();
+    wordEl.style.display='none';
+    stopBtn.style.display='none';
+    feedbackEl.textContent='';
+    const percent=total?Math.round((correctCount/total)*100):0;
+    let html=`<h2 style="text-align:center;margin-top:0">Session Summary</h2>`;
+    html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
+    html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
+    html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
+    html+=`<p><strong>Score:</strong> ${percent}%</p><hr>`;
+    html+=`<div style="text-align:center;font-weight:600;margin-bottom:10px;">Responses (in order)</div>`;
+    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;text-align:center;">`;
+    history.forEach(item=>{html+=`<div class="${item.correct?'correct':'incorrect'}">${item.word}</div>`;});
+    html+=`</div><div style="text-align:center;margin-top:16px"><button id="playAgain" class="btn-red" style="padding:8px 14px;border-radius:8px;">Play Again</button></div>`;
+    summaryDiv.innerHTML=html;
+    summaryDiv.style.display='block';
+    summaryDiv.scrollTo(0,0);
+    const pa=document.getElementById('playAgain'); if(pa) pa.addEventListener('click',resetAll);
+  }
+
+  function resetAll(){
+    stopTimer(); started=false; answered=false; total=0; correctCount=0; history=[]; elapsed=0;
+    timerEl.textContent='Time: 0s';
+    summaryDiv.style.display='none';
+    wordEl.style.display='block';
+    stopBtn.style.display='inline-block';
+    pool=shuffle([...words]);
+    showWord(pickNext());
+    startTimer();
+  }
+
+  resetBtn.addEventListener('click',resetAll);
+  stopBtn.addEventListener('click',stopSession);
+
+  // Auto-start first word and timer
+  showWord(pickNext());
+  startTimer();
+
+  window._qps={resetAll,stopSession,getHistory:()=>history.slice()};
+})();
+</script>
+</body>
+</html>
