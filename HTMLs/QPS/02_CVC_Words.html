@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -35,10 +35,13 @@
   }
   #timer {
     position: fixed;
-    bottom: 10px;
-    left: 15px;
+    top: 20px; /* moved to top-left */
+    left: 20px;
     font-size: 1.2em;
     color: #374151;
+    background: rgba(255,255,255,0.8);
+    padding: 6px 10px;
+    border-radius: 8px;
   }
   #resetButton, #stopButton {
     padding: 10px 20px;
@@ -58,6 +61,31 @@
   }
   .correct { color: green; font-weight: bold; }
   .incorrect { color: red; font-weight: bold; }
+
+  /* Teacher buttons */
+  .teacher-buttons {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .teacher-btn {
+    pointer-events: auto;
+    border: none;
+    padding: 16px 22px;
+    font-size: 20px;
+    border-radius: 14px;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    margin: 0 20px;
+  }
+
+  .teacher-btn.correct { background: green; }
+  .teacher-btn.incorrect { background: red; }
 </style>
 </head>
 <body>
@@ -71,6 +99,12 @@
 </div>
 
 <div id="timer">Time: 0s</div>
+
+<!-- Teacher Touch Buttons -->
+<div class="teacher-buttons">
+  <button class="teacher-btn incorrect" id="btnIncorrect">Incorrect</button>
+  <button class="teacher-btn correct" id="btnCorrect">Correct</button>
+</div>
 
 <script>
 const cvcWords = [
@@ -96,6 +130,7 @@ const wordDisplay = document.getElementById("word");
 const timerDisplay = document.getElementById("timer");
 const summaryDiv = document.getElementById("summary");
 
+// Show next word
 function nextWord() {
   if (currentIndex < cvcWords.length) {
     wordDisplay.textContent = cvcWords[currentIndex];
@@ -104,7 +139,9 @@ function nextWord() {
   }
 }
 
+// Timer functions
 function startTimer() {
+  if (startTime) return;
   startTime = Date.now();
   timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -116,15 +153,29 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
+// Mark word correct or incorrect
+function markCorrect() {
+  correctWords.push(cvcWords[currentIndex]);
+  currentIndex++;
+  nextWord();
+}
+
+function markIncorrect() {
+  incorrectWords.push(cvcWords[currentIndex]);
+  currentIndex++;
+  nextWord();
+}
+
+// Stop practice and show summary
 function stopPractice() {
   stopTimer();
   wordDisplay.style.display = "none";
   document.getElementById("stopButton").style.display = "none";
-  
+
   const total = correctWords.length + incorrectWords.length;
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  
+
   summaryDiv.innerHTML = `
     <h2>Results</h2>
     <p><strong>Time:</strong> ${elapsed}s</p>
@@ -139,6 +190,7 @@ function stopPractice() {
   summaryDiv.style.display = "block";
 }
 
+// Reset practice
 function resetPractice() {
   stopTimer();
   correctWords = [];
@@ -148,27 +200,27 @@ function resetPractice() {
   wordDisplay.style.display = "block";
   document.getElementById("stopButton").style.display = "inline-block";
   timerDisplay.textContent = "Time: 0s";
+  startTime = null;
   startTimer();
   nextWord();
 }
 
+// Keyboard support
 document.addEventListener("keydown", (event) => {
-  if (!startTime && (event.key === "1" || event.key === "2")) {
-    startTimer();
-  }
-  if (event.key === "1") {
-    correctWords.push(cvcWords[currentIndex]);
-    currentIndex++;
-    nextWord();
-  } else if (event.key === "2") {
-    incorrectWords.push(cvcWords[currentIndex]);
-    currentIndex++;
-    nextWord();
-  }
+  startTimer();
+  if (event.key === "1") markCorrect();
+  else if (event.key === "2") markIncorrect();
 });
 
+// Button events
 document.getElementById("resetButton").addEventListener("click", resetPractice);
 document.getElementById("stopButton").addEventListener("click", stopPractice);
+document.getElementById("btnCorrect").addEventListener("click", markCorrect);
+document.getElementById("btnIncorrect").addEventListener("click", markIncorrect);
+
+// Start first word & timer on page load
+nextWord();
+startTimer();
 </script>
 
 </body>
