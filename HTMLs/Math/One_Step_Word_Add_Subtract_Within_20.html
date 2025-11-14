@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Word Problems</title>
+<style>
+  body {
+    background-color: #f0f8ff;
+    color: #333;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    color: #0066cc;
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+  #problem {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 20px auto;
+    max-width: 600px;
+  }
+  input {
+    font-size: 1.5em;
+    padding: 8px;
+    text-align: center;
+    margin-top: 10px;
+  }
+  button {
+    font-size: 1.2em;
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  #submitBtn { background-color: #4CAF50; color: white; }
+  #resetBtn { background-color: #ff4d4d; color: white; }
+  #stopBtn { background-color: #007bff; color: white; display: block; margin: 10px auto; }
+  #feedback { font-size: 1.2em; margin-top: 10px; }
+  #score { position: absolute; top: 10px; right: 20px; font-weight: bold; }
+  #timer { position: absolute; bottom: 10px; left: 20px; font-weight: bold; }
+  #attempts { position: absolute; bottom: 10px; right: 20px; font-weight: bold; }
+  #summary {
+    display: none;
+    margin-top: 30px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .correct { color: green; }
+  .incorrect { color: red; }
+</style>
+</head>
+<body>
+  <h1>Word Problems</h1>
+  <div id="score">Score: 0%</div>
+  <div id="problem"></div>
+  <input type="number" id="answer" placeholder="Your answer" />
+  <br />
+  <button id="submitBtn">Submit</button>
+  <button id="resetBtn">Reset</button>
+  <div id="feedback"></div>
+  <div id="timer">Time: 0s</div>
+  <div id="attempts">Attempts: 0</div>
+  <button id="stopBtn">Stop</button>
+  <div id="summary"></div>
+
+<script>
+const names = ["Liam", "Emma", "Noah", "Olivia", "Ava", "Mia", "Ethan", "Sophia", "Lucas", "Isabella"];
+const items = ["apples", "pencils", "marbles", "books", "candies", "balls", "stickers", "toys", "blocks", "coins"];
+
+let correct = 0;
+let attempts = 0;
+let time = 0;
+let timerInterval;
+let questions = [];
+let currentProblem = {};
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    time++;
+    document.getElementById("timer").textContent = "Time: " + time + "s";
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function randomWordProblem() {
+  const type = Math.random() < 0.5 ? "add" : "subtract";
+  const name = names[Math.floor(Math.random() * names.length)];
+  const item = items[Math.floor(Math.random() * items.length)];
+  let num1, num2, questionText, answer;
+
+  if (type === "add") {
+    num1 = Math.floor(Math.random() * 10) + 1;
+    num2 = Math.floor(Math.random() * (20 - num1)) + 1;
+    answer = num1 + num2;
+    questionText = `${name} had ${num1} ${item}. ${name} got ${num2} more ${item}. How many ${item} does ${name} have now?`;
+  } else {
+    num1 = Math.floor(Math.random() * 18) + 2;
+    num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+    answer = num1 - num2;
+    questionText = `${name} had ${num1} ${item}. ${name} gave away ${num2} ${item}. How many ${item} does ${name} have left?`;
+  }
+
+  return { question: questionText, answer };
+}
+
+function newProblem() {
+  currentProblem = randomWordProblem();
+  document.getElementById("problem").textContent = currentProblem.question;
+  document.getElementById("answer").value = "";
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("answer").focus();
+}
+
+function updateScore() {
+  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
+  document.getElementById("score").textContent = `Score: ${percent}%`;
+  document.getElementById("attempts").textContent = `Attempts: ${attempts}`;
+}
+
+function submitAnswer() {
+  const userAnswer = parseInt(document.getElementById("answer").value);
+  if (isNaN(userAnswer)) return;
+
+  attempts++;
+  if (userAnswer === currentProblem.answer) {
+    correct++;
+    document.getElementById("feedback").textContent = "Correct!";
+    document.getElementById("feedback").style.color = "green";
+    questions.push({ ...currentProblem, correct: true });
+  } else {
+    document.getElementById("feedback").textContent = `Incorrect. The correct answer was ${currentProblem.answer}.`;
+    document.getElementById("feedback").style.color = "red";
+    questions.push({ ...currentProblem, correct: false });
+  }
+
+  updateScore();
+  setTimeout(newProblem, 1200);
+}
+
+function resetAll() {
+  stopTimer();
+  correct = 0;
+  attempts = 0;
+  time = 0;
+  questions = [];
+  document.getElementById("score").textContent = "Score: 0%";
+  document.getElementById("timer").textContent = "Time: 0s";
+  document.getElementById("attempts").textContent = "Attempts: 0";
+  document.getElementById("summary").style.display = "none";
+  startTimer();
+  newProblem();
+}
+
+function stopAll() {
+  stopTimer();
+  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
+  let summaryHTML = `<h2>Results</h2>`;
+  summaryHTML += `<p><strong>Time:</strong> ${time}s<br><strong>Attempts:</strong> ${attempts}<br><strong>Score:</strong> ${percent}%</p>`;
+  summaryHTML += "<ul>";
+  questions.forEach((q) => {
+    summaryHTML += `<li class="${q.correct ? 'correct' : 'incorrect'}">${q.question} — ${q.correct ? '✔' : '✖'} (Answer: ${q.answer})</li>`;
+  });
+  summaryHTML += "</ul>";
+  document.getElementById("summary").innerHTML = summaryHTML;
+  document.getElementById("summary").style.display = "block";
+}
+
+document.getElementById("submitBtn").addEventListener("click", submitAnswer);
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+document.getElementById("stopBtn").addEventListener("click", stopAll);
+document.getElementById("answer").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") submitAnswer();
+});
+
+startTimer();
+newProblem();
+</script>
+</body>
+</html>

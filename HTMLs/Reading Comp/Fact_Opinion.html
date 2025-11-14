@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fact vs Opinion Practice</title>
+<style>
+  :root{
+    --bg1:#dbeafe;
+    --bg2:#bfdbfe;
+    --card:#ffffff;
+    --green:#16a34a;
+    --red:#dc2626;
+    --blue:#2563eb;
+    --text:#0f172a;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:"Poppins", Arial, sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .wrap{
+    width:92%;
+    max-width:600px;
+    background:var(--card);
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 8px 24px rgba(2,6,23,0.12);
+  }
+
+  h1{
+    margin:0 0 12px 0;
+    color:#1e3a8a;
+    font-size:22px;
+    letter-spacing:0.2px;
+  }
+
+  #statement{
+    font-size:28px;
+    line-height:1.3;
+    font-weight:600;
+    color:var(--text);
+    margin:28px 0;
+    user-select:none;
+  }
+
+  .controls{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:4px;
+    flex-wrap:wrap;
+  }
+
+  button{
+    border:none;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    color:white;
+    font-size:15px;
+  }
+  .btn-red{background:var(--red);}
+  .btn-red:hover{background:#c63025;}
+  .btn-blue{background:var(--blue);}
+  .btn-blue:hover{background:#1e61d4;}
+
+  #feedback{
+    margin-top:14px;
+    font-weight:600;
+    min-height:24px;
+  }
+
+  #timer{
+    position:fixed;
+    bottom:14px;
+    left:20px;
+    background:rgba(255,255,255,0.9);
+    padding:8px 10px;
+    border-radius:10px;
+    font-weight:600;
+    color:#334155;
+  }
+
+  #summary{
+    display:none;
+    background:var(--card);
+    border-radius:18px;
+    padding:40px;
+    box-shadow:0 8px 24px rgba(2,6,23,0.12);
+    width:90vw;
+    max-width:900px;
+    min-height:80vh;
+    margin:auto;
+    font-size:1.3rem;
+    text-align:center;
+  }
+
+  #summary h2{
+    font-size:2rem;
+    color:#1e3a8a;
+    margin-bottom:20px;
+  }
+
+  #summary p{
+    margin:10px 0;
+    font-size:1.2rem;
+  }
+
+  .correct{color:var(--green);font-weight:700;font-size:1.5rem;}
+  .incorrect{color:var(--red);font-weight:700;font-size:1.5rem;}
+  .hint{color:#475569;margin-top:6px;font-size:14px;}
+</style>
+</head>
+<body>
+  <div class="wrap" id="mainWrap">
+    <h1>Fact vs Opinion Practice</h1>
+    <div id="statement" aria-live="polite">Press 1 (Fact) or 2 (Opinion) to start</div>
+    <div class="controls">
+      <button class="btn-red" id="resetBtn">Reset</button>
+      <button class="btn-blue" id="stopBtn">Stop</button>
+    </div>
+    <div id="feedback" aria-live="polite"></div>
+    <div class="hint">Type <strong>1</strong> for Fact, <strong>2</strong> for Opinion.</div>
+  </div>
+
+  <div id="summary" aria-live="polite"></div>
+  <div id="timer">Time: 0s</div>
+
+<script>
+(function(){
+  const statements = [
+    {text:"The sun rises in the east.",type:"Fact"},
+    {text:"Rain helps plants grow.",type:"Fact"},
+    {text:"Cats have four legs.",type:"Fact"},
+    {text:"Dogs are the best pets.",type:"Opinion"},
+    {text:"Water freezes at 32°F.",type:"Fact"},
+    {text:"Ice cream is the yummiest food.",type:"Opinion"},
+    {text:"The Earth orbits the sun.",type:"Fact"},
+    {text:"Summer is the most fun season.",type:"Opinion"},
+    {text:"Frogs can jump very far.",type:"Fact"},
+    {text:"Jumping in puddles is the best activity.",type:"Opinion"},
+    {text:"Bees make honey.",type:"Fact"},
+    {text:"Honey is the sweetest food ever.",type:"Opinion"},
+    {text:"Rocks can be hard or soft.",type:"Fact"},
+    {text:"Rocks are boring to look at.",type:"Opinion"},
+    {text:"Plants need sunlight to grow.",type:"Fact"},
+    {text:"Flowers are prettier than trees.",type:"Opinion"},
+    {text:"Water boils at 100°C.",type:"Fact"},
+    {text:"Hot chocolate is the best drink.",type:"Opinion"},
+    {text:"The moon shines at night.",type:"Fact"},
+    {text:"The night sky is more beautiful than the day sky.",type:"Opinion"},
+    {text:"Fish live in water.",type:"Fact"},
+    {text:"Swimming in the ocean is the most fun.",type:"Opinion"},
+    {text:"Birds have feathers.",type:"Fact"},
+    {text:"Birds are better than mammals.",type:"Opinion"},
+    {text:"Snow is cold.",type:"Fact"},
+    {text:"Snow is the most exciting weather.",type:"Opinion"},
+    {text:"The wind can move leaves.",type:"Fact"},
+    {text:"Windy days are annoying.",type:"Opinion"},
+    {text:"Some animals hibernate in winter.",type:"Fact"},
+    {text:"Winter is the best season.",type:"Opinion"},
+    {text:"The sky is blue.",type:"Fact"},
+    {text:"Blue is the prettiest color.",type:"Opinion"},
+    {text:"Earth has mountains and rivers.",type:"Fact"},
+    {text:"Mountains are more fun to climb than rivers are to swim in.",type:"Opinion"},
+    {text:"Fish use gills to breathe.",type:"Fact"},
+    {text:"Fish are cooler than birds.",type:"Opinion"},
+    {text:"Clouds are made of water droplets.",type:"Fact"},
+    {text:"Puffy clouds look the prettiest.",type:"Opinion"},
+    {text:"Trees have leaves.",type:"Fact"},
+    {text:"Trees are more interesting than flowers.",type:"Opinion"},
+    {text:"Lightning is dangerous.",type:"Fact"},
+    {text:"Thunderstorms are exciting.",type:"Opinion"},
+    {text:"Some animals lay eggs.",type:"Fact"},
+    {text:"Eggs are the most interesting food.",type:"Opinion"},
+    {text:"Earthquakes shake the ground.",type:"Fact"},
+    {text:"Earthquakes are fascinating.",type:"Opinion"},
+    {text:"Plants grow from seeds.",type:"Fact"},
+    {text:"Planting flowers is the most fun activity.",type:"Opinion"},
+    {text:"Some animals can camouflage.",type:"Fact"},
+    {text:"Camouflage makes animals look cooler.",type:"Opinion"}
+  ];
+
+  let pool = shuffle([...statements]);
+
+  const statementEl = document.getElementById('statement');
+  const feedbackEl = document.getElementById('feedback');
+  const timerEl = document.getElementById('timer');
+  const resetBtn = document.getElementById('resetBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const summaryDiv = document.getElementById('summary');
+  const mainWrap = document.getElementById('mainWrap');
+
+  let current = null;
+  let total = 0;
+  let correctCount = 0;
+  let history = [];
+  let started = false;
+  let answered = false;
+  let startTime = null;
+  let timerInterval = null;
+  let elapsed = 0;
+
+  function showStatement(obj){
+    current = obj;
+    statementEl.textContent = obj.text;
+    feedbackEl.textContent = '';
+    answered = false;
+  }
+
+  function pickNext(){
+    if(pool.length===0) pool = shuffle([...statements]);
+    return pool.pop();
+  }
+
+  function shuffle(a){
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function startTimer(){
+    if(started) return;
+    started = true;
+    startTime = Date.now();
+    timerInterval = setInterval(()=>{
+      elapsed = Math.floor((Date.now()-startTime)/1000);
+      timerEl.textContent = `Time: ${elapsed}s`;
+    },1000);
+  }
+
+  function stopTimer(){
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval=null;
+  }
+
+  function markAnswer(isFact){
+    if(!started) startTimer();
+    if(answered) return;
+    answered = true;
+    total++;
+    const correct = (isFact && current.type==="Fact") || (!isFact && current.type==="Opinion");
+    if(correct){
+      correctCount++;
+      feedbackEl.textContent='✅ Correct';
+      feedbackEl.style.color='var(--green)';
+    } else {
+      feedbackEl.textContent='❌ Incorrect';
+      feedbackEl.style.color='var(--red)';
+    }
+    history.push({statement:current.text,correct});
+    setTimeout(()=>{showStatement(pickNext());},350);
+  }
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.repeat) return;
+    if(e.key==='1') markAnswer(true);
+    else if(e.key==='2') markAnswer(false);
+  });
+
+  function stopSession(){
+    stopTimer();
+    mainWrap.style.display='none';
+    const percent = total?Math.round((correctCount/total)*100):0;
+    let html=`<h2>Session Summary</h2>`;
+    html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
+    html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
+    html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
+    html+=`<p><strong>Score:</strong> ${percent}%</p><hr style="margin:20px 0;">`;
+    html+=`<div><strong>Responses (in order)</strong></div><div style="margin-top:20px;display:flex;flex-wrap:wrap;justify-content:center;gap:20px;">`;
+    if(history.length===0) html+=`<p>No responses yet.</p>`;
+    else {
+      history.forEach(item=>{
+        html+=item.correct
+          ?`<div class="correct">${item.statement}</div>`
+          :`<div class="incorrect">${item.statement}</div>`;
+      });
+    }
+    html+=`</div><div style="margin-top:40px;"><button id="playAgain" class="btn-red" style="padding:12px 20px; font-size:1.2rem; border-radius:8px; color:#fff; border:none; cursor:pointer;">Play Again</button></div>`;
+    summaryDiv.innerHTML=html;
+    summaryDiv.style.display='flex';
+    summaryDiv.style.flexDirection='column';
+    summaryDiv.style.alignItems='center';
+    summaryDiv.style.justifyContent='center';
+    summaryDiv.style.gap='10px';
+
+    const pa=document.getElementById('playAgain');
+    if(pa) pa.addEventListener('click',resetAll);
+  }
+
+  function resetAll(){
+    stopTimer();
+    started=false; answered=false;
+    total=0; correctCount=0; history=[];
+    elapsed=0; timerEl.textContent='Time: 0s';
+    summaryDiv.style.display='none';
+    mainWrap.style.display='block';
+    pool=shuffle([...statements]);
+    showStatement(pickNext());
+  }
+
+  resetBtn.addEventListener('click',resetAll);
+  stopBtn.addEventListener('click',stopSession);
+
+  showStatement(pickNext());
+})();
+</script>
+</body>
+</html>
