@@ -1,119 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fry Word Practice</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #93c5fd, #bfdbfe);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    text-align: center;
-  }
-  h1 {
-    color: #1e3a8a;
-    margin-bottom: 20px;
-  }
-  #container {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    width: 90%;
-    max-width: 400px;
-  }
-  #word {
-    font-size: 3em;
-    margin: 40px 0;
-    color: #111827;
-  }
-
-  /* TIMER IN TOP LEFT */
-  #timer {
-    position: fixed;
-    top: 10px;
-    left: 15px;
-    font-size: 1.2em;
-    color: #111;
-    background: rgba(255,255,255,0.8);
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-weight: bold;
-  }
-
-  /* MOBILE BUTTONS */
-  .answer-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  .answer-buttons button {
-    padding: 18px 30px;
-    font-size: 1.2em;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: #3b82f6;
-    color: white;
-    width: 45%;
-    max-width: 160px;
-    touch-action: manipulation;
-  }
-  .answer-buttons button:active {
-    background: #1e40af;
-  }
-
-  #resetButton, #stopButton {
-    padding: 10px 20px;
-    font-size: 1em;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-    margin: 10px;
-  }
-  #resetButton { background-color: #dc2626; }
-  #stopButton { background-color: #2563eb; }
-
-  #summary {
-    display: none;
-    margin-top: 30px;
-    text-align: center;
-  }
-  .correct { color: green; font-weight: bold; }
-  .incorrect { color: red; font-weight: bold; }
-</style>
-</head>
-<body>
-
-<h1>Fry Word Practice</h1>
-
-<div id="timer">Time: 0s</div>
-
-<div id="container">
-  <div id="word">Press 1, 2, or tap a button to start</div>
-
-  <!-- MOBILE BUTTONS -->
-  <div class="answer-buttons">
-    <button id="correctBtn">Correct (1)</button>
-    <button id="incorrectBtn">Incorrect (2)</button>
-  </div>
-
-  <button id="resetButton">Reset</button>
-  <button id="stopButton">Stop</button>
-  <div id="summary"></div>
-</div>
-
 <script>
-const fryWords = [
+const fryWordsOriginal = [
   "the","of","and","a","to","in","is","you","that","it",
   "he","was","for","on","are","as","with","his","they","I",
   "at","be","this","have","from","or","one","had","by","word",
@@ -126,6 +12,8 @@ const fryWords = [
   "find","long","down","day","did","get","come","made","may","part"
 ];
 
+let fryWords = []; // <-- randomized list
+
 let currentIndex = 0;
 let correctWords = [];
 let incorrectWords = [];
@@ -136,6 +24,16 @@ const wordDisplay = document.getElementById("word");
 const timerDisplay = document.getElementById("timer");
 const summaryDiv = document.getElementById("summary");
 
+/* ----------- RANDOMIZER ----------- */
+function shuffleWords() {
+  fryWords = [...fryWordsOriginal]; // copy original
+  for (let i = fryWords.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fryWords[i], fryWords[j]] = [fryWords[j], fryWords[i]];
+  }
+}
+
+/* Show next Fry word */
 function nextWord() {
   if (currentIndex < fryWords.length) {
     wordDisplay.textContent = fryWords[currentIndex];
@@ -144,25 +42,22 @@ function nextWord() {
   }
 }
 
+/* Start timer immediately */
 function startTimer() {
-  if (startTime) return; // Prevent double-start
-
   startTime = Date.now();
   timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     timerDisplay.textContent = `Time: ${elapsed}s`;
   }, 1000);
-
-  nextWord(); // Start showing words immediately
 }
 
+/* Stop timer */
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
+/* Handle answer button or key press */
 function recordAnswer(isCorrect) {
-  if (!startTime) startTimer();
-
   if (isCorrect) {
     correctWords.push(fryWords[currentIndex]);
   } else {
@@ -172,6 +67,7 @@ function recordAnswer(isCorrect) {
   nextWord();
 }
 
+/* End practice and show summary */
 function stopPractice() {
   stopTimer();
   wordDisplay.style.display = "none";
@@ -192,6 +88,7 @@ function stopPractice() {
   summaryDiv.style.display = "block";
 }
 
+/* Reset game */
 function resetPractice() {
   stopTimer();
   correctWords = [];
@@ -201,23 +98,27 @@ function resetPractice() {
   wordDisplay.style.display = "block";
   document.getElementById("stopButton").style.display = "inline-block";
   timerDisplay.textContent = "Time: 0s";
+
   startTime = null;
+  shuffleWords();   // <-- NEW
+  startTimer();
   nextWord();
 }
 
-/* Keyboard Support */
+/* Keyboard support */
 document.addEventListener("keydown", (event) => {
   if (event.key === "1") recordAnswer(true);
   if (event.key === "2") recordAnswer(false);
 });
 
-/* Mobile Button Support */
+/* Mobile button support */
 document.getElementById("correctBtn").onclick = () => recordAnswer(true);
 document.getElementById("incorrectBtn").onclick = () => recordAnswer(false);
 
-document.getElementById("resetButton").addEventListener("click", resetPractice);
-document.getElementById("stopButton").addEventListener("click", stopPractice);
+/* AUTO-START ON LOAD */
+window.onload = () => {
+  shuffleWords();   // <-- NEW
+  startTimer();
+  nextWord();
+};
 </script>
-
-</body>
-</html>
