@@ -23,6 +23,7 @@
     align-items:center;
     justify-content:center;
     text-align:center;
+    position:relative;
   }
   .wrap{
     width:92%;
@@ -31,6 +32,7 @@
     border-radius:18px;
     padding:28px;
     box-shadow:0 8px 24px rgba(2,6,23,0.12);
+    z-index:1;
   }
   h1{
     margin:0 0 12px 0;
@@ -45,30 +47,7 @@
     margin:28px 0;
     user-select:none;
   }
-  .controls{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    margin-top:12px;
-    flex-wrap:wrap;
-  }
-  button{
-    border:none;
-    padding:14px 24px;
-    border-radius:12px;
-    cursor:pointer;
-    color:white;
-    font-size:18px;
-    font-weight:600;
-    width:45%;
-    max-width:220px;
-  }
-  .btn-green{ background:var(--green);}
-  .btn-red{ background:var(--red);}
-  .btn-blue{ background:var(--blue);}
   #feedback{margin-top:14px;font-weight:600;min-height:28px;}
-  
-  /* TIMER TOP-LEFT */
   #timer{
     position:fixed;
     top:14px;
@@ -79,7 +58,6 @@
     font-weight:600;
     color:#334155;
   }
-
   #summary{
     display:none;
     margin-top:18px;
@@ -89,56 +67,156 @@
     border-radius:10px;
     background: rgba(15,23,42,0.03);
   }
-
   .correct{ color:var(--green); font-weight:700; }
   .incorrect{ color:var(--red); font-weight:700; }
   .hint{ color:#475569; margin-top:12px; font-size:14px; }
-  
+
+  /* BUTTONS POSITIONS */
+  #simileBtn, #notBtn{
+    position:fixed;
+    bottom:20px;
+    padding:14px 24px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:18px;
+    z-index:2;
+    width:45%;
+    max-width:200px;
+  }
+  #simileBtn{ right:20px; background:var(--green);}
+  #notBtn{ left:20px; background:var(--red);}
+  #stopBtn{ position:fixed; top:14px; left:140px; background:var(--red); padding:10px 18px; border-radius:10px;}
+  #resetBtn{ position:fixed; top:14px; right:20px; background:var(--blue); padding:10px 18px; border-radius:10px;}
+
   @media(max-width:480px){ 
     #sentence{font-size:22px;} 
     .wrap{padding:18px;} 
-    button{width:100%;}
+    #simileBtn, #notBtn{width:40%;}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>Simile or Not?</h1>
-
 <div id="sentence" aria-live="polite"></div>
-
-<div class="controls">
-  <button class="btn-green" id="simileBtn">Simile (1)</button>
-  <button class="btn-red" id="notBtn">Not a Simile (2)</button>
-</div>
-
-<div class="controls" style="margin-top:20px;">
-  <button class="btn-blue" id="resetBtn">Reset</button>
-  <button class="btn-red" id="stopBtn">Stop</button>
-</div>
-
 <div id="feedback" aria-live="polite"></div>
-<div class="hint">Press <strong>1</strong> for Simile, <strong>2</strong> for Not a Simile</div>
-
+<div class="hint">Use keyboard 1 for Simile, 2 for Not a Simile</div>
 <div id="summary" aria-live="polite"></div>
 </div>
 
+<button id="simileBtn">Simile</button>
+<button id="notBtn">Not a Simile</button>
+<button id="resetBtn">Reset</button>
+<button id="stopBtn">Stop</button>
 <div id="timer">Time: 0s</div>
 
 <script>
 (function(){
-
-// ------------------- SENTENCES -------------------
 const sentences=[
+  // 50 Similes
   {text:"The dog ran as fast as a rocket.", answer:1},
-  {text:"His smile was as bright as the sun.", answer:1},
-  {text:"She was like a butterfly in the wind.", answer:1},
+  {text:"Her eyes sparkled like stars.", answer:1},
+  {text:"He was as brave as a lion.", answer:1},
+  {text:"The night was as dark as coal.", answer:1},
+  {text:"She was as busy as a bee.", answer:1},
+  {text:"His voice was like thunder.", answer:1},
+  {text:"The water was as cold as ice.", answer:1},
+  {text:"He was as strong as an ox.", answer:1},
+  {text:"Her smile was as bright as the sun.", answer:1},
+  {text:"The wind howled like a wolf.", answer:1},
+  {text:"His hands were as cold as stone.", answer:1},
+  {text:"The clouds were like cotton.", answer:1},
+  {text:"She ran as quickly as a deer.", answer:1},
+  {text:"He was as quiet as a mouse.", answer:1},
+  {text:"Her hair was like golden silk.", answer:1},
+  {text:"The room was as silent as a grave.", answer:1},
+  {text:"The snow was like a white blanket.", answer:1},
+  {text:"His eyes shone like diamonds.", answer:1},
+  {text:"She floated like a feather.", answer:1},
+  {text:"The night sky was as black as coal.", answer:1},
+  {text:"He fought like a warrior.", answer:1},
+  {text:"The baby was as cute as a button.", answer:1},
+  {text:"Her skin was like porcelain.", answer:1},
+  {text:"The music was as sweet as honey.", answer:1},
+  {text:"He was as sly as a fox.", answer:1},
+  {text:"The fire burned like a furnace.", answer:1},
+  {text:"She was as graceful as a swan.", answer:1},
+  {text:"The path was as winding as a snake.", answer:1},
+  {text:"His laugh was like a bell.", answer:1},
+  {text:"The forest was as thick as fog.", answer:1},
+  {text:"Her voice was like velvet.", answer:1},
+  {text:"The ocean was as deep as a canyon.", answer:1},
+  {text:"He moved as fast as lightning.", answer:1},
+  {text:"The candle flickered like a flame.", answer:1},
+  {text:"She was as stubborn as a mule.", answer:1},
+  {text:"His face was like stone.", answer:1},
+  {text:"The wind was as strong as a hurricane.", answer:1},
+  {text:"The moon shone like silver.", answer:1},
+  {text:"He was as tall as a tree.", answer:1},
+  {text:"Her eyes were like emeralds.", answer:1},
+  {text:"The baby slept as peacefully as a log.", answer:1},
+  {text:"His mind was as sharp as a knife.", answer:1},
+  {text:"She danced like the wind.", answer:1},
+  {text:"The stars twinkled like diamonds.", answer:1},
+  {text:"He was as brave as a knight.", answer:1},
+  {text:"The river flowed like liquid silver.", answer:1},
+  {text:"She was as quick as a fox.", answer:1},
+  {text:"The room was as bright as day.", answer:1},
+  {text:"His fingers were as nimble as monkeys.", answer:1},
+
+  // 50 Non-similes
   {text:"The rain cooled the air.", answer:2},
-  {text:"He slept through the entire movie.", answer:2}
-  // Add your full list here
+  {text:"He slept through the entire movie.", answer:2},
+  {text:"The cat sat on the windowsill.", answer:2},
+  {text:"She ate her breakfast quietly.", answer:2},
+  {text:"The door creaked open slowly.", answer:2},
+  {text:"He walked to school.", answer:2},
+  {text:"The boy read a book.", answer:2},
+  {text:"The sun rose in the morning.", answer:2},
+  {text:"She wrote a letter to her friend.", answer:2},
+  {text:"The dog barked loudly.", answer:2},
+  {text:"He drank a glass of water.", answer:2},
+  {text:"The phone rang suddenly.", answer:2},
+  {text:"She tied her shoes.", answer:2},
+  {text:"The clock ticked softly.", answer:2},
+  {text:"He opened the window.", answer:2},
+  {text:"The children played outside.", answer:2},
+  {text:"She drew a picture.", answer:2},
+  {text:"The car stopped at the light.", answer:2},
+  {text:"He wrote in his journal.", answer:2},
+  {text:"The flowers bloomed in spring.", answer:2},
+  {text:"She cleaned her room.", answer:2},
+  {text:"The boy kicked the ball.", answer:2},
+  {text:"He fed the fish.", answer:2},
+  {text:"The wind blew through the trees.", answer:2},
+  {text:"She poured tea into a cup.", answer:2},
+  {text:"He painted the wall.", answer:2},
+  {text:"The cat chased a mouse.", answer:2},
+  {text:"She walked to the park.", answer:2},
+  {text:"He cooked dinner.", answer:2},
+  {text:"The dog slept on the couch.", answer:2},
+  {text:"She watered the plants.", answer:2},
+  {text:"He fixed the fence.", answer:2},
+  {text:"The children laughed.", answer:2},
+  {text:"She bought groceries.", answer:2},
+  {text:"He mowed the lawn.", answer:2},
+  {text:"The baby cried.", answer:2},
+  {text:"She opened the book.", answer:2},
+  {text:"He drove to the store.", answer:2},
+  {text:"The rain fell gently.", answer:2},
+  {text:"She ate lunch.", answer:2},
+  {text:"He played the guitar.", answer:2},
+  {text:"The bird sang a song.", answer:2},
+  {text:"She tied her scarf.", answer:2},
+  {text:"He wrote a note.", answer:2},
+  {text:"The clock struck twelve.", answer:2},
+  {text:"She closed the door.", answer:2},
+  {text:"He washed the dishes.", answer:2},
+  {text:"The sun set slowly.", answer:2},
+  {text:"She lit the candle.", answer:2},
+  {text:"He opened the jar.", answer:2}
 ];
 
-// ------------------- VARIABLES -------------------
 let pool=[], currentSentence=null;
 let total=0, correctCount=0, history=[];
 let answered=false;
@@ -153,83 +231,20 @@ const notBtn=document.getElementById('notBtn');
 const resetBtn=document.getElementById('resetBtn');
 const stopBtn=document.getElementById('stopBtn');
 
-// ------------------- FUNCTIONS -------------------
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    let j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a;}
+function pickNext(){ if(pool.length===0) pool=shuffle([...sentences]); return pool.pop();}
+function showSentence(s){ currentSentence=s; sentenceEl.textContent=s.text; feedbackEl.textContent=''; answered=false;}
+function startTimer(){ startTime=Date.now(); timerInterval=setInterval(()=>{ elapsed=Math.floor((Date.now()-startTime)/1000); timerEl.textContent=`Time: ${elapsed}s`; },1000);}
+function stopTimer(){ clearInterval(timerInterval); timerInterval=null;}
+function startGame(){ pool=shuffle([...sentences]); showSentence(pickNext()); startTimer();}
+function markAnswer(choice){ if(answered) return; answered=true; total++; let correct=(choice===currentSentence.answer); if(correct){ correctCount++; feedbackEl.textContent="✅ Correct"; feedbackEl.style.color="var(--green)"; } else { feedbackEl.textContent="❌ Incorrect"; feedbackEl.style.color="var(--red)"; } history.push({sentence:currentSentence.text, correct}); setTimeout(()=> showSentence(pickNext()),350);}
 
-function pickNext(){
-  if(pool.length===0) pool=shuffle([...sentences]);
-  return pool.pop();
-}
-
-function showSentence(s){
-  currentSentence=s;
-  sentenceEl.textContent=s.text;
-  feedbackEl.textContent='';
-  answered=false;
-}
-
-function startTimer(){
-  startTime=Date.now();
-  timerInterval=setInterval(()=>{
-    elapsed=Math.floor((Date.now()-startTime)/1000);
-    timerEl.textContent=`Time: ${elapsed}s`;
-  },1000);
-}
-
-function stopTimer(){
-  clearInterval(timerInterval);
-  timerInterval=null;
-}
-
-function startGame(){
-  pool=shuffle([...sentences]);
-  showSentence(pickNext());
-  startTimer();
-}
-
-function markAnswer(choice){
-  if(answered) return;
-  answered=true;
-
-  total++;
-  let correct=(choice===currentSentence.answer);
-
-  if(correct){
-    correctCount++;
-    feedbackEl.textContent="✅ Correct";
-    feedbackEl.style.color="var(--green)";
-  } else {
-    feedbackEl.textContent="❌ Incorrect";
-    feedbackEl.style.color="var(--red)";
-  }
-
-  history.push({sentence:currentSentence.text, correct});
-  setTimeout(()=> showSentence(pickNext()), 350);
-}
-
-// ------------------- EVENT LISTENERS -------------------
 simileBtn.addEventListener("click", ()=>markAnswer(1));
 notBtn.addEventListener("click", ()=>markAnswer(2));
+document.addEventListener("keydown", e=>{ if(e.repeat) return; if(e.key==="1") markAnswer(1); else if(e.key==="2") markAnswer(2); });
 
-document.addEventListener("keydown", e=>{
-  if(e.repeat) return;
-  if(e.key==="1") markAnswer(1);
-  else if(e.key==="2") markAnswer(2);
-});
-
-// ------------------- STOP SESSION -------------------
 function stopSession(){
-  stopTimer();
-  sentenceEl.style.display='none';
-  stopBtn.style.display='none';
-  feedbackEl.textContent='';
-
+  stopTimer(); sentenceEl.style.display='none'; stopBtn.style.display='none'; feedbackEl.textContent='';
   const percent=total?Math.round((correctCount/total)*100):0;
   let html=`<h2 style="text-align:center">Session Summary</h2>`;
   html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
@@ -238,45 +253,24 @@ function stopSession(){
   html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
   html+=`<p><strong>Score:</strong> ${percent}%</p><hr>`;
   html+=`<div><strong>Responses:</strong></div>`;
-
-  history.forEach(item=>{
-    html+= item.correct
-      ? `<div class="correct" style="text-align:center">${item.sentence}</div>`
-      : `<div class="incorrect" style="text-align:center">${item.sentence}</div>`;
-  });
-
+  history.forEach(item=>{ html+= item.correct ? `<div class="correct" style="text-align:center">${item.sentence}</div>` : `<div class="incorrect" style="text-align:center">${item.sentence}</div>`; });
   html+=`<div style="text-align:center;margin-top:12px">
            <button id="playAgain" class="btn-red" style="padding:10px 18px;">Play Again</button>
          </div>`;
-
-  summaryDiv.innerHTML=html;
-  summaryDiv.style.display='block';
+  summaryDiv.innerHTML=html; summaryDiv.style.display='block';
   document.getElementById('playAgain').addEventListener('click', resetAll);
 }
 
-// ------------------- RESET -------------------
 function resetAll(){
-  stopTimer();
-  total=0;
-  correctCount=0;
-  history=[];
-  answered=false;
-  elapsed=0;
-
-  timerEl.textContent='Time: 0s';
-  summaryDiv.style.display='none';
-  sentenceEl.style.display='block';
-  stopBtn.style.display='inline-block';
-
+  stopTimer(); total=0; correctCount=0; history=[]; answered=false; elapsed=0;
+  timerEl.textContent='Time: 0s'; summaryDiv.style.display='none'; sentenceEl.style.display='block'; stopBtn.style.display='inline-block';
   startGame();
 }
 
 resetBtn.addEventListener('click', resetAll);
 stopBtn.addEventListener('click', stopSession);
 
-// --- AUTO-START GAME ---
 startGame();
-
 })();
 </script>
 </body>
