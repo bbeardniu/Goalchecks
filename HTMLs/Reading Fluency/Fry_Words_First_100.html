@@ -1,5 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fry Word Practice</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #93c5fd, #bfdbfe);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+    overflow-x: hidden;
+  }
+  h1 {
+    color: #1e3a8a;
+    margin-bottom: 10px;
+  }
+  #container {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 400px;
+    z-index: 5;
+  }
+  #word {
+    font-size: 3em;
+    margin: 40px 0;
+    color: #111827;
+    user-select: none;
+  }
+
+  /* TIMER IN TOP LEFT */
+  #timer {
+    position: fixed;
+    top: 10px;
+    left: 15px;
+    font-size: 1.2em;
+    color: #111;
+    background: rgba(255,255,255,0.85);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 100;
+  }
+
+  /* FIXED BOTTOM BUTTONS */
+  #incorrectBtn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 20px 32px;
+    font-size: 1.4em;
+    border: none;
+    border-radius: 16px;
+    background: #dc2626;
+    color: white;
+    width: 40vw;
+    max-width: 240px;
+    cursor: pointer;
+    z-index: 99;
+    touch-action: manipulation;
+  }
+  #incorrectBtn:active { background: #7f1d1d; }
+
+  #correctBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 20px 32px;
+    font-size: 1.4em;
+    border: none;
+    border-radius: 16px;
+    background: #16a34a;
+    color: white;
+    width: 40vw;
+    max-width: 240px;
+    cursor: pointer;
+    z-index: 99;
+    touch-action: manipulation;
+  }
+  #correctBtn:active { background: #065f46; }
+
+  #resetButton, #stopButton {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    margin: 10px;
+  }
+  #resetButton { background-color: #dc2626; }
+  #stopButton { background-color: #2563eb; }
+
+  #summary {
+    display: none;
+    margin-top: 30px;
+    text-align: center;
+  }
+  .correct { color: #16a34a; font-weight: bold; }
+  .incorrect { color: #dc2626; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Fry Word Practice</h1>
+
+<div id="timer">Time: 0s</div>
+
+<div id="container">
+  <div id="word">Loading…</div>
+
+  <button id="resetButton">Reset</button>
+  <button id="stopButton">Stop</button>
+
+  <div id="summary"></div>
+</div>
+
+<!-- FIXED BOTTOM BUTTONS -->
+<button id="incorrectBtn">Incorrect </button>
+<button id="correctBtn">Correct </button>
+
 <script>
-const fryWordsOriginal = [
+/* FRY WORDS */
+const fryWords = [
   "the","of","and","a","to","in","is","you","that","it",
   "he","was","for","on","are","as","with","his","they","I",
   "at","be","this","have","from","or","one","had","by","word",
@@ -12,113 +143,116 @@ const fryWordsOriginal = [
   "find","long","down","day","did","get","come","made","may","part"
 ];
 
-let fryWords = []; // <-- randomized list
+/* SHUFFLE WORDS */
+let words = shuffle([...fryWords]);
+let index = 0;
 
-let currentIndex = 0;
 let correctWords = [];
 let incorrectWords = [];
+
 let startTime = null;
 let timerInterval = null;
 
-const wordDisplay = document.getElementById("word");
-const timerDisplay = document.getElementById("timer");
-const summaryDiv = document.getElementById("summary");
+const wordEl = document.getElementById("word");
+const timerEl = document.getElementById("timer");
+const summaryEl = document.getElementById("summary");
 
-/* ----------- RANDOMIZER ----------- */
-function shuffleWords() {
-  fryWords = [...fryWordsOriginal]; // copy original
-  for (let i = fryWords.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [fryWords[i], fryWords[j]] = [fryWords[j], fryWords[i]];
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  return arr;
 }
 
-/* Show next Fry word */
-function nextWord() {
-  if (currentIndex < fryWords.length) {
-    wordDisplay.textContent = fryWords[currentIndex];
-  } else {
-    stopPractice();
-  }
-}
-
-/* Start timer immediately */
 function startTimer() {
+  if (startTime) return;
   startTime = Date.now();
   timerInterval = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    timerDisplay.textContent = `Time: ${elapsed}s`;
+    timerEl.textContent = `Time: ${Math.floor((Date.now() - startTime) / 1000)}s`;
   }, 1000);
 }
 
-/* Stop timer */
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
-/* Handle answer button or key press */
-function recordAnswer(isCorrect) {
-  if (isCorrect) {
-    correctWords.push(fryWords[currentIndex]);
-  } else {
-    incorrectWords.push(fryWords[currentIndex]);
+function showNextWord() {
+  if (index >= words.length) {
+    stopPractice();
+    return;
   }
-  currentIndex++;
-  nextWord();
+  wordEl.textContent = words[index];
 }
 
-/* End practice and show summary */
+function recordAnswer(isCorrect) {
+  if (!startTime) startTimer();
+
+  if (isCorrect) correctWords.push(words[index]);
+  else incorrectWords.push(words[index]);
+
+  index++;
+  showNextWord();
+}
+
 function stopPractice() {
   stopTimer();
-  wordDisplay.style.display = "none";
+  wordEl.style.display = "none";
   document.getElementById("stopButton").style.display = "none";
 
   const total = correctWords.length + incorrectWords.length;
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
 
-  summaryDiv.innerHTML = `
+  summaryEl.innerHTML = `
     <h2>Results</h2>
     <p><strong>Time:</strong> ${elapsed}s</p>
     <p><strong>Total Words:</strong> ${total}</p>
     <p><strong>Correct:</strong> ${correctWords.length}</p>
     <p><strong>Incorrect:</strong> ${incorrectWords.length}</p>
     <p><strong>Score:</strong> ${percent}%</p>
+    <hr>
+    <h3>Correct Words</h3>
+    <p class="correct">${correctWords.join(", ")}</p>
+    <h3>Incorrect Words</h3>
+    <p class="incorrect">${incorrectWords.join(", ")}</p>
   `;
-  summaryDiv.style.display = "block";
+  summaryEl.style.display = "block";
 }
 
-/* Reset game */
 function resetPractice() {
   stopTimer();
   correctWords = [];
   incorrectWords = [];
-  currentIndex = 0;
-  summaryDiv.style.display = "none";
-  wordDisplay.style.display = "block";
-  document.getElementById("stopButton").style.display = "inline-block";
-  timerDisplay.textContent = "Time: 0s";
+  index = 0;
+  words = shuffle([...fryWords]);
 
+  summaryEl.style.display = "none";
+  wordEl.style.display = "block";
+  document.getElementById("stopButton").style.display = "inline-block";
+
+  timerEl.textContent = "Time: 0s";
   startTime = null;
-  shuffleWords();   // <-- NEW
-  startTimer();
-  nextWord();
+
+  showNextWord();
 }
 
-/* Keyboard support */
-document.addEventListener("keydown", (event) => {
-  if (event.key === "1") recordAnswer(true);
-  if (event.key === "2") recordAnswer(false);
+/* KEYBOARD: 1=Correct, 2=Incorrect */
+document.addEventListener("keydown", (e) => {
+  if (e.key === "1") recordAnswer(true);
+  if (e.key === "2") recordAnswer(false);
 });
 
-/* Mobile button support */
+/* BUTTONS */
 document.getElementById("correctBtn").onclick = () => recordAnswer(true);
 document.getElementById("incorrectBtn").onclick = () => recordAnswer(false);
 
-/* AUTO-START ON LOAD */
-window.onload = () => {
-  shuffleWords();   // <-- NEW
-  startTimer();
-  nextWord();
-};
+document.getElementById("resetButton").onclick = resetPractice;
+document.getElementById("stopButton").onclick = stopPractice;
+
+/* AUTO START */
+showNextWord();
 </script>
+
+</body>
+</html>
