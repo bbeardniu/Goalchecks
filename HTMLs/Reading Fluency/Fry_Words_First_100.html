@@ -33,13 +33,44 @@
     margin: 40px 0;
     color: #111827;
   }
+
+  /* TIMER IN TOP LEFT */
   #timer {
     position: fixed;
-    bottom: 10px;
+    top: 10px;
     left: 15px;
     font-size: 1.2em;
-    color: #374151;
+    color: #111;
+    background: rgba(255,255,255,0.8);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: bold;
   }
+
+  /* MOBILE BUTTONS */
+  .answer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .answer-buttons button {
+    padding: 18px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #3b82f6;
+    color: white;
+    width: 45%;
+    max-width: 160px;
+    touch-action: manipulation;
+  }
+  .answer-buttons button:active {
+    background: #1e40af;
+  }
+
   #resetButton, #stopButton {
     padding: 10px 20px;
     font-size: 1em;
@@ -51,6 +82,7 @@
   }
   #resetButton { background-color: #dc2626; }
   #stopButton { background-color: #2563eb; }
+
   #summary {
     display: none;
     margin-top: 30px;
@@ -63,14 +95,22 @@
 <body>
 
 <h1>Fry Word Practice</h1>
+
+<div id="timer">Time: 0s</div>
+
 <div id="container">
-  <div id="word">Press 1 or 2 to start</div>
+  <div id="word">Press 1, 2, or tap a button to start</div>
+
+  <!-- MOBILE BUTTONS -->
+  <div class="answer-buttons">
+    <button id="correctBtn">Correct (1)</button>
+    <button id="incorrectBtn">Incorrect (2)</button>
+  </div>
+
   <button id="resetButton">Reset</button>
   <button id="stopButton">Stop</button>
   <div id="summary"></div>
 </div>
-
-<div id="timer">Time: 0s</div>
 
 <script>
 const fryWords = [
@@ -105,26 +145,42 @@ function nextWord() {
 }
 
 function startTimer() {
+  if (startTime) return; // Prevent double-start
+
   startTime = Date.now();
   timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     timerDisplay.textContent = `Time: ${elapsed}s`;
   }, 1000);
+
+  nextWord(); // Start showing words immediately
 }
 
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
+function recordAnswer(isCorrect) {
+  if (!startTime) startTimer();
+
+  if (isCorrect) {
+    correctWords.push(fryWords[currentIndex]);
+  } else {
+    incorrectWords.push(fryWords[currentIndex]);
+  }
+  currentIndex++;
+  nextWord();
+}
+
 function stopPractice() {
   stopTimer();
   wordDisplay.style.display = "none";
   document.getElementById("stopButton").style.display = "none";
-  
+
   const total = correctWords.length + incorrectWords.length;
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  
+
   summaryDiv.innerHTML = `
     <h2>Results</h2>
     <p><strong>Time:</strong> ${elapsed}s</p>
@@ -132,9 +188,6 @@ function stopPractice() {
     <p><strong>Correct:</strong> ${correctWords.length}</p>
     <p><strong>Incorrect:</strong> ${incorrectWords.length}</p>
     <p><strong>Score:</strong> ${percent}%</p>
-    <h3>Words</h3>
-    <div>${correctWords.map(w => `<span class='correct'>${w}</span>`).join(", ")}</div><br>
-    <div>${incorrectWords.map(w => `<span class='incorrect'>${w}</span>`).join(", ")}</div>
   `;
   summaryDiv.style.display = "block";
 }
@@ -148,24 +201,19 @@ function resetPractice() {
   wordDisplay.style.display = "block";
   document.getElementById("stopButton").style.display = "inline-block";
   timerDisplay.textContent = "Time: 0s";
-  startTimer();
+  startTime = null;
   nextWord();
 }
 
+/* Keyboard Support */
 document.addEventListener("keydown", (event) => {
-  if (!startTime && (event.key === "1" || event.key === "2")) {
-    startTimer();
-  }
-  if (event.key === "1") {
-    correctWords.push(fryWords[currentIndex]);
-    currentIndex++;
-    nextWord();
-  } else if (event.key === "2") {
-    incorrectWords.push(fryWords[currentIndex]);
-    currentIndex++;
-    nextWord();
-  }
+  if (event.key === "1") recordAnswer(true);
+  if (event.key === "2") recordAnswer(false);
 });
+
+/* Mobile Button Support */
+document.getElementById("correctBtn").onclick = () => recordAnswer(true);
+document.getElementById("incorrectBtn").onclick = () => recordAnswer(false);
 
 document.getElementById("resetButton").addEventListener("click", resetPractice);
 document.getElementById("stopButton").addEventListener("click", stopPractice);
