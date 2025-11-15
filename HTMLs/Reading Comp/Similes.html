@@ -65,10 +65,10 @@
   }
   .btn-green{ background:var(--green);}
   .btn-red{ background:var(--red);}
-  .btn-blue{ background:var(--blue); }
+  .btn-blue{ background:var(--blue);}
   #feedback{margin-top:14px;font-weight:600;min-height:28px;}
   
-  /* 🔥 TIMER TOP-LEFT */
+  /* TIMER TOP-LEFT */
   #timer{
     position:fixed;
     top:14px;
@@ -105,7 +105,7 @@
 <div class="wrap">
 <h1>Simile or Not?</h1>
 
-<div id="sentence" aria-live="polite">Press 1 or 2 or tap a button to begin</div>
+<div id="sentence" aria-live="polite"></div>
 
 <div class="controls">
   <button class="btn-green" id="simileBtn">Simile (1)</button>
@@ -128,16 +128,20 @@
 <script>
 (function(){
 
+// ------------------- SENTENCES -------------------
 const sentences=[
   {text:"The dog ran as fast as a rocket.", answer:1},
   {text:"His smile was as bright as the sun.", answer:1},
-  {text:"The rain cooled the air.", answer:2}
-  // (keep your full list here)
+  {text:"She was like a butterfly in the wind.", answer:1},
+  {text:"The rain cooled the air.", answer:2},
+  {text:"He slept through the entire movie.", answer:2}
+  // Add your full list here
 ];
 
+// ------------------- VARIABLES -------------------
 let pool=[], currentSentence=null;
 let total=0, correctCount=0, history=[];
-let started=false, answered=false;
+let answered=false;
 let timerInterval=null, startTime=null, elapsed=0;
 
 const sentenceEl=document.getElementById('sentence');
@@ -149,6 +153,7 @@ const notBtn=document.getElementById('notBtn');
 const resetBtn=document.getElementById('resetBtn');
 const stopBtn=document.getElementById('stopBtn');
 
+// ------------------- FUNCTIONS -------------------
 function shuffle(a){
   for(let i=a.length-1;i>0;i--){
     let j=Math.floor(Math.random()*(i+1));
@@ -183,19 +188,12 @@ function stopTimer(){
 }
 
 function startGame(){
-  if(started) return;
-  started=true;
   pool=shuffle([...sentences]);
   showSentence(pickNext());
   startTimer();
 }
 
 function markAnswer(choice){
-  if(!started){
-    startGame();
-    return; // <-- prevents the FIRST press from answering!
-  }
-
   if(answered) return;
   answered=true;
 
@@ -212,10 +210,10 @@ function markAnswer(choice){
   }
 
   history.push({sentence:currentSentence.text, correct});
-
   setTimeout(()=> showSentence(pickNext()), 350);
 }
 
+// ------------------- EVENT LISTENERS -------------------
 simileBtn.addEventListener("click", ()=>markAnswer(1));
 notBtn.addEventListener("click", ()=>markAnswer(2));
 
@@ -225,6 +223,7 @@ document.addEventListener("keydown", e=>{
   else if(e.key==="2") markAnswer(2);
 });
 
+// ------------------- STOP SESSION -------------------
 function stopSession(){
   stopTimer();
   sentenceEl.style.display='none';
@@ -252,17 +251,16 @@ function stopSession(){
 
   summaryDiv.innerHTML=html;
   summaryDiv.style.display='block';
-
   document.getElementById('playAgain').addEventListener('click', resetAll);
 }
 
+// ------------------- RESET -------------------
 function resetAll(){
   stopTimer();
-  started=false;
-  answered=false;
   total=0;
   correctCount=0;
   history=[];
+  answered=false;
   elapsed=0;
 
   timerEl.textContent='Time: 0s';
@@ -270,11 +268,14 @@ function resetAll(){
   sentenceEl.style.display='block';
   stopBtn.style.display='inline-block';
 
-  sentenceEl.textContent='Press 1 or 2 or tap a button to begin';
+  startGame();
 }
 
 resetBtn.addEventListener('click', resetAll);
 stopBtn.addEventListener('click', stopSession);
+
+// --- AUTO-START GAME ---
+startGame();
 
 })();
 </script>
