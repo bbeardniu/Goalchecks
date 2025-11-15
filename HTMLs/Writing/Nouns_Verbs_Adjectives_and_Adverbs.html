@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Parts of Speech: Nouns, Verbs, Adjectives, Adverbs</title>
+<title>Parts of Speech: Noun / Verb / Adjective / Adverb</title>
 <style>
   :root{
-    --bg1:#93c5fd;
-    --bg2:#fde68a;
+    --bg1:#93c5fd;   /* blue */
+    --bg2:#fde68a;   /* yellow */
     --card:#ffffff;
     --green:#16a34a;
-    --red:#dc2626;
-    --blue:#2563eb;
+    --muted:#334155;
     --text:#0f172a;
   }
   html,body{
@@ -22,58 +21,94 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    text-align:center;
   }
+
   .wrap{
-    width:92%;
-    max-width:520px;
+    width:94%;
+    max-width:720px;
     background:var(--card);
     border-radius:18px;
-    padding:28px;
-    box-shadow:0 8px 24px rgba(2,6,23,0.12);
+    padding:20px;
+    box-shadow:0 10px 30px rgba(2,6,23,0.12);
+    text-align:center;
+    margin:20px;
+    position:relative;
   }
+
   h1{margin:0 0 12px;color:#1e3a8a;font-size:22px;}
-  #sentence{font-size:32px;font-weight:500;color:var(--text);margin:24px 0;line-height:1.4;user-select:none;}
-  .controls{display:flex;justify-content:center;gap:12px;margin-top:4px;flex-wrap:wrap;}
-  button{border:none;padding:10px 20px;border-radius:10px;cursor:pointer;color:white;font-size:15px;}
-  .btn-red{background:var(--red);}
-  .btn-red:hover{background:#c63025;}
-  .btn-blue{background:var(--blue);}
-  .btn-blue:hover{background:#1e61d4;}
-  #feedback{margin-top:14px;font-weight:600;min-height:24px;}
-  #timer{position:fixed;bottom:14px;left:20px;background:rgba(255,255,255,0.9);padding:8px 10px;border-radius:10px;font-weight:600;color:#334155;}
-  #summary{display:none;margin-top:18px;text-align:left;width:100%;padding:20px;border-radius:10px;background:rgba(15,23,42,0.03);}
+  #sentence{font-size:28px;font-weight:600;color:var(--text);margin:24px 0;line-height:1.4;user-select:none; min-height:84px; display:flex;align-items:center;justify-content:center;}
+  #sentence b u{ /* highlight styling for target word */ text-decoration-color:currentColor; }
+
+  .top-row {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .controls{display:flex;justify-content:center;gap:12px;margin-top:6px;flex-wrap:wrap;}
+  .btn {border:none;padding:10px 14px;border-radius:10px;cursor:pointer;color:white;font-size:16px;font-weight:700;}
+  .btn-aux {background:#64748b;} /* reset / stop */
+  .btn-aux:hover{filter:brightness(.95)}
+  .btn-answer {background:var(--green);color:white;}
+  .btn-answer:active {transform:translateY(1px)}
+  #feedback{margin-top:12px;font-weight:700;min-height:26px;color:var(--muted);}
+  #timer{
+    position:fixed;
+    top:14px;
+    left:16px;
+    background:rgba(255,255,255,0.9);
+    padding:8px 12px;
+    border-radius:10px;
+    font-weight:700;
+    color:var(--muted);
+    box-shadow:0 3px 10px rgba(2,6,23,0.08);
+    z-index:1000;
+  }
+  #summary{display:none;margin-top:18px;text-align:left;width:100%;padding:18px;border-radius:10px;background:rgba(15,23,42,0.03);max-height:60vh;overflow:auto;}
   .correct{color:var(--green);font-weight:700;}
-  .incorrect{color:var(--red);font-weight:700;}
-  .hint{color:#475569;margin-top:6px;font-size:14px;}
-  @media (max-width:420px){#sentence{font-size:24px;}.wrap{padding:18px;}}
+  .incorrect{color:#dc2626;font-weight:700;}
+  .bottom-row {display:flex;justify-content:space-between;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .answer-row{display:flex;gap:12px;justify-content:space-between;margin-top:10px;}
+  .answer-row .btn {flex:1;}
+  .hint{color:#475569;margin-top:8px;font-size:14px;}
+
+  @media(max-width:520px){
+    #sentence{font-size:20px;padding:6px;}
+    .answer-row .btn{font-size:15px;padding:14px;}
+    .top-row{flex-direction:column;align-items:stretch;gap:8px}
+  }
 </style>
 </head>
 <body>
+<div id="timer">Time: 0s</div>
+
 <div class="wrap" role="application" aria-label="Parts of Speech Practice">
-  <h1>Nouns, Verbs, Adjectives, Adverbs</h1>
-
-  <div id="startScreen">
-    <button class="btn-blue" id="startBtn" style="font-size:18px; padding:12px 24px;">Start Game</button>
+  <div class="top-row">
+    <h1>Nouns • Verbs • Adjectives • Adverbs</h1>
+    <div>
+      <button id="resetBtn" class="btn btn-aux" title="Reset">Reset</button>
+      <button id="stopBtn" class="btn btn-aux" title="Stop">Stop</button>
+    </div>
   </div>
 
-  <div id="sentence" aria-live="polite" style="display:none;">Press 1,2,3,4 to start</div>
-
-  <div class="controls" style="display:none;">
-    <button class="btn-red" id="resetBtn">Reset</button>
-    <button class="btn-blue" id="stopBtn">Stop</button>
-  </div>
+  <div id="sentence" aria-live="polite"></div>
 
   <div id="feedback" aria-live="polite"></div>
-  <div class="hint" style="display:none;">1=Noun, 2=Verb, 3=Adjective, 4=Adverb</div>
+  <div class="hint">Press the buttons below or use keys <strong>1</strong>=Noun <strong>2</strong>=Verb <strong>3</strong>=Adjective <strong>4</strong>=Adverb</div>
+
+  <!-- Answer buttons row (inside white box, bottom) -->
+  <div class="answer-row" style="margin-top:18px;">
+    <button id="nounBtn" class="btn btn-answer">Noun</button>
+    <button id="verbBtn" class="btn btn-answer">Verb</button>
+    <button id="adjBtn" class="btn btn-answer">Adjective</button>
+    <button id="advBtn" class="btn btn-answer">Adverb</button>
+  </div>
+
   <div id="summary" aria-live="polite"></div>
 </div>
-<div id="timer">Time: 0s</div>
 
 <script>
 (function(){
+  // 200 sentences: 50 nouns, 50 verbs, 50 adjectives, 50 adverbs
+  // Option A: the target word is already bold+underlined in the sentence string
+
   const sentences = [
-    // 25 Nouns
+    /* 50 Nouns (answer:1) */
     {text:"She saw a <b><u>dog</u></b> in the yard.", answer:1},
     {text:"My <b><u>mom</u></b> baked cookies.", answer:1},
     {text:"The <b><u>car</u></b> stopped at the light.", answer:1},
@@ -99,8 +134,29 @@
     {text:"My <b><u>mom</u></b> bought bread.", answer:1},
     {text:"The <b><u>ball</u></b> is round.", answer:1},
     {text:"The <b><u>cat</u></b> sleeps on the couch.", answer:1},
+    {text:"The <b><u>truck</u></b> drove down the road.", answer:1},
+    {text:"A <b><u>child</u></b> laughed on the swing.", answer:1},
+    {text:"The <b><u>bus</u></b> stopped at the corner.", answer:1},
+    {text:"She lost her <b><u>glove</u></b> in the park.", answer:1},
+    {text:"The <b><u>phone</u></b> rang at midnight.", answer:1},
+    {text:"The <b><u>teacher</u></b> placed stickers on the chart.", answer:1},
+    {text:"The <b><u>window</u></b> was open during the storm.", answer:1},
+    {text:"A <b><u>baby</u></b> slept in the cradle.", answer:1},
+    {text:"The <b><u>market</u></b> was busy this morning.", answer:1},
+    {text:"She wore a <b><u>ring</u></b> on her finger.", answer:1},
+    {text:"The <b><u>city</u></b> lights shone at night.", answer:1},
+    {text:"We visited the <b><u>museum</u></b> on Saturday.", answer:1},
+    {text:"The <b><u>teacher</u></b> graded the papers.", answer:1},
+    {text:"The <b><u>store</u></b> sold fresh bread.", answer:1},
+    {text:"I bought a new <b><u>toy</u></b> yesterday.", answer:1},
+    {text:"The <b><u>river</u></b> flowed past the farm.", answer:1},
+    {text:"She left her <b><u>umbrella</u></b> at school.", answer:1},
+    {text:"The <b><u>cookie</u></b> jar sat on the shelf.", answer:1},
+    {text:"A <b><u>bird</u></b> built a nest in the tree.", answer:1},
+    {text:"We saw a <b><u>movie</u></b> at the theater.", answer:1},
+    {text:"His <b><u>laptop</u></b> is on the desk.", answer:1},
 
-    // 25 Verbs
+    /* 50 Verbs (answer:2) */
     {text:"He likes to <b><u>run</u></b> every morning.", answer:2},
     {text:"We <b><u>play</u></b> outside after lunch.", answer:2},
     {text:"They <b><u>jumped</u></b> over the puddle.", answer:2},
@@ -126,8 +182,30 @@
     {text:"They <b><u>climb</u></b> the tree.", answer:2},
     {text:"He <b><u>reads</u></b> a story.", answer:2},
     {text:"We <b><u>jump</u></b> on the trampoline.", answer:2},
+    {text:"She <b><u>cooks</u></b> dinner each night.", answer:2},
+    {text:"They <b><u>walk</u></b> to school together.", answer:2},
+    {text:"He <b><u>drives</u></b> to work every day.", answer:2},
+    {text:"She <b><u>pauses</u></b> before speaking.", answer:2},
+    {text:"I <b><u>carry</u></b> the bag for you.", answer:2},
+    {text:"He <b><u>sings</u></b> in the choir.", answer:2},
+    {text:"They <b><u>help</u></b> with the chores.", answer:2},
+    {text:"She <b><u>feeds</u></b> the cat at noon.", answer:2},
+    {text:"We <b><u>travel</u></b> during the summer.", answer:2},
+    {text:"He <b><u>studies</u></b> for the test.", answer:2},
+    {text:"They <b><u>draw</u></b> on the sidewalk.", answer:2},
+    {text:"She <b><u>teaches</u></b> the children.", answer:2},
+    {text:"I <b><u>drive</u></b> slowly in rain.", answer:2},
+    {text:"He <b><u>listens</u></b> to music quietly.", answer:2},
+    {text:"She <b><u>cleans</u></b> her room weekly.", answer:2},
+    {text:"They <b><u>jump</u></b> rope at recess.", answer:2},
+    {text:"He <b><u>throws</u></b> the ball far.", answer:2},
+    {text:"She <b><u>types</u></b> on the keyboard.", answer:2},
+    {text:"I <b><u>cook</u></b> dinner sometimes.", answer:2},
+    {text:"We <b><u>open</u></b> the door together.", answer:2},
+    {text:"She <b><u>reads</u></b> the sign aloud.", answer:2},
+    {text:"They <b><u>ride</u></b> bikes in the park.", answer:2},
 
-    // 25 Adjectives
+    /* 50 Adjectives (answer:3) */
     {text:"The <b><u>blue</u></b> car is fast.", answer:3},
     {text:"She wore a <b><u>beautiful</u></b> dress.", answer:3},
     {text:"The <b><u>tall</u></b> building is shiny.", answer:3},
@@ -152,106 +230,224 @@
     {text:"He ate a <b><u>juicy</u></b> orange.", answer:3},
     {text:"This is a <b><u>soft</u></b> blanket.", answer:3},
     {text:"The <b><u>cold</u></b> water splashed.", answer:3},
+    {text:"The <b><u>yellow</u></b> bird sang.", answer:3},
+    {text:"The <b><u>big</u></b> truck passed by.", answer:3},
+    {text:"She gave him a <b><u>kind</u></b> smile.", answer:3},
+    {text:"The <b><u>shiny</u></b> coin gleamed.", answer:3},
+    {text:"A <b><u>furry</u></b> cat slept there.", answer:3},
+    {text:"The <b><u>small</u></b> house is cozy.", answer:3},
+    {text:"She has a <b><u>bright</u></b> idea.", answer:3},
+    {text:"The <b><u>noisy</u></b> crowd cheered.", answer:3},
+    {text:"He wore a <b><u>clean</u></b> shirt.", answer:3},
+    {text:"The <b><u>tasty</u></b> pie cooled.", answer:3},
+    {text:"The <b><u>steep</u></b> hill was hard to climb.", answer:3},
+    {text:"We saw a <b><u>tiny</u></b> insect.", answer:3},
+    {text:"The <b><u>bright</u></b> paint dried quickly.", answer:3},
+    {text:"A <b><u>warm</u></b> blanket helped him sleep.", answer:3},
+    {text:"The <b><u>soft</u></b> sweater is cozy.", answer:3},
+    {text:"Her <b><u>funny</u></b> joke made us laugh.", answer:3},
+    {text:"The <b><u>green</u></b> field stretched wide.", answer:3},
+    {text:"She has a <b><u>polite</u></b> voice.", answer:3},
+    {text:"The <b><u>tall</u></b> tree shaded the yard.", answer:3},
+    {text:"This is a <b><u>quiet</u></b> room.", answer:3},
+    {text:"A <b><u>smart</u></b> student answered the question.", answer:3},
+    {text:"The <b><u>fresh</u></b> bread smelled good.", answer:3},
+    {text:"He carried a <b><u>heavy</u></b> bag.", answer:3},
 
-    // 25 Adverbs
+    /* 50 Adverbs (answer:4) */
     {text:"He ran <b><u>quickly</u></b> to the door.", answer:4},
     {text:"She sings <b><u>loudly</u></b> in the shower.", answer:4},
     {text:"The dog barked <b><u>happily</u></b>.", answer:4},
     {text:"He drives <b><u>carefully</u></b>.", answer:4},
-    {text:"She spoke <b><u>softly</u></b>.", answer:4},
+    {text:"She spoke <b><u>softly</u></b> to the child.", answer:4},
     {text:"They walked <b><u>slowly</u></b> to school.", answer:4},
     {text:"He finished his work <b><u>quickly</u></b>.", answer:4},
-    {text:"She laughed <b><u>loudly</u></b>.", answer:4},
+    {text:"She laughed <b><u>loudly</u></b> at the joke.", answer:4},
     {text:"The cat slept <b><u>peacefully</u></b>.", answer:4},
     {text:"He answered the question <b><u>correctly</u></b>.", answer:4},
-    {text:"She drew <b><u>carefully</u></b>.", answer:4},
-    {text:"They cheered <b><u>enthusiastically</u></b>.", answer:4},
-    {text:"He ate <b><u>quickly</u></b>.", answer:4},
+    {text:"She drew <b><u>carefully</u></b> around the lines.", answer:4},
+    {text:"They cheered <b><u>enthusiastically</u></b> for the team.", answer:4},
+    {text:"He ate <b><u>quickly</u></b> at lunch.", answer:4},
     {text:"She spoke <b><u>softly</u></b> to her friend.", answer:4},
-    {text:"He ran <b><u>slowly</u></b> in the park.", answer:4},
-    {text:"The baby slept <b><u>peacefully</u></b>.", answer:4},
-    {text:"She painted <b><u>beautifully</u></b>.", answer:4},
-    {text:"He played <b><u>happily</u></b>.", answer:4},
-    {text:"They worked <b><u>diligently</u></b>.", answer:4},
+    {text:"He ran <b><u>slowly</u></b> to warm up.", answer:4},
+    {text:"The baby slept <b><u>peacefully</u></b> through the night.", answer:4},
+    {text:"She painted <b><u>beautifully</u></b> in class.", answer:4},
+    {text:"He played <b><u>happily</u></b> with friends.", answer:4},
+    {text:"They worked <b><u>diligently</u></b> on the project.", answer:4},
     {text:"He sang <b><u>loudly</u></b> at the concert.", answer:4},
-    {text:"She ran <b><u>fast</u></b>.", answer:4},
+    {text:"She ran <b><u>fast</u></b> down the lane.", answer:4},
     {text:"He completed the puzzle <b><u>quickly</u></b>.", answer:4},
     {text:"They spoke <b><u>softly</u></b> in the library.", answer:4},
-    {text:"She smiled <b><u>happily</u></b>.", answer:4}
+    {text:"She smiled <b><u>happily</u></b> at the news.", answer:4},
+    {text:"He walked <b><u>carefully</u></b> on the ice.", answer:4},
+    {text:"They arrived <b><u>early</u></b> to the meeting.", answer:4},
+    {text:"She answered <b><u>quickly</u></b> when called.", answer:4},
+    {text:"He spoke <b><u>politely</u></b> to the visitors.", answer:4},
+    {text:"They practiced <b><u>daily</u></b> for the show.", answer:4},
+    {text:"She waved <b><u>enthusiastically</u></b> from the stage.", answer:4},
+    {text:"He listened <b><u>carefully</u></b> to instructions.", answer:4},
+    {text:"She walked <b><u>slowly</u></b> up the stairs.", answer:4},
+    {text:"He read the story <b><u>aloud</u></b> to the class.", answer:4},
+    {text:"They worked <b><u>quickly</u></b> to finish.", answer:4},
+    {text:"She looked <b><u>closely</u></b> at the picture.", answer:4},
+    {text:"He smiled <b><u>warmly</u></b> at the guest.", answer:4},
+    {text:"She spoke <b><u>clearly</u></b> during the talk.", answer:4},
+    {text:"They traveled <b><u>together</u></b> across the town.", answer:4},
+    {text:"He typed <b><u>quickly</u></b> on the keyboard.", answer:4},
+    {text:"She slept <b><u>soundly</u></b> after the game.", answer:4},
+    {text:"They cheered <b><u>loudly</u></b> when the team scored.", answer:4},
+    {text:"He waited <b><u>patiently</u></b> in line.", answer:4},
+    {text:"She practiced <b><u>regularly</u></b> to improve.", answer:4},
+    {text:"They worked <b><u>together</u></b> on the task.", answer:4},
+    {text:"He walked <b><u>briskly</u></b> to the bus stop.", answer:4},
+    {text:"She looked <b><u>carefully</u></b> at the map.", answer:4},
+    {text:"They listened <b><u>quietly</u></b> during the story.", answer:4}
   ];
 
+  // DOM
   const sentenceEl = document.getElementById('sentence');
   const feedbackEl = document.getElementById('feedback');
   const timerEl = document.getElementById('timer');
   const resetBtn = document.getElementById('resetBtn');
   const stopBtn = document.getElementById('stopBtn');
   const summaryDiv = document.getElementById('summary');
-  const startBtn = document.getElementById('startBtn');
-  const startScreen = document.getElementById('startScreen');
-  const controls = document.querySelector('.controls');
-  const hint = document.querySelector('.hint');
+  const nounBtn = document.getElementById('nounBtn');
+  const verbBtn = document.getElementById('verbBtn');
+  const adjBtn = document.getElementById('adjBtn');
+  const advBtn = document.getElementById('advBtn');
 
-  let currentSentence = null;
+  // State
   let pool = [];
+  let current = null;
   let total = 0;
   let correctCount = 0;
   let history = [];
-  let started = false;
-  let answered = false;
   let startTime = null;
   let timerInterval = null;
   let elapsed = 0;
 
-  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-  function pickNext(){if(pool.length===0) pool=shuffle([...sentences]);return pool.pop();}
-  function showSentence(sent){currentSentence=sent;sentenceEl.innerHTML=sent.text;feedbackEl.textContent='';answered=false;}
-  function startTimer(){if(started) return; started=true; startTime=Date.now(); timerInterval=setInterval(()=>{elapsed=Math.floor((Date.now()-startTime)/1000); timerEl.textContent=`Time: ${elapsed}s`;},1000);}
-  function stopTimer(){if(timerInterval) clearInterval(timerInterval); timerInterval=null;}
-  function markAnswer(ans){if(!started) startTimer();if(answered) return;answered=true;total++;const correct=(ans===currentSentence.answer);if(correct){correctCount++;feedbackEl.textContent='✅ Correct';feedbackEl.style.color='var(--green)';}else{feedbackEl.textContent='❌ Incorrect';feedbackEl.style.color='var(--red)';}history.push({sentence:currentSentence.text,correct});setTimeout(()=>showSentence(pickNext()),350);}
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 
-  document.addEventListener('keydown',(e)=>{if(e.repeat) return;if(e.key==='1') markAnswer(1);else if(e.key==='2') markAnswer(2);else if(e.key==='3') markAnswer(3);else if(e.key==='4') markAnswer(4);});
+  function startGame(){
+    pool = shuffle([...sentences]);
+    total = 0; correctCount = 0; history = [];
+    elapsed = 0;
+    startTime = Date.now();
+    timerEl.textContent = 'Time: 0s';
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(()=> {
+      elapsed = Math.floor((Date.now()-startTime)/1000);
+      timerEl.textContent = `Time: ${elapsed}s`;
+    }, 1000);
+    showNext();
+  }
+
+  function stopTimer(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function showNext(){
+    if(pool.length === 0){
+      // finished
+      endSession();
+      return;
+    }
+    current = pool.pop();
+    sentenceEl.innerHTML = current.text;
+    feedbackEl.textContent = '';
+  }
+
+  function markAnswer(selection){ // selection: 1..4
+    // record
+    const correct = (selection === current.answer);
+    total++;
+    if(correct){ correctCount++; feedbackEl.textContent = '✅ Correct'; feedbackEl.style.color = 'var(--green)'; }
+    else { feedbackEl.textContent = '❌ Incorrect'; feedbackEl.style.color = '#dc2626'; }
+    history.push({sentence: current.text, selected: selection, correct: current.answer});
+    // small delay then next
+    setTimeout(()=> {
+      showNext();
+    }, 300);
+  }
+
+  // buttons
+  nounBtn.addEventListener('click', ()=> markAnswer(1));
+  verbBtn.addEventListener('click', ()=> markAnswer(2));
+  adjBtn.addEventListener('click', ()=> markAnswer(3));
+  advBtn.addEventListener('click', ()=> markAnswer(4));
+
+  // keyboard
+  document.addEventListener('keydown', (e) => {
+    if(e.repeat) return;
+    if(!startTime) return; // ignore keypresses until game auto-started
+    if(e.key === '1') markAnswer(1);
+    else if(e.key === '2') markAnswer(2);
+    else if(e.key === '3') markAnswer(3);
+    else if(e.key === '4') markAnswer(4);
+  });
+
+  function endSession(){
+    stopTimer();
+    sentenceEl.style.display = 'none';
+    feedbackEl.textContent = '';
+    stopBtn.style.display = 'none';
+    const percent = total ? Math.round((correctCount/total)*100) : 0;
+    let html = `<h2 style="margin-top:0">Session Summary</h2>`;
+    html += `<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html += `<p><strong>Total Attempted:</strong> ${total}</p>`;
+    html += `<p><strong>Correct:</strong> ${correctCount}</p>`;
+    html += `<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
+    html += `<p><strong>Score:</strong> ${percent}%</p><hr>`;
+    html += `<div><strong>Responses (most recent first)</strong></div><div style="margin-top:10px">`;
+    history.slice().reverse().forEach(item=>{
+      const ok = (item.selected === item.correct);
+      html += `<div style="margin:6px 0; padding:6px; border-radius:6px; background:rgba(2,6,23,0.02)">${ ok ? `<div class="correct">${item.sentence}</div>` : `<div class="incorrect">${item.sentence}</div>` }</div>`;
+    });
+    html += `</div><div style="text-align:center;margin-top:12px"><button id="playAgain" class="btn btn-aux" style="padding:10px 16px;">Play Again</button></div>`;
+    summaryDiv.innerHTML = html;
+    summaryDiv.style.display = 'block';
+    const pa = document.getElementById('playAgain');
+    if(pa) pa.addEventListener('click', ()=> {
+      summaryDiv.style.display = 'none';
+      sentenceEl.style.display = 'block';
+      stopBtn.style.display = 'inline-block';
+      startGame();
+    });
+  }
 
   function stopSession(){
-    stopTimer();
-    sentenceEl.style.display='none';
-    stopBtn.style.display='none';
-    feedbackEl.textContent='';
-    const percent = total?Math.round((correctCount/total)*100):0;
-    let html=`<h2 style="text-align:center;margin-top:0">Session Summary</h2>`;
-    html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
-    html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
-    html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
-    html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
-    html+=`<p><strong>Score:</strong> ${percent}%</p><hr>`;
-    html+=`<div style="text-align:center"><strong>Responses (in order)</strong></div><div style="margin-top:10px">`;
-    history.forEach(item=>{html+=item.correct?`<div class="correct" style="margin:4px 0;text-align:center">${item.sentence}</div>`:`<div class="incorrect" style="margin:4px 0;text-align:center">${item.sentence}</div>`;});
-    html+=`</div><div style="text-align:center;margin-top:12px"><button id="playAgain" class="btn-red" style="padding:8px 14px; border-radius:8px; color:#fff; border:none; cursor:pointer;">Play Again</button></div>`;
-    summaryDiv.innerHTML=html;
-    summaryDiv.style.display='block';
-    const pa=document.getElementById('playAgain');if(pa) pa.addEventListener('click',resetAll);
+    // show summary at any time
+    endSession();
   }
 
   function resetAll(){
     stopTimer();
-    started=false;answered=false;total=0;correctCount=0;history=[];elapsed=0;
-    timerEl.textContent='Time: 0s';
-    summaryDiv.style.display='none';
-    sentenceEl.style.display='block';
-    stopBtn.style.display='inline-block';
-    pool=shuffle([...sentences]);
-    showSentence(pickNext());
+    pool = [];
+    current = null;
+    total = 0;
+    correctCount = 0;
+    history = [];
+    startTime = null;
+    elapsed = 0;
+    timerEl.textContent = 'Time: 0s';
+    summaryDiv.style.display = 'none';
+    sentenceEl.style.display = 'block';
+    stopBtn.style.display = 'inline-block';
+    // re-start game
+    startGame();
   }
 
-  resetBtn.addEventListener('click',resetAll);
-  stopBtn.addEventListener('click',stopSession);
+  resetBtn.addEventListener('click', ()=> {
+    if(confirm('Reset the session?')) resetAll();
+  });
+  stopBtn.addEventListener('click', ()=> {
+    if(confirm('Stop the session and view report?')) stopSession();
+  });
 
-  startBtn.addEventListener('click',()=>{
-    startScreen.style.display='none';
-    sentenceEl.style.display='block';
-    controls.style.display='flex';
-    hint.style.display='block';
-    pool=shuffle([...sentences]);
-    showSentence(pickNext());
+  // Auto-start immediately on load
+  window.addEventListener('load', ()=> {
+    // small delay to allow UI paint
+    setTimeout(()=> startGame(), 150);
   });
 
 })();
