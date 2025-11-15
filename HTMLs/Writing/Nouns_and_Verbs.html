@@ -5,235 +5,248 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Nouns and Verbs</title>
 <style>
-  :root{
-    --bg1:#93c5fd;
-    --bg2:#fde68a;
-    --card:#ffffff;
-    --green:#16a34a;
-    --red:#dc2626;
-    --blue:#2563eb;
-    --text:#0f172a;
-  }
-  html,body{
-    height:100%;
-    margin:0;
-    font-family:"Poppins",Arial,sans-serif;
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-  }
-  .wrap{
-    width:92%;
-    max-width:520px;
-    background:var(--card);
-    border-radius:18px;
-    padding:28px;
-    box-shadow:0 8px 24px rgba(2,6,23,0.12);
-  }
-  h1{margin:0 0 12px;color:#1e3a8a;font-size:22px;}
-  #sentence{font-size:32px;font-weight:500;color:var(--text);margin:24px 0;line-height:1.4;user-select:none;}
-  .controls{display:flex;justify-content:center;gap:12px;margin-top:4px;flex-wrap:wrap;}
-  button{border:none;padding:10px 20px;border-radius:10px;cursor:pointer;color:white;font-size:15px;}
-  .btn-red{background:var(--red);}
-  .btn-red:hover{background:#c63025;}
-  .btn-blue{background:var(--blue);}
-  .btn-blue:hover{background:#1e61d4;}
-  #feedback{margin-top:14px;font-weight:600;min-height:24px;}
-  #timer{position:fixed;bottom:14px;left:20px;background:rgba(255,255,255,0.9);padding:8px 10px;border-radius:10px;font-weight:600;color:#334155;}
-  #summary{display:none;margin-top:18px;text-align:left;width:100%;padding:20px;border-radius:10px;background:rgba(15,23,42,0.03);}
-  .correct{color:var(--green);font-weight:700;}
-  .incorrect{color:var(--red);font-weight:700;}
-  .hint{color:#475569;margin-top:6px;font-size:14px;}
-  @media (max-width:420px){#sentence{font-size:24px;}.wrap{padding:18px;}}
+:root{
+  --bg1:#93c5fd;
+  --bg2:#fde68a;
+  --card:#ffffff;
+  --green:#16a34a;
+  --red:#dc2626;
+  --text:#0f172a;
+}
+html,body{
+  height:100%;
+  margin:0;
+  font-family:"Poppins",Arial,sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.wrap{
+  width:92%;
+  max-width:520px;
+  background:var(--card);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 8px 24px rgba(2,6,23,0.12);
+}
+h1{margin:0 0 12px;color:#1e3a8a;font-size:22px;}
+#sentence{font-size:32px;font-weight:500;color:var(--text);margin:24px 0;line-height:1.4;user-select:none;}
+#feedback{margin-top:14px;font-weight:600;min-height:24px;}
+.hint{color:#475569;margin-top:6px;font-size:14px;}
+#summary{display:none;margin-top:18px;text-align:left;width:100%;padding:20px;border-radius:10px;background:rgba(15,23,42,0.03);}
+.correct{color:var(--green);font-weight:700;}
+.incorrect{color:#dc2626;font-weight:700;}
+#timer{position:fixed;top:14px;left:20px;background:rgba(255,255,255,0.9);padding:8px 10px;border-radius:10px;font-weight:600;color:#334155;}
+button{cursor:pointer;border:none;border-radius:12px;color:white;font-weight:600;font-size:18px;padding:14px 24px;}
+#nounBtn, #verbBtn{position:fixed;bottom:20px;width:45%;max-width:200px;background:var(--green);}
+#nounBtn{right:20px;} #verbBtn{left:20px;}
+#stopBtn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2563eb;}
+#resetBtn{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#dc2626;}
+@media(max-width:420px){#sentence{font-size:24px;}#nounBtn,#verbBtn{width:40%;}#stopBtn,#resetBtn{padding:10px 16px;}}
 </style>
 </head>
 <body>
-<div class="wrap" role="application" aria-label="Nouns and Verbs Practice">
+<div class="wrap">
   <h1>Nouns and Verbs</h1>
-
-  <!-- Start button screen -->
-  <div id="startScreen">
-    <button class="btn-blue" id="startBtn" style="font-size:18px; padding:12px 24px;">Start Game</button>
-  </div>
-
-  <div id="sentence" aria-live="polite" style="display:none;">Press 1 (Noun) or 2 (Verb) to start</div>
-
-  <div class="controls" style="display:none;">
-    <button class="btn-red" id="resetBtn">Reset</button>
-    <button class="btn-blue" id="stopBtn">Stop</button>
-  </div>
-
+  <div id="sentence" aria-live="polite"></div>
   <div id="feedback" aria-live="polite"></div>
-  <div class="hint" style="display:none;">Press <strong>1</strong> if the bolded word is a Noun, <strong>2</strong> if it is a Verb.</div>
+  <div class="hint">Press <strong>1</strong> for Noun, <strong>2</strong> for Verb</div>
   <div id="summary" aria-live="polite"></div>
 </div>
+
 <div id="timer">Time: 0s</div>
+<button id="nounBtn">Noun</button>
+<button id="verbBtn">Verb</button>
+<button id="stopBtn">Stop</button>
+<button id="resetBtn">Reset</button>
 
 <script>
 (function(){
-  // 100 sentences with bold+underlined words
-  const sentences = [
-    {text:"She saw a <b><u>dog</u></b> in the yard.", answer:"noun"},
-    {text:"He likes to <b><u>run</u></b> every morning.", answer:"verb"},
-    {text:"My <b><u>mom</u></b> baked cookies.", answer:"noun"},
-    {text:"We <b><u>play</u></b> outside after lunch.", answer:"verb"},
-    {text:"The <b><u>car</u></b> stopped at the light.", answer:"noun"},
-    {text:"They <b><u>jumped</u></b> over the puddle.", answer:"verb"},
-    {text:"His <b><u>brother</u></b> is very tall.", answer:"noun"},
-    {text:"Please <b><u>close</u></b> the door.", answer:"verb"},
-    {text:"The <b><u>teacher</u></b> read the story.", answer:"noun"},
-    {text:"The bird <b><u>sings</u></b> a pretty song.", answer:"verb"},
-    {text:"I found a <b><u>shell</u></b> on the beach.", answer:"noun"},
-    {text:"She <b><u>writes</u></b> in her notebook.", answer:"verb"},
-    {text:"The <b><u>cat</u></b> chased a mouse.", answer:"noun"},
-    {text:"We <b><u>clap</u></b> for our friends.", answer:"verb"},
-    {text:"My <b><u>friend</u></b> gave me a gift.", answer:"noun"},
-    {text:"He <b><u>runs</u></b> fast in the race.", answer:"verb"},
-    {text:"The <b><u>ball</u></b> rolled down the hill.", answer:"noun"},
-    {text:"She <b><u>dances</u></b> gracefully.", answer:"verb"},
-    {text:"Our <b><u>garden</u></b> has many flowers.", answer:"noun"},
-    {text:"I <b><u>help</u></b> my mom cook dinner.", answer:"verb"},
-    {text:"The <b><u>book</u></b> is on the table.", answer:"noun"},
-    {text:"They <b><u>swim</u></b> in the pool.", answer:"verb"},
-    {text:"My <b><u>dog</u></b> loves to fetch.", answer:"noun"},
-    {text:"He <b><u>reads</u></b> every night.", answer:"verb"},
-    {text:"The <b><u>apple</u></b> is red and sweet.", answer:"noun"},
-    {text:"She <b><u>draws</u></b> a picture.", answer:"verb"},
-    {text:"The <b><u>chair</u></b> is broken.", answer:"noun"},
-    {text:"We <b><u>sing</u></b> a song.", answer:"verb"},
-    {text:"My <b><u>sister</u></b> likes to paint.", answer:"noun"},
-    {text:"He <b><u>writes</u></b> a letter.", answer:"verb"},
-    {text:"The <b><u>bird</u></b> is in the tree.", answer:"noun"},
-    {text:"They <b><u>play</u></b> soccer.", answer:"verb"},
-    {text:"The <b><u>flower</u></b> smells nice.", answer:"noun"},
-    {text:"I <b><u>jump</u></b> high.", answer:"verb"},
-    {text:"My <b><u>teacher</u></b> gave homework.", answer:"noun"},
-    {text:"She <b><u>runs</u></b> to school.", answer:"verb"},
-    {text:"The <b><u>cake</u></b> looks delicious.", answer:"noun"},
-    {text:"He <b><u>drinks</u></b> water quickly.", answer:"verb"},
-    {text:"The <b><u>hat</u></b> is on the table.", answer:"noun"},
-    {text:"We <b><u>listen</u></b> to music.", answer:"verb"},
-    {text:"My <b><u>brother</u></b> drew a car.", answer:"noun"},
-    {text:"She <b><u>climbs</u></b> the ladder.", answer:"verb"},
-    {text:"The <b><u>dog</u></b> barked loudly.", answer:"noun"},
-    {text:"I <b><u>write</u></b> my name.", answer:"verb"},
-    {text:"The <b><u>pencil</u></b> is sharp.", answer:"noun"},
-    {text:"They <b><u>dance</u></b> together.", answer:"verb"},
-    {text:"My <b><u>mom</u></b> bought bread.", answer:"noun"},
-    {text:"He <b><u>reads</u></b> the book.", answer:"verb"},
-    {text:"The <b><u>ball</u></b> is round.", answer:"noun"},
-    {text:"We <b><u>jump</u></b> over the rope.", answer:"verb"},
-    {text:"The <b><u>cat</u></b> sleeps on the couch.", answer:"noun"},
-    {text:"She <b><u>runs</u></b> quickly.", answer:"verb"},
-    {text:"My <b><u>friend</u></b> smiles.", answer:"noun"},
-    {text:"He <b><u>writes</u></b> a story.", answer:"verb"},
-    {text:"The <b><u>bird</u></b> flies high.", answer:"noun"},
-    {text:"They <b><u>play</u></b> with toys.", answer:"verb"},
-    {text:"My <b><u>teacher</u></b> talks loudly.", answer:"noun"},
-    {text:"I <b><u>sing</u></b> a song.", answer:"verb"},
-    {text:"The <b><u>car</u></b> is fast.", answer:"noun"},
-    {text:"She <b><u>paints</u></b> a picture.", answer:"verb"},
-    {text:"My <b><u>brother</u></b> likes ice cream.", answer:"noun"},
-    {text:"He <b><u>runs</u></b> every morning.", answer:"verb"},
-    {text:"The <b><u>apple</u></b> fell from the tree.", answer:"noun"},
-    {text:"We <b><u>listen</u></b> carefully.", answer:"verb"},
-    {text:"The <b><u>hat</u></b> is blue.", answer:"noun"},
-    {text:"I <b><u>jump</u></b> on the trampoline.", answer:"verb"},
-    {text:"My <b><u>mom</u></b> sings well.", answer:"noun"},
-    {text:"He <b><u>writes</u></b> in his journal.", answer:"verb"},
-    {text:"The <b><u>dog</u></b> sleeps.", answer:"noun"},
-    {text:"She <b><u>runs</u></b> around the park.", answer:"verb"},
-    {text:"My <b><u>friend</u></b> plays guitar.", answer:"noun"},
-    {text:"They <b><u>dance</u></b> in class.", answer:"verb"},
-    {text:"The <b><u>flower</u></b> is pink.", answer:"noun"},
-    {text:"I <b><u>draw</u></b> a house.", answer:"verb"},
-    {text:"The <b><u>teacher</u></b> smiles.", answer:"noun"},
-    {text:"He <b><u>reads</u></b> the story.", answer:"verb"},
-    {text:"My <b><u>brother</u></b> likes to swim.", answer:"noun"},
-    {text:"We <b><u>write</u></b> letters.", answer:"verb"},
-    {text:"The <b><u>cat</u></b> is cute.", answer:"noun"},
-    {text:"She <b><u>sings</u></b> beautifully.", answer:"verb"},
-    {text:"My <b><u>dog</u></b> runs fast.", answer:"noun"},
-    {text:"I <b><u>help</u></b> my friend.", answer:"verb"}
-  ];
+const sentences=[
+  // 50 Noun Sentences
+  {text:"She saw a <b><u>dog</u></b> in the yard.", answer:"noun"},
+  {text:"My <b><u>mom</u></b> baked cookies.", answer:"noun"},
+  {text:"The <b><u>car</u></b> stopped at the light.", answer:"noun"},
+  {text:"His <b><u>brother</u></b> is very tall.", answer:"noun"},
+  {text:"The <b><u>teacher</u></b> read the story.", answer:"noun"},
+  {text:"I found a <b><u>shell</u></b> on the beach.", answer:"noun"},
+  {text:"The <b><u>cat</u></b> chased a mouse.", answer:"noun"},
+  {text:"My <b><u>friend</u></b> gave me a gift.", answer:"noun"},
+  {text:"The <b><u>ball</u></b> rolled down the hill.", answer:"noun"},
+  {text:"Our <b><u>garden</u></b> has many flowers.", answer:"noun"},
+  {text:"The <b><u>book</u></b> is on the table.", answer:"noun"},
+  {text:"My <b><u>dog</u></b> loves to fetch.", answer:"noun"},
+  {text:"The <b><u>apple</u></b> is red and sweet.", answer:"noun"},
+  {text:"The <b><u>chair</u></b> is broken.", answer:"noun"},
+  {text:"My <b><u>sister</u></b> likes to paint.", answer:"noun"},
+  {text:"The <b><u>bird</u></b> is in the tree.", answer:"noun"},
+  {text:"The <b><u>flower</u></b> smells nice.", answer:"noun"},
+  {text:"My <b><u>teacher</u></b> gave homework.", answer:"noun"},
+  {text:"The <b><u>cake</u></b> looks delicious.", answer:"noun"},
+  {text:"The <b><u>hat</u></b> is on the table.", answer:"noun"},
+  {text:"My <b><u>brother</u></b> drew a car.", answer:"noun"},
+  {text:"The <b><u>dog</u></b> barked loudly.", answer:"noun"},
+  {text:"The <b><u>pencil</u></b> is sharp.", answer:"noun"},
+  {text:"My <b><u>mom</u></b> bought bread.", answer:"noun"},
+  {text:"The <b><u>ball</u></b> is round.", answer:"noun"},
+  {text:"The <b><u>cat</u></b> sleeps on the couch.", answer:"noun"},
+  {text:"My <b><u>friend</u></b> smiles.", answer:"noun"},
+  {text:"The <b><u>bird</u></b> flies high.", answer:"noun"},
+  {text:"My <b><u>teacher</u></b> talks loudly.", answer:"noun"},
+  {text:"The <b><u>car</u></b> is fast.", answer:"noun"},
+  {text:"My <b><u>brother</u></b> likes ice cream.", answer:"noun"},
+  {text:"The <b><u>apple</u></b> fell from the tree.", answer:"noun"},
+  {text:"The <b><u>hat</u></b> is blue.", answer:"noun"},
+  {text:"My <b><u>mom</u></b> sings well.", answer:"noun"},
+  {text:"The <b><u>dog</u></b> sleeps.", answer:"noun"},
+  {text:"My <b><u>friend</u></b> plays guitar.", answer:"noun"},
+  {text:"The <b><u>flower</u></b> is pink.", answer:"noun"},
+  {text:"The <b><u>teacher</u></b> smiles.", answer:"noun"},
+  {text:"My <b><u>brother</u></b> likes to swim.", answer:"noun"},
+  {text:"The <b><u>cat</u></b> is cute.", answer:"noun"},
+  {text:"My <b><u>dog</u></b> runs fast.", answer:"noun"},
+  {text:"The <b><u>house</u></b> is big.", answer:"noun"},
+  {text:"The <b><u>tree</u></b> is tall.", answer:"noun"},
+  {text:"A <b><u>bird</u></b> is flying.", answer:"noun"},
+  {text:"The <b><u>river</u></b> is wide.", answer:"noun"},
+  {text:"The <b><u>mountain</u></b> is high.", answer:"noun"},
+  {text:"The <b><u>street</u></b> is long.", answer:"noun"},
+  {text:"My <b><u>dog</u></b> is sleeping.", answer:"noun"},
+  {text:"The <b><u>school</u></b> is near.", answer:"noun"},
+  {text:"The <b><u>car</u></b> is new.", answer:"noun"},
+  {text:"The <b><u>bag</u></b> is heavy.", answer:"noun"},
+  {text:"The <b><u>book</u></b> is interesting.", answer:"noun"},
+  {text:"The <b><u>cup</u></b> is full.", answer:"noun"},
+  {text:"The <b><u>desk</u></b> is wooden.", answer:"noun"},
+  // 50 Verb Sentences
+  {text:"He likes to <b><u>run</u></b> every morning.", answer:"verb"},
+  {text:"We <b><u>play</u></b> outside after lunch.", answer:"verb"},
+  {text:"They <b><u>jumped</u></b> over the puddle.", answer:"verb"},
+  {text:"Please <b><u>close</u></b> the door.", answer:"verb"},
+  {text:"The bird <b><u>sings</u></b> a pretty song.", answer:"verb"},
+  {text:"She <b><u>writes</u></b> in her notebook.", answer:"verb"},
+  {text:"We <b><u>clap</u></b> for our friends.", answer:"verb"},
+  {text:"He <b><u>runs</u></b> fast in the race.", answer:"verb"},
+  {text:"She <b><u>dances</u></b> gracefully.", answer:"verb"},
+  {text:"I <b><u>help</u></b> my mom cook dinner.", answer:"verb"},
+  {text:"They <b><u>swim</u></b> in the pool.", answer:"verb"},
+  {text:"He <b><u>reads</u></b> every night.", answer:"verb"},
+  {text:"She <b><u>draws</u></b> a picture.", answer:"verb"},
+  {text:"We <b><u>sing</u></b> a song.", answer:"verb"},
+  {text:"He <b><u>writes</u></b> a letter.", answer:"verb"},
+  {text:"They <b><u>play</u></b> soccer.", answer:"verb"},
+  {text:"I <b><u>jump</u></b> high.", answer:"verb"},
+  {text:"She <b><u>runs</u></b> to school.", answer:"verb"},
+  {text:"He <b><u>drinks</u></b> water quickly.", answer:"verb"},
+  {text:"We <b><u>listen</u></b> to music.", answer:"verb"},
+  {text:"She <b><u>climbs</u></b> the ladder.", answer:"verb"},
+  {text:"I <b><u>write</u></b> my name.", answer:"verb"},
+  {text:"They <b><u>dance</u></b> together.", answer:"verb"},
+  {text:"He <b><u>reads</u></b> the book.", answer:"verb"},
+  {text:"We <b><u>jump</u></b> over the rope.", answer:"verb"},
+  {text:"She <b><u>runs</u></b> quickly.", answer:"verb"},
+  {text:"He <b><u>writes</u></b> a story.", answer:"verb"},
+  {text:"They <b><u>dance</u></b> in class.", answer:"verb"},
+  {text:"I <b><u>draw</u></b> a house.", answer:"verb"},
+  {text:"He <b><u>reads</u></b> the story.", answer:"verb"},
+  {text:"We <b><u>write</u></b> letters.", answer:"verb"},
+  {text:"She <b><u>sings</u></b> beautifully.", answer:"verb"},
+  {text:"I <b><u>help</u></b> my friend.", answer:"verb"},
+  {text:"We <b><u>clap</u></b> hands.", answer:"verb"},
+  {text:"They <b><u>listen</u></b> carefully.", answer:"verb"},
+  {text:"He <b><u>runs</u></b> around the park.", answer:"verb"},
+  {text:"She <b><u>paints</u></b> a picture.", answer:"verb"},
+  {text:"He <b><u>jumps</u></b> over the bench.", answer:"verb"},
+  {text:"We <b><u>sing</u></b> loudly.", answer:"verb"},
+  {text:"I <b><u>write</u></b> a letter.", answer:"verb"},
+  {text:"They <b><u>play</u></b> with toys.", answer:"verb"},
+  {text:"He <b><u>reads</u></b> aloud.", answer:"verb"},
+  {text:"She <b><u>dances</u></b> well.", answer:"verb"},
+  {text:"I <b><u>jump</u></b> every morning.", answer:"verb"},
+  {text:"We <b><u>listen</u></b> to music.", answer:"verb"},
+  {text:"He <b><u>runs</u></b> fast.", answer:"verb"},
+  {text:"She <b><u>paints</u></b> the wall.", answer:"verb"},
+  {text:"They <b><u>swim</u></b> in the lake.", answer:"verb"},
+  {text:"I <b><u>help</u></b> my sister.", answer:"verb"},
+  {text:"We <b><u>clap</u></b> for the winner.", answer:"verb"},
+  {text:"He <b><u>reads</u></b> the instructions.", answer:"verb"}
+];
 
-  // DOM
-  const sentenceEl = document.getElementById('sentence');
-  const feedbackEl = document.getElementById('feedback');
-  const timerEl = document.getElementById('timer');
-  const resetBtn = document.getElementById('resetBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const summaryDiv = document.getElementById('summary');
-  const startBtn = document.getElementById('startBtn');
-  const startScreen = document.getElementById('startScreen');
-  const controls = document.querySelector('.controls');
-  const hint = document.querySelector('.hint');
+const sentenceEl=document.getElementById('sentence');
+const feedbackEl=document.getElementById('feedback');
+const timerEl=document.getElementById('timer');
+const summaryDiv=document.getElementById('summary');
+const nounBtn=document.getElementById('nounBtn');
+const verbBtn=document.getElementById('verbBtn');
+const stopBtn=document.getElementById('stopBtn');
+const resetBtn=document.getElementById('resetBtn');
 
-  // State
-  let currentSentence = null;
-  let pool = [];
-  let total = 0;
-  let correctCount = 0;
-  let history = [];
-  let started = false;
-  let answered = false;
-  let startTime = null;
-  let timerInterval = null;
-  let elapsed = 0;
+let pool=[], currentSentence=null;
+let total=0, correctCount=0, history=[];
+let answered=false, started=false;
+let startTime=null, timerInterval=null, elapsed=0;
 
-  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-  function pickNext(){if(pool.length===0) pool=shuffle([...sentences]);return pool.pop();}
-  function showSentence(sent){currentSentence=sent;sentenceEl.innerHTML=sent.text;feedbackEl.textContent='';answered=false;}
-  function startTimer(){if(started) return; started=true; startTime=Date.now(); timerInterval=setInterval(()=>{elapsed=Math.floor((Date.now()-startTime)/1000); timerEl.textContent=`Time: ${elapsed}s`;},1000);}
-  function stopTimer(){if(timerInterval) clearInterval(timerInterval); timerInterval=null;}
-  function markAnswer(isNoun){if(!started) startTimer();if(answered) return;answered=true;total++;const correct=(isNoun&&currentSentence.answer==="noun")||(!isNoun&&currentSentence.answer==="verb");if(correct){correctCount++;feedbackEl.textContent='✅ Correct';feedbackEl.style.color='var(--green)';}else{feedbackEl.textContent='❌ Incorrect';feedbackEl.style.color='var(--red)';}history.push({sentence:currentSentence.text,correct});setTimeout(()=>showSentence(pickNext()),350);}
-  
-  document.addEventListener('keydown',(e)=>{if(e.repeat) return;if(e.key==='1') markAnswer(true);else if(e.key==='2') markAnswer(false);});
-  
-  function stopSession(){
-    stopTimer();
-    sentenceEl.style.display='none';
-    stopBtn.style.display='none';
-    feedbackEl.textContent='';
-    const percent = total?Math.round((correctCount/total)*100):0;
-    let html=`<h2 style="text-align:center;margin-top:0">Session Summary</h2>`;
-    html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
-    html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
-    html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
-    html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
-    html+=`<p><strong>Score:</strong> ${percent}%</p><hr>`;
-    html+=`<div style="text-align:center"><strong>Responses (in order)</strong></div><div style="margin-top:10px">`;
-    history.forEach(item=>{html+=item.correct?`<div class="correct" style="margin:4px 0;text-align:center">${item.sentence}</div>`:`<div class="incorrect" style="margin:4px 0;text-align:center">${item.sentence}</div>`;});
-    html+=`</div><div style="text-align:center;margin-top:12px"><button id="playAgain" class="btn-red" style="padding:8px 14px; border-radius:8px; color:#fff; border:none; cursor:pointer;">Play Again</button></div>`;
-    summaryDiv.innerHTML=html;
-    summaryDiv.style.display='block';
-    const pa=document.getElementById('playAgain');if(pa) pa.addEventListener('click',resetAll);
-  }
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a;}
+function pickNext(){if(pool.length===0) pool=shuffle([...sentences]); return pool.pop();}
+function showSentence(s){currentSentence=s; sentenceEl.innerHTML=s.text; feedbackEl.textContent=''; answered=false;}
+function startTimer(){if(started) return; started=true; startTime=Date.now(); timerInterval=setInterval(()=>{elapsed=Math.floor((Date.now()-startTime)/1000); timerEl.textContent=`Time: ${elapsed}s`;},1000);}
+function stopTimer(){if(timerInterval) clearInterval(timerInterval); timerInterval=null;}
 
-  function resetAll(){
-    stopTimer();
-    started=false;answered=false;total=0;correctCount=0;history=[];elapsed=0;
-    timerEl.textContent='Time: 0s';
-    summaryDiv.style.display='none';
-    sentenceEl.style.display='block';
-    stopBtn.style.display='inline-block';
-    pool=shuffle([...sentences]);
-    showSentence(pickNext());
-  }
+function markAnswer(isNoun){
+  if(!started) startTimer();
+  if(answered) return;
+  answered=true; total++;
+  const correct=(isNoun && currentSentence.answer==="noun") || (!isNoun && currentSentence.answer==="verb");
+  if(correct){correctCount++; feedbackEl.textContent='✅ Correct'; feedbackEl.style.color='var(--green)';}
+  else{feedbackEl.textContent='❌ Incorrect'; feedbackEl.style.color='#dc2626';}
+  history.push({sentence:currentSentence.text,correct});
+  setTimeout(()=>showSentence(pickNext()),350);
+}
 
-  resetBtn.addEventListener('click',resetAll);
-  stopBtn.addEventListener('click',stopSession);
+nounBtn.addEventListener('click',()=>markAnswer(true));
+verbBtn.addEventListener('click',()=>markAnswer(false));
+document.addEventListener('keydown',e=>{if(e.repeat) return;if(e.key==='1') markAnswer(true); else if(e.key==='2') markAnswer(false);});
 
-  startBtn.addEventListener('click',()=>{
-    startScreen.style.display='none';
-    sentenceEl.style.display='block';
-    controls.style.display='flex';
-    hint.style.display='block';
-    showSentence(pickNext());
-    startTimer();
+function stopSession(){
+  stopTimer();
+  sentenceEl.style.display='none';
+  feedbackEl.textContent='';
+  const percent=total?Math.round((correctCount/total)*100):0;
+  let html=`<h2 style="text-align:center;margin-top:0">Session Summary</h2>`;
+  html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
+  html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
+  html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
+  html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
+  html+=`<p><strong>Score:</strong> ${percent}%</p><hr>`;
+  html+=`<div style="text-align:center"><strong>Responses</strong></div>`;
+  history.forEach(item=>{
+    html+=item.correct?`<div class="correct" style="text-align:center">${item.sentence}</div>`:
+                        `<div class="incorrect" style="text-align:center">${item.sentence}</div>`;
   });
+  html+=`<div style="text-align:center;margin-top:12px"><button onclick="resetAll()" style="padding:8px 14px;border-radius:8px;background:var(--green);color:#fff;border:none;cursor:pointer;">Play Again</button></div>`;
+  summaryDiv.innerHTML=html; summaryDiv.style.display='block';
+}
+
+function resetAll(){
+  stopTimer(); started=false; answered=false; total=0; correctCount=0; history=[]; elapsed=0;
+  sentenceEl.style.display='block';
+  timerEl.textContent='Time: 0s';
+  summaryDiv.style.display='none';
+  pool=shuffle([...sentences]);
+  showSentence(pickNext());
+  startTimer();
+}
+
+stopBtn.addEventListener('click', stopSession);
+resetBtn.addEventListener('click', resetAll);
+
+// Auto-start game
+pool=shuffle([...sentences]);
+showSentence(pickNext());
+startTimer();
+
 })();
 </script>
 </body>
