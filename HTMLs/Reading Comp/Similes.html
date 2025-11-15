@@ -65,9 +65,10 @@
   }
   .btn-green{ background:var(--green);}
   .btn-red{ background:var(--red);}
+  .btn-blue{ background:var(--blue); }
   #feedback{margin-top:14px;font-weight:600;min-height:28px;}
   
-  /* 🔥 TIMER MOVED TOP-LEFT */
+  /* 🔥 TIMER TOP-LEFT */
   #timer{
     position:fixed;
     top:14px;
@@ -127,18 +128,16 @@
 <script>
 (function(){
 
-// --------------------------------------
-// SENTENCE BANK
-// --------------------------------------
-const sentences = [
+const sentences=[
   {text:"The dog ran as fast as a rocket.", answer:1},
   {text:"His smile was as bright as the sun.", answer:1},
-  /* ... (your full 100 sentences remain unchanged) ... */
   {text:"The rain cooled the air.", answer:2}
+  // (keep your full list here)
 ];
 
-let pool=[], currentSentence=null, total=0, correctCount=0;
-let history=[], started=false, answered=false;
+let pool=[], currentSentence=null;
+let total=0, correctCount=0, history=[];
+let started=false, answered=false;
 let timerInterval=null, startTime=null, elapsed=0;
 
 const sentenceEl=document.getElementById('sentence');
@@ -158,6 +157,11 @@ function shuffle(a){
   return a;
 }
 
+function pickNext(){
+  if(pool.length===0) pool=shuffle([...sentences]);
+  return pool.pop();
+}
+
 function showSentence(s){
   currentSentence=s;
   sentenceEl.textContent=s.text;
@@ -165,12 +169,6 @@ function showSentence(s){
   answered=false;
 }
 
-function pickNext(){
-  if(pool.length===0) pool=shuffle([...sentences]);
-  return pool.pop();
-}
-
-// ----------------------- TIMER -----------------------
 function startTimer(){
   startTime=Date.now();
   timerInterval=setInterval(()=>{
@@ -184,8 +182,7 @@ function stopTimer(){
   timerInterval=null;
 }
 
-// ----------------------- GAME LOGIC -----------------------
-function startGameIfNeeded(){
+function startGame(){
   if(started) return;
   started=true;
   pool=shuffle([...sentences]);
@@ -194,21 +191,24 @@ function startGameIfNeeded(){
 }
 
 function markAnswer(choice){
-  startGameIfNeeded(); // AUTO START
-  
+  if(!started){
+    startGame();
+    return; // <-- prevents the FIRST press from answering!
+  }
+
   if(answered) return;
   answered=true;
 
   total++;
-  let correct = (choice===currentSentence.answer);
+  let correct=(choice===currentSentence.answer);
 
   if(correct){
     correctCount++;
-    feedbackEl.textContent='✅ Correct';
-    feedbackEl.style.color='var(--green)';
+    feedbackEl.textContent="✅ Correct";
+    feedbackEl.style.color="var(--green)";
   } else {
-    feedbackEl.textContent='❌ Incorrect';
-    feedbackEl.style.color='var(--red)';
+    feedbackEl.textContent="❌ Incorrect";
+    feedbackEl.style.color="var(--red)";
   }
 
   history.push({sentence:currentSentence.text, correct});
@@ -216,32 +216,29 @@ function markAnswer(choice){
   setTimeout(()=> showSentence(pickNext()), 350);
 }
 
-// ----------------------- BUTTONS -----------------------
 simileBtn.addEventListener("click", ()=>markAnswer(1));
 notBtn.addEventListener("click", ()=>markAnswer(2));
 
-document.addEventListener("keydown",e=>{
+document.addEventListener("keydown", e=>{
   if(e.repeat) return;
-  if(e.key==='1') markAnswer(1);
-  else if(e.key==='2') markAnswer(2);
+  if(e.key==="1") markAnswer(1);
+  else if(e.key==="2") markAnswer(2);
 });
 
-// ----------------------- STOP / RESET -----------------------
 function stopSession(){
   stopTimer();
   sentenceEl.style.display='none';
   stopBtn.style.display='none';
   feedbackEl.textContent='';
 
-  const percent = total?Math.round((correctCount/total)*100):0;
-
+  const percent=total?Math.round((correctCount/total)*100):0;
   let html=`<h2 style="text-align:center">Session Summary</h2>`;
   html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
   html+=`<p><strong>Total:</strong> ${total}</p>`;
   html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
   html+=`<p><strong>Incorrect:</strong> ${total-correctCount}</p>`;
-  html+=`<p><strong>Score:</strong> ${percent}%</p>`;
-  html+=`<hr><div><strong>Responses:</strong></div>`;
+  html+=`<p><strong>Score:</strong> ${percent}%</p><hr>`;
+  html+=`<div><strong>Responses:</strong></div>`;
 
   history.forEach(item=>{
     html+= item.correct
@@ -249,7 +246,9 @@ function stopSession(){
       : `<div class="incorrect" style="text-align:center">${item.sentence}</div>`;
   });
 
-  html+=`<div style="text-align:center;margin-top:12px"><button id="playAgain" class="btn-red" style="padding:10px 18px;">Play Again</button></div>`;
+  html+=`<div style="text-align:center;margin-top:12px">
+           <button id="playAgain" class="btn-red" style="padding:10px 18px;">Play Again</button>
+         </div>`;
 
   summaryDiv.innerHTML=html;
   summaryDiv.style.display='block';
@@ -259,13 +258,18 @@ function stopSession(){
 
 function resetAll(){
   stopTimer();
-  started=false; answered=false;
-  total=0; correctCount=0; history=[];
+  started=false;
+  answered=false;
+  total=0;
+  correctCount=0;
+  history=[];
   elapsed=0;
+
   timerEl.textContent='Time: 0s';
   summaryDiv.style.display='none';
   sentenceEl.style.display='block';
   stopBtn.style.display='inline-block';
+
   sentenceEl.textContent='Press 1 or 2 or tap a button to begin';
 }
 
