@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cause & Effect Practice</title>
+<style>
+  :root{
+    --bg1:#fde68a;
+    --bg2:#bfdbfe;
+    --card:#ffffff;
+    --green:#16a34a;
+    --red:#dc2626;
+    --blue:#2563eb;
+    --text:#0f172a;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:"Poppins",Arial,sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .wrap{
+    width:94%;
+    max-width:760px;
+    background:var(--card);
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 12px 30px rgba(2,6,23,0.12);
+    text-align:center;
+    position:relative;
+  }
+  h1{margin:4px 0 6px;color:#1e3a8a;font-size:22px;}
+  #meta{color:#475569;margin-bottom:8px;}
+  #paragraph{
+    font-size:20px;
+    line-height:1.45;
+    color:var(--text);
+    margin:22px 0;
+    user-select:none;
+    min-height:90px;
+  }
+  .top-controls{
+    position:absolute;
+    right:18px;
+    top:14px;
+    display:flex;
+    gap:8px;
+  }
+  .top-controls button{
+    border:none;padding:8px 12px;border-radius:8px;cursor:pointer;color:#fff;font-weight:700;
+    background:var(--blue);
+  }
+  .top-controls button.reset{background:var(--red);}
+  #feedback{margin-top:6px;font-weight:700;min-height:24px;}
+  .controls-bottom{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .controls-bottom button{
+    border:none;
+    padding:14px 28px;
+    border-radius:12px;
+    cursor:pointer;
+    color:white;
+    font-size:18px;
+    font-weight:700;
+    min-width:140px;
+    touch-action:manipulation;
+  }
+  .btn-cause{background:var(--green);}
+  .btn-effect{background:#059669;}
+  .hint{color:#475569;margin-top:10px;font-size:14px;}
+  #timer{
+    position:fixed;
+    top:12px;
+    left:16px;
+    background:rgba(255,255,255,0.95);
+    padding:8px 10px;border-radius:10px;
+    font-weight:700;color:#111;
+    box-shadow:0 4px 10px rgba(2,6,23,0.06);
+  }
+  #summary{
+    display:none;
+    margin-top:14px;
+    text-align:left;
+    width:100%;
+    padding:18px;
+    border-radius:10px;
+    background: rgba(15,23,42,0.03);
+    max-height:60vh;
+    overflow:auto;
+  }
+  .correct{color:var(--green);font-weight:700;}
+  .incorrect{color:var(--red);font-weight:700;}
+  /* responsive */
+  @media(max-width:520px){
+    #paragraph{font-size:18px}
+    .controls-bottom button{min-width:44%; font-size:16px; padding:12px 18px;}
+    .top-controls{right:12px;top:10px}
+  }
+</style>
+</head>
+<body>
+<div id="timer">Time: 0s</div>
+
+<div class="wrap" role="application" aria-label="Cause and Effect practice">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <h1>Cause & Effect Practice</h1>
+      <div id="meta">Decide whether the <strong>underlined, bold</strong> part is a <em>cause</em> or an <em>effect</em>.</div>
+    </div>
+
+    <div class="top-controls" role="toolbar" aria-label="Session controls">
+      <button id="resetBtn" class="reset" title="Reset session">Reset</button>
+      <button id="stopBtn" title="Stop session">Stop</button>
+    </div>
+  </div>
+
+  <div id="paragraph" aria-live="polite">Loading...</div>
+
+  <div id="feedback" aria-live="polite"></div>
+
+  <div class="controls-bottom" id="actionButtons">
+    <button id="causeBtn" class="btn-cause">Cause</button>
+    <button id="effectBtn" class="btn-effect">Effect</button>
+  </div>
+
+  <div class="hint">Keyboard: press <strong>1</strong> = Cause, <strong>2</strong> = Effect</div>
+
+  <div id="summary" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  // 50 cause paragraphs and 50 effect paragraphs (total 100), each 3 sentences.
+  // Underlined bold segment has spaces around it for readability.
+  const items = [
+    // 25 Cause examples (underlined part = cause)
+    {text: "The wind blew hard all night. The tree roots loosened, and the fence fell down when <b><u>the wind blew hard</u></b>. Neighbors cleaned up the yard the next morning.", answer:1},
+    {text: "She forgot to water the plants for weeks. The leaves drooped and the plant died after <b><u>she forgot to water the plants</u></b>. She promised to water plants regularly from now on.", answer:1},
+    {text: "Tom left the window open during the storm. Water poured into the room and the carpet soaked when <b><u>he left the window open</u></b>. He had to dry the carpet the next day.", answer:1},
+    {text: "The oven was left on overnight. Smoke filled the kitchen and the fire alarm rang because <b><u>the oven was left on</u></b>. Dad opened windows and turned off the oven.", answer:1},
+    {text: "A heavy rain fell for hours. The road became flooded and cars could not pass after <b><u>the heavy rain fell</u></b>. People waited until the water went down.", answer:1},
+    {text: "Lucy practiced piano every day. She played the song perfectly at the recital thanks to <b><u>her daily practice</u></b>. The audience clapped loudly.", answer:1},
+    {text: "The children ate too much candy before bed. They tossed and turned and could not sleep due to <b><u>eating too much candy</u></b>. In the morning they felt tired.", answer:1},
+    {text: "Dad forgot to fasten the trailer to the truck. Tools fell off during the drive when <b><u>the trailer was not fastened</u></b>. They stopped to pick everything up.", answer:1},
+    {text: "The cat knocked over the vase by the window. Water spilled everywhere and flowers were ruined when <b><u>the cat knocked over the vase</u></b>. Mom cleaned the table.", answer:1},
+    {text: "Sam left his bike out in the rain. The chain rusted and the bike squeaked after <b><u>it got wet</u></b>. He oiled the chain to fix it.", answer:1},
+    {text: "The students rehearsed their lines for weeks. The play went smoothly because of <b><u>their careful rehearsals</u></b>. Parents praised the performance.", answer:1},
+    {text: "A squirrel chewed through an electrical wire. The lights went out because <b><u>the wire was chewed</u></b>. The electrician came to repair it.", answer:1},
+    {text: "Rain soaked the picnic blanket early in the day. The food got soggy and had to be thrown out after <b><u>the picnic was rained on</u></b>. They decided to go home.", answer:1},
+    {text: "Mom didn't set an alarm. She woke up late and missed the meeting because <b><u>her alarm didn't go off</u></b>. She called to explain why she was late.", answer:1},
+    {text: "A pipe burst in the basement overnight. Water damaged boxes and toys after <b><u>the pipe burst</u></b>. They moved the items to a dry place.", answer:1},
+    {text: "The sun warmed the day early. The ice on the road melted and the path became slippery after <b><u>the morning sun warmed everything</u></b>. People walked carefully home.", answer:1},
+    {text: "James left his homework at school. He received a zero the next day because <b><u>he forgot his homework</u></b>. He promised to keep it in his backpack.", answer:1},
+    {text: "The mail truck delivered a new package. The kids were excited and opened the gift because <b><u>the package arrived</u></b>. They played with their new toys.", answer:1},
+    {text: "The roof had a tiny hole. Rainwater dripped and the ceiling stained where <b><u>the roof leaked</u></b>. The roofer came the following week.", answer:1},
+    {text: "Sam climbed a tall ladder without asking. He fell and scraped his knee because <b><u>he climbed unsafely</u></b>. His mom cleaned and bandaged it.", answer:1},
+    {text: "A strong gust blew the trash can over. Garbage spread across the yard after <b><u>the wind knocked the can</u></b>. The neighbors helped pick it up.", answer:1},
+    {text: "The bakery ran out of flour in the morning. They couldn't bake bread and sold fewer loaves because <b><u>the flour supply was gone</u></b>. Customers waited until more arrived.", answer:1},
+    {text: "He left his bike unlocked overnight. Someone took it and it disappeared after <b><u>he left it unsecured</u></b>. He reported it to the police.", answer:1},
+    {text: "The garden had poor soil and no fertilizer. The vegetables were small and weak because <b><u>the soil lacked nutrients</u></b>. Next season they added compost.", answer:1},
+    {text: "The family left food out in the open. Mice came into the pantry and ate snacks after <b><u>the food was left uncovered</u></b>. They sealed containers afterward.", answer:1},
+
+    // 25 Effect examples (underlined part = effect)
+    {text: "The storm uprooted trees and blocked the road. Cars could not pass and people were late because <b><u>the road was blocked</u></b>. Crews cleared the debris later.", answer:2},
+    {text: "He stayed up late watching TV. He felt sleepy and missed the bus the next morning because <b><u>he was very tired</u></b>. He walked to school instead.", answer:2},
+    {text: "The ice on the pond melted quickly. The children could not skate and went home when <b><u>the ice had melted</u></b>. They played games inside instead.", answer:2},
+    {text: "They forgot to lock the gate at night. The dog wandered away and was missing because <b><u>the gate was left open</u></b>. They posted flyers to find him.", answer:2},
+    {text: "Rain fell steadily all afternoon. The soccer game was canceled and everyone went home because <b><u>the field was too wet</u></b>. They rescheduled for next week.", answer:2},
+    {text: "The oven overheated during baking. The cookies burned and tasted bitter because <b><u>they were overcooked</u></b>. They made a fresh batch later.", answer:2},
+    {text: "The teacher praised her hard work. She felt proud and smiled because <b><u>she received recognition</u></b>. Her classmates cheered.", answer:2},
+    {text: "A small leak went unattended in the roof. The ceiling stained and paint peeled because <b><u>water had seeped in</u></b>. A repair was scheduled.", answer:2},
+    {text: "She practiced speaking every day with a tutor. Her pronunciation improved and she felt confident because <b><u>she practiced regularly</u></b>. She spoke smoothly on stage.", answer:2},
+    {text: "They left the gate open by accident. The garden plants were trampled and broken because <b><u>animals entered the yard</u></b>. They fixed the fence quickly.", answer:2},
+    {text: "A strong smell appeared in the kitchen. The family left the house because <b><u>the gas leak was detected</u></b>. The company came to check the lines.", answer:2},
+    {text: "He trained with a coach for months. His running time got faster and he won the race because <b><u>he trained hard</u></b>. The team celebrated afterward.", answer:2},
+    {text: "The truck spilled oil on the street. Cars slid and one crashed because <b><u>the road was slick with oil</u></b>. The clean-up crew arrived to fix it.", answer:2},
+    {text: "A vase fell from the shelf and shattered. The floor was scattered with glass because <b><u>the vase broke</u></b>. They swept it up carefully.", answer:2},
+    {text: "The bakery displayed fresh cookies in the window. Customers lined up and the shop sold out because <b><u>the treats looked delicious</u></b>. The baker made more batches.", answer:2},
+    {text: "A loud crash woke the whole house. Everyone rushed into the kitchen because <b><u>the cupboard door fell off</u></b>. They found dishes on the floor.", answer:2},
+    {text: "The power went out suddenly. The neighborhood sat in the dark and people lit candles because <b><u>the electricity was off</u></b>. The utility crew worked to restore power.", answer:2},
+    {text: "She studied vocabulary every night. Her test grade rose and she felt proud because <b><u>her studying helped</u></b>. She kept studying to improve more.", answer:2},
+    {text: "A heavy truck passed the thin bridge. The bridge shook and small cracks appeared because <b><u>the load was very heavy</u></b>. The inspector checked for safety.", answer:2},
+    {text: "The child touched a hot pan. He yelped and pulled his hand away because <b><u>the pan was very hot</u></b>. Mom put a cool cloth on the skin.", answer:2},
+    {text: "The car ran out of gas on the highway. Drivers slowed down and a traffic jam formed because <b><u>the car stopped suddenly</u></b>. Tow trucks cleared the lane.", answer:2},
+    {text: "They planted many trees along the street. Shade increased and summer days felt cooler because <b><u>more trees grew there</u></b>. Neighbors enjoyed the shade.", answer:2},
+    {text: "A child spilled paint on the floor. The carpet had bright stains because <b><u>the paint was spilled</u></b>. They cleaned it but some color remained.", answer:2},
+    {text: "The bell rang at the end of class. Students packed up and left the room because <b><u>the class period ended</u></b>. They headed outside for recess.", answer:2},
+    {text: "A puppy chewed a shoe by accident. The owner found a hole and a torn sole because <b><u>the shoe was chewed</u></b>. The owner laughed and bought a new pair.", answer:2},
+
+    // Additional 25 Cause examples
+    {text: "The children left toys in the yard. The lawnmower hit a toy and broke its blade because <b><u>toys were left outside</u></b>. Dad warned them to bring everything in.", answer:1},
+    {text: "A puddle formed by the playground. A child slipped and fell after <b><u>they stepped into the puddle</u></b>. The teacher comforted the child.", answer:1},
+    {text: "A window was left unlocked overnight. A bird flew inside and made a mess because <b><u>the window was open</u></b>. They gently guided the bird back out.", answer:1},
+    {text: "The camper forgot to pack the map. The group lost direction and got delayed because <b><u>no map was brought</u></b>. They used a phone to find the trail.", answer:1},
+    {text: "The party host left candles unattended. The cake caught fire and was ruined when <b><u>the candle touched the frosting</u></b>. Everyone blew out remaining flames.", answer:1},
+    {text: "The dog was left alone outside. It barked constantly and annoyed neighbors because <b><u>it was lonely</u></b>. The owner brought it indoors.", answer:1},
+    {text: "The gardener forgot to cover seedlings. A frost came that night and plants wilted after <b><u>the frost hit</u></b>. They covered future seedlings earlier.", answer:1},
+    {text: "A screw came loose on the playground swing. The seat fell and a child got hurt because <b><u>the swing was broken</u></b>. They fixed it before more kids played.", answer:1},
+    {text: "He left the car windows down in a storm. Water collected inside and the seats smelled musty because <b><u>the rain entered</u></b>. They vacuumed and dried the interior.", answer:1},
+    {text: "The cookbook's recipe was followed poorly. The cake didn't rise and tasted dense because <b><u>the instructions were not followed</u></b>. They tried again carefully.", answer:1},
+    {text: "They ignored the 'Wet Paint' sign. People sat on the bench and left marks because <b><u>paint was still wet</u></b>. The painter had to repaint the bench.", answer:1},
+    {text: "The child left a candle near curtains. Sparks caught and a small fire started because <b><u>the candle was too close</u></b>. The family called for help and put out the flame.", answer:1},
+    {text: "The team practiced passes every day. They won the game because <b><u>their passing was practiced</u></b>. The coach congratulated everyone.", answer:1},
+    {text: "She left the iron on the clothes. A scorch mark appeared when <b><u>the hot iron touched the shirt too long</u></b>. She replaced the shirt later.", answer:1},
+    {text: "A storm washed debris into the river. The water level rose and the bridge flooded because <b><u>debris blocked the flow</u></b>. Crews cleared the channel.", answer:1},
+    {text: "The cat scratched the couch daily. The fabric grew worn and torn because <b><u>the cat scratched it often</u></b>. They bought a scratching post to help.", answer:1},
+    {text: "Leaves collected in the gutters all fall. The downspout clogged and water backed up because <b><u>leaves were not cleared</u></b>. The roofer cleaned the gutters.", answer:1},
+    {text: "He ate cold food left out for hours. He became sick the next day because <b><u>the food was spoiled</u></b>. He visited the doctor for medicine.", answer:1},
+    {text: "A tire lost air from a nail. The car's wheel wobble and a slow flat occurred because <b><u>the tire was punctured</u></b>. They repaired it at the shop.", answer:1},
+    {text: "The puppy chewed the remote control. The TV stopped working because <b><u>the batteries were damaged</u></b>. They bought a replacement remote.", answer:1},
+    {text: "The lamp's cord frayed after years. A short circuit happened and the fuse blew because <b><u>the wiring was faulty</u></b>. An electrician fixed it.", answer:1},
+    {text: "Someone spilled oil on the driveway. A bike slipped and the rider fell because <b><u>the surface was slick</u></b>. The rider was okay after a scrape.", answer:1},
+    {text: "They painted the playground bright colors. Kids smiled and played more because <b><u>the area looked cheerful</u></b>. The town enjoyed the new look.", answer:1},
+    {text: "The plumber left a valve partly closed. Water pressure dropped and the shower sputtered because <b><u>the valve wasn't fully opened</u></b>. He returned to adjust it.", answer:1},
+
+    // Additional 25 Effect examples
+    {text: "The sprinkler system turned on early. Wet footprints lined the path because <b><u>the ground was wet</u></b>. Kids changed into dry shoes.", answer:2},
+    {text: "A loud thunderclap echoed across town. Windows rattled and dogs barked because <b><u>thunder shook the air</u></b>. People checked the weather app.", answer:2},
+    {text: "The oven timer dinged when the cookies were done. The family gathered and ate warm treats because <b><u>the cookies were ready</u></b>. They drank milk together.", answer:2},
+    {text: "She left her bike chain unlubricated for months. The pedals became stiff and noisy because <b><u>the chain seized</u></b>. She cleaned and oiled it later.", answer:2},
+    {text: "The mailbox overflowed with ads. The front yard looked messy because <b><u>papers were scattered</u></b>. He bundled them to recycle.", answer:2},
+    {text: "A large truck parked on the street. Parking spots were scarce and neighbors complained because <b><u>space was taken</u></b>. The truck moved later that day.", answer:2},
+    {text: "The power company cut electricity for repairs. The store closed early and customers left because <b><u>there was no power</u></b>. They returned the next day.", answer:2},
+    {text: "A chill came with the evening breeze. People wore jackets and closed windows because <b><u>the temperature fell</u></b>. The fire was lit for warmth.", answer:2},
+    {text: "She practiced addition facts every night. Math became easier and she finished homework faster because <b><u>her fluency improved</u></b>. Her teacher praised her progress.", answer:2},
+    {text: "The movie tickets sold out quickly online. The theater posted a waitlist because <b><u>seats were all purchased</u></b>. Many fans were disappointed.", answer:2},
+    {text: "A truck delivering supplies arrived early. The classroom set up quickly and activities started because <b><u>materials were available</u></b>. Students enjoyed the new projects.", answer:2},
+    {text: "A leak developed in the aquarium glass. Water levels dropped and fish were moved because <b><u>the tank was leaking</u></b>. Staff repaired the tank overnight.", answer:2},
+    {text: "The bakery opened a new window for orders. Customers waited less and service sped up because <b><u>an extra counter was in use</u></b>. Lines shortened immediately.", answer:2},
+    {text: "A boy left a sandwich in his backpack. By lunchtime the bread was squished and soggy because <b><u>it was packed under heavy books</u></b>. He traded with a friend.", answer:2},
+    {text: "The road crews resurfaced the street. The drive was smoother and quieter because <b><u>the asphalt was new</u></b>. Residents drove with ease.", answer:2},
+    {text: "A stray cat found shelter in the garage. Someone heard meowing and left food out because <b><u>a cat took shelter</u></b>. The neighbors cared for it until it found a new home.", answer:2},
+    {text: "A birthday sign was hung on the porch. The friend felt special and smiled because <b><u>they were surprised</u></b>. They had a small party afterward.", answer:2},
+    {text: "The library added new books about space. Students checked them out and learned more because <b><u>new resources were available</u></b>. Interest in science grew.", answer:2},
+    {text: "Someone dropped a match on dry leaves. A small fire started and smoke rose because <b><u>the leaves caught</u></b>. It was put out quickly.", answer:2},
+    {text: "The coach gave extra practice time to the team. The players felt more confident and executed plays better because <b><u>they practiced more</u></b>. The team improved.", answer:2},
+    {text: "An old tree branch fell during the windstorm. The street was blocked and drivers detoured because <b><u>debris was in the road</u></b>. Crews removed it soon after.", answer:2},
+    {text: "The cat knocked a jar off the shelf. Water spilled everywhere and the floor was slippery because <b><u>the jar broke</u></b>. They cleaned it up carefully.", answer:2},
+    {text: "The store announced a sale on shoes. Shoppers lined up and shelves emptied quickly because <b><u>items were discounted</u></b>. The sale ended that afternoon.", answer:2},
+    {text: "A student shared his snack with a classmate. The friend smiled and the two became closer because <b><u>an act of kindness happened</u></b>. They played together at recess.", answer:2},
+    {text: "A delivery truck blocked the corner for hours. Traffic backed up and drivers were delayed because <b><u>the road was narrowed</u></b>. Police redirected cars around it.", answer:2}
+  ];
+
+  // convert answers: 1 = cause, 2 = effect
+  // shuffle the entire set to randomize order each run
+  let pool = [];
+  let current = null;
+  let index = -1;
+  let started = false;
+  let answered = false;
+  let startTime = null;
+  let timerInterval = null;
+  let elapsed = 0;
+  let total = 0;
+  let correctCount = 0;
+  let history = [];
+
+  const paragraphEl = document.getElementById('paragraph');
+  const feedbackEl = document.getElementById('feedback');
+  const timerEl = document.getElementById('timer');
+  const causeBtn = document.getElementById('causeBtn');
+  const effectBtn = document.getElementById('effectBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const summaryEl = document.getElementById('summary');
+
+  function shuffle(a){
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function startSession(){
+    pool = shuffle(items.slice()); // copy and shuffle
+    index = -1;
+    total = 0;
+    correctCount = 0;
+    history = [];
+    started = true;
+    startTime = Date.now();
+    elapsed = 0;
+    timerEl.textContent = 'Time: 0s';
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(()=> {
+      elapsed = Math.floor((Date.now() - startTime) / 1000);
+      timerEl.textContent = `Time: ${elapsed}s`;
+    }, 1000);
+    nextItem();
+  }
+
+  function stopTimer(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function nextItem(){
+    index++;
+    if(index >= pool.length){
+      endSession();
+      return;
+    }
+    current = pool[index];
+    showCurrent();
+    answered = false;
+  }
+
+  function showCurrent(){
+    // ensure spaces around the underlined bold section are present in the source strings
+    paragraphEl.innerHTML = current.text;
+    feedbackEl.textContent = '';
+  }
+
+  function markAnswer(choice){ // choice: 1=cause, 2=effect
+    if(!started) startSession(); // auto-start if somehow not started
+    if(answered) return;
+    answered = true;
+    total++;
+    const correct = (choice === current.answer);
+    if(correct){
+      correctCount++;
+      feedbackEl.textContent = '✅ Correct';
+      feedbackEl.className = 'correct';
+    } else {
+      feedbackEl.textContent = '❌ Incorrect';
+      feedbackEl.className = 'incorrect';
+    }
+    history.push({
+      paragraph: current.text,
+      correctAnswer: current.answer === 1 ? 'Cause' : 'Effect',
+      selected: choice === 1 ? 'Cause' : 'Effect',
+      correct: correct
+    });
+
+    // short delay then next
+    setTimeout(()=> {
+      nextItem();
+    }, 450);
+  }
+
+  // Keyboard handlers
+  document.addEventListener('keydown', (e) => {
+    if(e.repeat) return;
+    if(e.key === '1') markAnswer(1);
+    else if(e.key === '2') markAnswer(2);
+  });
+
+  // Button handlers
+  causeBtn.addEventListener('click', ()=> markAnswer(1));
+  effectBtn.addEventListener('click', ()=> markAnswer(2));
+  resetBtn.addEventListener('click', resetSession);
+  stopBtn.addEventListener('click', endSession);
+
+  function endSession(){
+    stopTimer();
+    started = false;
+    paragraphEl.style.display = 'none';
+    feedbackEl.textContent = '';
+    causeBtn.disabled = true;
+    effectBtn.disabled = true;
+
+    const percent = total ? Math.round((correctCount / total) * 100) : 0;
+    let html = `<h2 style="margin-top:0">Session Summary</h2>`;
+    html += `<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html += `<p><strong>Attempted:</strong> ${total}</p>`;
+    html += `<p><strong>Correct:</strong> ${correctCount}</p>`;
+    html += `<p><strong>Incorrect:</strong> ${total - correctCount}</p>`;
+    html += `<p><strong>Score:</strong> ${percent}%</p><hr/>`;
+    html += `<div><strong>Responses (in order)</strong></div><ol>`;
+    history.forEach(h=>{
+      html += `<li style="margin:8px 0"><div style="font-weight:600">${h.paragraph}</div>`;
+      html += `<div style="margin-top:6px;color:${h.correct ? 'var(--green)' : 'var(--red)'}">${h.selected} — Correct: ${h.correctAnswer}</div></li>`;
+    });
+    html += `</ol>`;
+    html += `<div style="text-align:center;margin-top:12px"><button id="playAgain" style="padding:10px 16px;border-radius:8px;background:var(--blue);color:#fff;border:none;cursor:pointer;font-weight:700">Play Again</button></div>`;
+
+    summaryEl.innerHTML = html;
+    summaryEl.style.display = 'block';
+    const pa = document.getElementById('playAgain');
+    if(pa) pa.addEventListener('click', ()=>{
+      summaryEl.style.display = 'none';
+      resetSession();
+    });
+  }
+
+  function resetSession(){
+    stopTimer();
+    paragraphEl.style.display = 'block';
+    causeBtn.disabled = false;
+    effectBtn.disabled = false;
+    startSession();
+    summaryEl.style.display = 'none';
+  }
+
+  // Auto-start on load
+  window.addEventListener('load', ()=> {
+    startSession();
+    paragraphEl.focus();
+  });
+
+  // expose for debugging if needed
+  window._causeEffect = {startSession, resetSession, endSession};
+})();
+</script>
+</body>
+</html>
