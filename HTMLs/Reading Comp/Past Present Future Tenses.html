@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tense Practice — Past / Present / Future (150)</title>
+<style>
+  :root{
+    --bg1:#fde68a; /* yellow */
+    --bg2:#93c5fd; /* blue */
+    --card:#ffffff;
+    --accent:#0ea5a4;
+    --past:#2563eb;
+    --present:#16a34a;
+    --future:#f59e0b;
+    -- unsure:#9ca3af;
+    --text:#0f172a;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Poppins", Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:20px;
+  }
+
+  .wrap{
+    width:96%;
+    max-width:760px;
+    background:var(--card);
+    border-radius:18px;
+    padding:20px 22px;
+    box-shadow:0 10px 30px rgba(2,6,23,0.12);
+    margin:auto;
+  }
+
+  h1{margin:6px 0 8px 0;color:#0f172a;font-size:20px;}
+  .top-row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:8px;}
+  .choice-row{display:flex;gap:10px;align-items:center;justify-content:flex-start;flex-wrap:wrap;}
+  .action-row{display:flex;gap:8px;align-items:center;}
+  button.choice{
+    border:none;padding:10px 14px;border-radius:10px;cursor:pointer;color:white;font-size:15px;font-weight:700;
+  }
+  button.past{background:var(--past);}        /* blue */
+  button.present{background:var(--present);}  /* green */
+  button.future{background:var(--future);}    /* amber */
+  button.unsure{background:#6b7280;}           /* gray */
+  button.action{background:#e5e7eb;color:#111;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;}
+  #sentence{font-size:28px;line-height:1.4;color:var(--text);margin:18px 0;min-height:70px;user-select:none;}
+  #meta{font-size:13px;color:#475569;margin-bottom:8px;}
+  #feedback{min-height:26px;font-weight:700;margin-bottom:6px;}
+  #timer{
+    position:fixed;top:12px;left:14px;
+    background:rgba(255,255,255,0.95);
+    padding:8px 10px;border-radius:10px;font-weight:700;color:#0f172a;box-shadow:0 4px 10px rgba(2,6,23,0.06);
+  }
+  #summary{display:none;margin-top:14px;text-align:left;padding:14px;border-radius:10px;background:rgba(2,6,23,0.03);max-height:60vh;overflow:auto;}
+  .correct{color:var(--present);font-weight:700;}
+  .incorrect{color:var(--future);font-weight:700;}
+  .small{font-size:13px;color:#374151;margin-top:6px;}
+  @media(max-width:640px){
+    #sentence{font-size:22px;}
+    .top-row{flex-direction:column;align-items:stretch;gap:12px;}
+    .choice-row{justify-content:space-between;}
+  }
+</style>
+</head>
+<body>
+<div id="timer">Time: 0s</div>
+
+<div class="wrap" role="application" aria-label="Tense Practice — Past Present Future">
+  <h1>Tense Practice — Past / Present / Future</h1>
+
+  <div class="top-row">
+    <div class="choice-row" aria-hidden="false">
+      <button id="btnPast" class="choice past">Past</button>
+      <button id="btnPresent" class="choice present">Present</button>
+      <button id="btnFuture" class="choice future">Future</button>
+      <button id="btnUnsure" class="choice unsure">I'm not sure</button>
+    </div>
+
+    <div class="action-row">
+      <button id="resetBtn" class="action">Reset</button>
+      <button id="stopBtn" class="action">Stop</button>
+    </div>
+  </div>
+
+  <div id="meta">Identify the tense of the <strong>underlined, bolded</strong> verb. Use keys <strong>1</strong>=Past, <strong>2</strong>=Present, <strong>3</strong>=Future, <strong>4</strong>=I'm not sure.</div>
+
+  <div id="sentence" aria-live="polite"></div>
+  <div id="feedback" aria-live="polite"></div>
+
+  <div class="small">Keyboard: 1 = Past • 2 = Present • 3 = Future • 4 = I'm not sure</div>
+
+  <div id="summary" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  // 150 sentences: 50 past, 50 present, 50 future
+  // Format: sentence contains spacing around <b><u>verb</u></b> to ensure clear spacing
+  const sentences = [
+    // 50 Past (1)
+    {text:"She <b><u> walked </u></b> to school yesterday.", answer:1},
+    {text:"Tom <b><u> cried </u></b> when he dropped his ice cream.", answer:1},
+    {text:"The dog <b><u> chased </u></b> the ball this morning.", answer:1},
+    {text:"We <b><u> played </u></b> at the park last weekend.", answer:1},
+    {text:"Mom <b><u> baked </u></b> a cake for the party.", answer:1},
+    {text:"Dad <b><u> fixed </u></b> the bicycle yesterday.", answer:1},
+    {text:"They <b><u> jumped </u></b> over the puddle earlier.", answer:1},
+    {text:"I <b><u> finished </u></b> my homework last night.", answer:1},
+    {text:"The cat <b><u> slept </u></b> on the couch all day.", answer:1},
+    {text:"Grandma <b><u> told </u></b> a story before bed.", answer:1},
+    {text:"We <b><u> visited </u></b> the museum on Friday.", answer:1},
+    {text:"She <b><u> painted </u></b> a picture at school.", answer:1},
+    {text:"He <b><u> smiled </u></b> when he saw the puppy.", answer:1},
+    {text:"The teacher <b><u> explained </u></b> the lesson yesterday.", answer:1},
+    {text:"I <b><u> found </u></b> a shiny coin in the yard.", answer:1},
+    {text:"They <b><u> danced </u></b> at the festival last month.", answer:1},
+    {text:"Sara <b><u> baked </u></b> cookies for her friends.", answer:1},
+    {text:"We <b><u> watched </u></b> a movie on Saturday.", answer:1},
+    {text:"He <b><u> ran </u></b> to the bus stop this morning.", answer:1},
+    {text:"Mom <b><u> washed </u></b> the car yesterday.", answer:1},
+    {text:"I <b><u> lost </u></b> my glove in the snow.", answer:1},
+    {text:"The baby <b><u> giggled </u></b> at the silly face.", answer:1},
+    {text:"They <b><u> cleaned </u></b> the room after playtime.", answer:1},
+    {text:"He <b><u> built </u></b> a fort with blankets.", answer:1},
+    {text:"We <b><u> packed </u></b> lunch for the trip.", answer:1},
+    {text:"She <b><u> wore </u></b> her new shoes to school.", answer:1},
+    {text:"I <b><u> watered </u></b> the plants yesterday.", answer:1},
+    {text:"Dad <b><u> drove </u></b> us to the store last night.", answer:1},
+    {text:"They <b><u> sang </u></b> a song at the show.", answer:1},
+    {text:"He <b><u> caught </u></b> the ball during the game.", answer:1},
+    {text:"We <b><u> ate </u></b> soup for dinner last night.", answer:1},
+    {text:"She <b><u> collected </u></b> shells on the beach.", answer:1},
+    {text:"I <b><u> carried </u></b> the books to class.", answer:1},
+    {text:"The wind <b><u> knocked </u></b> over the trash can.", answer:1},
+    {text:"He <b><u> wrote </u></b> a letter to his friend.", answer:1},
+    {text:"They <b><u> hopped </u></b> on the bus to town.", answer:1},
+    {text:"Mom <b><u> hung </u></b> the picture on the wall.", answer:1},
+    {text:"We <b><u> listened </u></b> to music at the party.", answer:1},
+    {text:"She <b><u> closed </u></b> the window when it rained.", answer:1},
+    {text:"I <b><u> sold </u></b> my old toys last weekend.", answer:1},
+    {text:"He <b><u> climbed </u></b> the ladder carefully.", answer:1},
+    {text:"They <b><u> practiced </u></b> piano after school.", answer:1},
+    {text:"She <b><u> fed </u></b> the fish in the tank.", answer:1},
+    {text:"I <b><u> painted </u></b> the fence blue.", answer:1},
+    {text:"We <b><u> rode </u></b> the roller coaster last summer.", answer:1},
+    {text:"He <b><u> opened </u></b> the gift with a big smile.", answer:1},
+    {text:"They <b><u> picked </u></b> apples at the orchard.", answer:1},
+    {text:"She <b><u> rested </u></b> after a long walk.", answer:1},
+    {text:"I <b><u> baked </u></b> bread for breakfast.", answer:1},
+
+    // 50 Present (2)
+    {text:"She <b><u> walks </u></b> to school every day.", answer:2},
+    {text:"Tom <b><u> cries </u></b> when he gets hurt.", answer:2},
+    {text:"The dog <b><u> chases </u></b> the ball in the yard.", answer:2},
+    {text:"We <b><u> play </u></b> at the park after school.", answer:2},
+    {text:"Mom <b><u> bakes </u></b> bread on Sundays.", answer:2},
+    {text:"Dad <b><u> fixes </u></b> things around the house.", answer:2},
+    {text:"They <b><u> jump </u></b> over the rope in gym.", answer:2},
+    {text:"I <b><u> finish </u></b> my work before dinner.", answer:2},
+    {text:"The cat <b><u> sleeps </u></b> on the warm blanket.", answer:2},
+    {text:"Grandma <b><u> tells </u></b> stories to us nightly.", answer:2},
+    {text:"We <b><u> visit </u></b> our cousins often.", answer:2},
+    {text:"She <b><u> paints </u></b> pictures in art class.", answer:2},
+    {text:"He <b><u> smiles </u></b> when he is happy.", answer:2},
+    {text:"The teacher <b><u> explains </u></b> the new lesson.", answer:2},
+    {text:"I <b><u> find </u></b> interesting rocks outside.", answer:2},
+    {text:"They <b><u> dance </u></b> to the music at recess.", answer:2},
+    {text:"Sara <b><u> bakes </u></b> treats for her friends.", answer:2},
+    {text:"We <b><u> watch </u></b> shows on the weekend.", answer:2},
+    {text:"He <b><u> runs </u></b> around the track.", answer:2},
+    {text:"Mom <b><u> washes </u></b> dishes after dinner.", answer:2},
+    {text:"I <b><u> lose </u></b> my keys sometimes.", answer:2},
+    {text:"The baby <b><u> giggles </u></b> at silly jokes.", answer:2},
+    {text:"They <b><u> clean </u></b> their room each day.", answer:2},
+    {text:"He <b><u> builds </u></b> tall towers with blocks.", answer:2},
+    {text:"We <b><u> pack </u></b> snacks for the outing.", answer:2},
+    {text:"She <b><u> wears </u></b> bright hats often.", answer:2},
+    {text:"I <b><u> water </u></b> the garden in the morning.", answer:2},
+    {text:"Dad <b><u> drives </u></b> to work every day.", answer:2},
+    {text:"They <b><u> sing </u></b> in a small group.", answer:2},
+    {text:"He <b><u> catches </u></b> the bus to school.", answer:2},
+    {text:"We <b><u> eat </u></b> lunch together in class.", answer:2},
+    {text:"She <b><u> collects </u></b> stickers in her notebook.", answer:2},
+    {text:"I <b><u> carry </u></b> my backpack to the bus.", answer:2},
+    {text:"The wind <b><u> knocks </u></b> leaves from the trees.", answer:2},
+    {text:"He <b><u> writes </u></b> neat notes in his book.", answer:2},
+    {text:"They <b><u> hop </u></b> in a game at recess.", answer:2},
+    {text:"Mom <b><u> hangs </u></b> art on the wall.", answer:2},
+    {text:"We <b><u> listen </u></b> to stories in class.", answer:2},
+    {text:"She <b><u> closes </u></b> the door softly.", answer:2},
+    {text:"I <b><u> sell </u></b> lemonade in summer.", answer:2},
+    {text:"He <b><u> climbs </u></b> ladders carefully.", answer:2},
+    {text:"They <b><u> practice </u></b> songs together.", answer:2},
+    {text:"She <b><u> feeds </u></b> the birds in the yard.", answer:2},
+    {text:"I <b><u> paint </u></b> with bright colors.", answer:2},
+    {text:"We <b><u> ride </u></b> bikes on the trail.", answer:2},
+    {text:"He <b><u> opens </u></b> presents with joy.", answer:2},
+    {text:"They <b><u> pick </u></b> fresh fruit from the tree.", answer:2},
+    {text:"She <b><u> rests </u></b> after running.", answer:2},
+    {text:"I <b><u> bake </u></b> cookies on chilly days.", answer:2},
+    {text:"The sun <b><u> shines </u></b> in the clear sky.", answer:2},
+
+    // 50 Future (3)
+    {text:"She <b><u> will walk </u></b> to school tomorrow.", answer:3},
+    {text:"Tom <b><u> will cry </u></b> if he falls down.", answer:3},
+    {text:"The dog <b><u> will chase </u></b> the squirrel later.", answer:3},
+    {text:"We <b><u> will play </u></b> at the park next week.", answer:3},
+    {text:"Mom <b><u> will bake </u></b> a pie for us soon.", answer:3},
+    {text:"Dad <b><u> will fix </u></b> the fence this weekend.", answer:3},
+    {text:"They <b><u> will jump </u></b> over puddles after the rain.", answer:3},
+    {text:"I <b><u> will finish </u></b> my book later tonight.", answer:3},
+    {text:"The cat <b><u> will sleep </u></b> in its bed tonight.", answer:3},
+    {text:"Grandma <b><u> will tell </u></b> a story at dinner.", answer:3},
+    {text:"We <b><u> will visit </u></b> the zoo next month.", answer:3},
+    {text:"She <b><u> will paint </u></b> a mural next spring.", answer:3},
+    {text:"He <b><u> will smile </u></b> when he gets the news.", answer:3},
+    {text:"The teacher <b><u> will explain </u></b> the project tomorrow.", answer:3},
+    {text:"I <b><u> will find </u></b> a new book to read.", answer:3},
+    {text:"They <b><u> will dance </u></b> at the festival next year.", answer:3},
+    {text:"Sara <b><u> will bake </u></b> muffins for the picnic.", answer:3},
+    {text:"We <b><u> will watch </u></b> a new movie on Friday.", answer:3},
+    {text:"He <b><u> will run </u></b> in the race tomorrow.", answer:3},
+    {text:"Mom <b><u> will wash </u></b> the car this afternoon.", answer:3},
+    {text:"I <b><u> will lose </u></b> these extra papers soon.", answer:3},
+    {text:"The baby <b><u> will giggle </u></b> at the surprise.", answer:3},
+    {text:"They <b><u> will clean </u></b> the yard after lunch.", answer:3},
+    {text:"He <b><u> will build </u></b> a new shelf next weekend.", answer:3},
+    {text:"We <b><u> will pack </u></b> the picnic tomorrow morning.", answer:3},
+    {text:"She <b><u> will wear </u></b> a new dress to the party.", answer:3},
+    {text:"I <b><u> will water </u></b> the plants this evening.", answer:3},
+    {text:"Dad <b><u> will drive </u></b> us to the show soon.", answer:3},
+    {text:"They <b><u> will sing </u></b> at the assembly next week.", answer:3},
+    {text:"He <b><u> will catch </u></b> the ball at practice.", answer:3},
+    {text:"We <b><u> will eat </u></b> lunch together tomorrow.", answer:3},
+    {text:"She <b><u> will collect </u></b> stickers tomorrow at school.", answer:3},
+    {text:"I <b><u> will carry </u></b> the supplies later.", answer:3},
+    {text:"The wind <b><u> will knock </u></b> leaves down in the evening.", answer:3},
+    {text:"He <b><u> will write </u></b> a story next month.", answer:3},
+    {text:"They <b><u> will hop </u></b> on the train after lunch.", answer:3},
+    {text:"Mom <b><u> will hang </u></b> the curtains tomorrow.", answer:3},
+    {text:"We <b><u> will listen </u></b> to the band tonight.", answer:3},
+    {text:"She <b><u> will close </u></b> the window if it rains.", answer:3},
+    {text:"I <b><u> will sell </u></b> my extra toys next week.", answer:3},
+    {text:"He <b><u> will climb </u></b> the tree tomorrow.", answer:3},
+    {text:"They <b><u> will practice </u></b> the song later today.", answer:3},
+    {text:"She <b><u> will feed </u></b> the ducks on our walk.", answer:3},
+    {text:"I <b><u> will paint </u></b> the shed next weekend.", answer:3},
+    {text:"We <b><u> will ride </u></b> our bikes after school.", answer:3},
+    {text:"He <b><u> will open </u></b> the surprise at the party.", answer:3},
+    {text:"They <b><u> will pick </u></b> apples when they ripen.", answer:3},
+    {text:"She <b><u> will rest </u></b> after the long walk.", answer:3},
+    {text:"I <b><u> will bake </u></b> a pie for the contest.", answer:3},
+    {text:"The sun <b><u> will shine </u></b> tomorrow morning.", answer:3},
+
+    // 150 total (we have 50+50+50 = 150)
+  ];
+
+  // Shuffle utility
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  // DOM
+  const sentenceEl = document.getElementById('sentence');
+  const feedbackEl = document.getElementById('feedback');
+  const timerEl = document.getElementById('timer');
+  const summaryEl = document.getElementById('summary');
+  const btnPast = document.getElementById('btnPast');
+  const btnPresent = document.getElementById('btnPresent');
+  const btnFuture = document.getElementById('btnFuture');
+  const btnUnsure = document.getElementById('btnUnsure');
+  const resetBtn = document.getElementById('resetBtn');
+  const stopBtn = document.getElementById('stopBtn');
+
+  // State
+  let pool = [];
+  let currentIndex = -1;
+  let total = 0;
+  let correct = 0;
+  let history = [];
+  let startTime = null;
+  let timerInterval = null;
+
+  function startSession(){
+    pool = shuffle([...sentences]);
+    currentIndex = -1;
+    total = 0; correct = 0; history = [];
+    summaryEl.style.display = 'none';
+    feedbackEl.textContent = '';
+    showNext(); // move to first sentence
+    if(timerInterval) clearInterval(timerInterval);
+    startTime = Date.now();
+    timerEl.textContent = 'Time: 0s';
+    timerInterval = setInterval(()=>{
+      const s = Math.floor((Date.now()-startTime)/1000);
+      timerEl.textContent = `Time: ${s}s`;
+    },1000);
+  }
+
+  function stopTimer(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function showNext(){
+    currentIndex++;
+    if(currentIndex >= pool.length) return endSession();
+    const s = pool[currentIndex];
+    sentenceEl.innerHTML = s.text; // safe - content is controlled
+    feedbackEl.textContent = '';
+    // ensure choices enabled visually
+    enableButtons(true);
+  }
+
+  function enableButtons(on){
+    [btnPast, btnPresent, btnFuture, btnUnsure].forEach(b=>{
+      b.disabled = !on;
+      b.style.opacity = on ? '1' : '0.6';
+    });
+  }
+
+  function markAnswer(choice){
+    // choice: 1 past, 2 present, 3 future, 4 unsure
+    // ignore if out of range
+    if(currentIndex < 0 || currentIndex >= pool.length) return;
+    const item = pool[currentIndex];
+    const isCorrect = (choice === item.answer);
+    total++;
+    if(isCorrect) correct++;
+    history.push({
+      sentence: item.text,
+      selected: choice,
+      correct: item.answer
+    });
+    feedbackEl.textContent = isCorrect ? '✅ Correct' : `❌ Incorrect — correct: ${labelFor(item.answer)}`;
+    // disable until next
+    enableButtons(false);
+    setTimeout(()=> showNext(), 450);
+  }
+
+  function labelFor(n){
+    if(n===1) return 'Past';
+    if(n===2) return 'Present';
+    if(n===3) return 'Future';
+    return "I'm not sure";
+  }
+
+  function endSession(){
+    stopTimer();
+    sentenceEl.style.display = 'none';
+    feedbackEl.textContent = '';
+    const elapsed = startTime ? Math.floor((Date.now()-startTime)/1000) : 0;
+    const score = total ? Math.round((correct/total)*100) : 0;
+    let html = `<h2 style="margin-top:0">Session Summary</h2>`;
+    html += `<p><strong>Time:</strong> ${elapsed}s</p>`;
+    html += `<p><strong>Correct:</strong> ${correct} / ${total} (${score}%)</p>`;
+    html += `<p><strong>Incorrect:</strong> ${total - correct}</p><hr>`;
+    html += `<div><strong>Responses (in order)</strong></div><ol>`;
+    history.forEach(h=>{
+      const ok = h.selected === h.correct;
+      html += `<li style="margin:8px 0"><div style="font-weight:600">${h.sentence}</div>`;
+      html += `<div style="color:${ok ? 'var(--present)' : 'var(--future)'}">${ok ? 'Correct' : `Selected: ${labelFor(h.selected)} — Correct: ${labelFor(h.correct)}`}</div></li>`;
+    });
+    html += `</ol><div style="text-align:center;margin-top:8px"><button id="restart" style="padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:700">Start Over</button></div>`;
+    summaryEl.innerHTML = html;
+    summaryEl.style.display = 'block';
+    document.getElementById('restart').addEventListener('click', ()=>{
+      sentenceEl.style.display = '';
+      startSession();
+    });
+  }
+
+  // Button events
+  btnPast.addEventListener('click', ()=> markAnswer(1));
+  btnPresent.addEventListener('click', ()=> markAnswer(2));
+  btnFuture.addEventListener('click', ()=> markAnswer(3));
+  btnUnsure.addEventListener('click', ()=> markAnswer(4));
+
+  resetBtn.addEventListener('click', ()=>{
+    if(confirm('Reset the session?')) {
+      stopTimer();
+      sentenceEl.style.display = '';
+      startSession();
+    }
+  });
+  stopBtn.addEventListener('click', ()=> {
+    if(confirm('Stop and show summary?')) endSession();
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', (e)=>{
+    if(e.repeat) return;
+    if(e.key === '1') markAnswer(1);
+    else if(e.key === '2') markAnswer(2);
+    else if(e.key === '3') markAnswer(3);
+    else if(e.key === '4') markAnswer(4);
+  });
+
+  // Auto start when page loads
+  window.addEventListener('load', ()=>{
+    startSession();
+  });
+
+})();
+</script>
+</body>
+</html>
