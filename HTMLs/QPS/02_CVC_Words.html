@@ -35,7 +35,7 @@
   }
   #timer {
     position: fixed;
-    top: 20px; /* moved to top-left */
+    top: 20px;
     left: 20px;
     font-size: 1.2em;
     color: #374151;
@@ -62,7 +62,6 @@
   .correct { color: green; font-weight: bold; }
   .incorrect { color: red; font-weight: bold; }
 
-  /* Teacher buttons */
   .teacher-buttons {
     position: fixed;
     bottom: 20px;
@@ -100,13 +99,23 @@
 
 <div id="timer">Time: 0s</div>
 
-<!-- Teacher Touch Buttons -->
 <div class="teacher-buttons">
   <button class="teacher-btn incorrect" id="btnIncorrect">Incorrect</button>
   <button class="teacher-btn correct" id="btnCorrect">Correct</button>
 </div>
 
 <script>
+// ----------------------
+// RANDOMIZER ADDED HERE!
+// ----------------------
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 const cvcWords = [
   "cat","dog","hat","pig","sun","cup","bed","pen","top","bug",
   "jam","net","kit","box","man","rug","fox","bat","lid","mop",
@@ -126,11 +135,12 @@ let incorrectWords = [];
 let startTime = null;
 let timerInterval = null;
 
+shuffle(cvcWords); // <-- RANDOMIZE ON LOAD
+
 const wordDisplay = document.getElementById("word");
 const timerDisplay = document.getElementById("timer");
 const summaryDiv = document.getElementById("summary");
 
-// Show next word
 function nextWord() {
   if (currentIndex < cvcWords.length) {
     wordDisplay.textContent = cvcWords[currentIndex];
@@ -139,7 +149,6 @@ function nextWord() {
   }
 }
 
-// Timer functions
 function startTimer() {
   if (startTime) return;
   startTime = Date.now();
@@ -153,7 +162,6 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
-// Mark word correct or incorrect
 function markCorrect() {
   correctWords.push(cvcWords[currentIndex]);
   currentIndex++;
@@ -166,7 +174,6 @@ function markIncorrect() {
   nextWord();
 }
 
-// Stop practice and show summary
 function stopPractice() {
   stopTimer();
   wordDisplay.style.display = "none";
@@ -190,12 +197,14 @@ function stopPractice() {
   summaryDiv.style.display = "block";
 }
 
-// Reset practice
 function resetPractice() {
   stopTimer();
   correctWords = [];
   incorrectWords = [];
+
+  shuffle(cvcWords);   // <-- RANDOMIZE ON RESET TOO
   currentIndex = 0;
+
   summaryDiv.style.display = "none";
   wordDisplay.style.display = "block";
   document.getElementById("stopButton").style.display = "inline-block";
@@ -205,20 +214,17 @@ function resetPractice() {
   nextWord();
 }
 
-// Keyboard support
 document.addEventListener("keydown", (event) => {
   startTimer();
   if (event.key === "1") markCorrect();
   else if (event.key === "2") markIncorrect();
 });
 
-// Button events
 document.getElementById("resetButton").addEventListener("click", resetPractice);
 document.getElementById("stopButton").addEventListener("click", stopPractice);
 document.getElementById("btnCorrect").addEventListener("click", markCorrect);
 document.getElementById("btnIncorrect").addEventListener("click", markIncorrect);
 
-// Start first word & timer on page load
 nextWord();
 startTimer();
 </script>
