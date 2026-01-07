@@ -44,7 +44,7 @@ h1 {
     position: relative;
     width: 100%;
     max-width: 1400px;
-    height: 520px;
+    height: 650px; /* increased height */
     margin: 0 auto;
     background: linear-gradient(to bottom, #38bdf8, #0284c7, #0369a1);
     border-radius: 30px;
@@ -65,7 +65,7 @@ h1 {
 
 @keyframes rise {
     0% { transform: translateY(0); opacity: 0.8; }
-    100% { transform: translateY(-600px); opacity: 0; }
+    100% { transform: translateY(-700px); opacity: 0; }
 }
 
 /* Kelp */
@@ -73,7 +73,7 @@ h1 {
     position: absolute;
     bottom: 60px;
     width: 20px;
-    height: 260px;
+    height: 400px; /* taller kelp */
     background: linear-gradient(#22c55e, #15803d);
     border-radius: 20px;
     animation: sway 4s ease-in-out infinite;
@@ -82,12 +82,12 @@ h1 {
 .kelp::after {
     content: "";
     position: absolute;
-    width: 40px;
-    height: 80px;
+    width: 60px; /* wider leaf */
+    height: 120px; /* taller leaf */
     background: linear-gradient(#22c55e, #15803d);
     border-radius: 50%;
-    top: -40px;
-    left: -10px;
+    top: -60px; /* adjust to top of kelp */
+    left: -20px;
 }
 
 @keyframes sway {
@@ -108,16 +108,16 @@ h1 {
 /* Treasure */
 .treasure {
     position: absolute;
-    right: 20px;
-    bottom: 90px;
-    font-size: 70px;
+    right: 40px; /* moved slightly left */
+    bottom: 160px; /* moved above sea floor */
+    font-size: 90px; /* bigger */
     transition: transform 0.5s;
 }
 
 .gold {
     position: absolute;
     right: 35px;
-    bottom: 150px;
+    bottom: 250px; /* adjusted for taller treasure */
     font-size: 40px;
     display: none;
 }
@@ -139,14 +139,14 @@ h1 {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 90px;
+    height: 150px; /* enough for bigger icons */
     background: #fde68a;
     border-top: 6px solid #f59e0b;
     display: flex;
-    justify-content: space-evenly; /* space out icons */
+    justify-content: space-around; /* more space between icons */
     align-items: center;
-    font-size: 60px; /* double size for larger decorations */
-    padding: 0 20px;
+    font-size: 120px; /* double previous size */
+    padding: 0 30px; /* more padding */
 }
 </style>
 </head>
@@ -246,7 +246,6 @@ function swimFish(fish, score, lane) {
     const percent = Math.min(score / goal(), 1);
     const maxX = ocean.clientWidth - 140;
 
-    // curved swim with sine wave
     let start = performance.now();
     let duration = 1500;
 
@@ -268,7 +267,6 @@ function celebrate(fish) {
     const treasure = document.getElementById("treasure");
     treasure.textContent = "🪙"; // chest opens
 
-    // Fireworks
     for (let i = 0; i < 5; i++) {
         const f = document.createElement("div");
         f.className = "firework";
