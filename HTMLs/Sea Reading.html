@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Our School of Fish</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif;
+    background: linear-gradient(#7dd3fc, #0ea5e9);
+    overflow-x: hidden;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    font-size: 42px;
+    margin: 10px 0;
+    text-shadow: 2px 2px #0369a1;
+}
+
+/* Controls */
+.controls {
+    background: white;
+    padding: 15px;
+    border-radius: 20px;
+    max-width: 1400px;
+    margin: 0 auto 10px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+    text-align: center;
+}
+
+.controls select, .controls input, .controls button {
+    font-size: 16px;
+    padding: 6px 10px;
+    border-radius: 14px;
+    margin: 4px;
+    border: 2px solid #38bdf8;
+}
+
+/* Ocean */
+.ocean {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    height: 520px;
+    margin: 0 auto;
+    background: linear-gradient(to bottom, #38bdf8, #0284c7, #0369a1);
+    border-radius: 30px;
+    overflow: hidden;
+    border: 6px solid #0c4a6e;
+}
+
+/* Bubbles */
+.bubble {
+    position: absolute;
+    bottom: -40px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    animation: rise 10s infinite ease-in;
+}
+
+@keyframes rise {
+    0% { transform: translateY(0); opacity: 0.8; }
+    100% { transform: translateY(-600px); opacity: 0; }
+}
+
+/* Kelp */
+.kelp {
+    position: absolute;
+    bottom: 60px;
+    width: 20px;
+    height: 260px;
+    background: linear-gradient(#22c55e, #15803d);
+    border-radius: 20px;
+    animation: sway 4s ease-in-out infinite;
+}
+
+.kelp::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 80px;
+    background: linear-gradient(#22c55e, #15803d);
+    border-radius: 50%;
+    top: -40px;
+    left: -10px;
+}
+
+@keyframes sway {
+    0%,100% { transform: rotate(-2deg); }
+    50% { transform: rotate(3deg); }
+}
+
+.k25 { left: 25%; }
+.k50 { left: 50%; }
+.k75 { left: 75%; }
+
+/* Fish */
+.fish {
+    position: absolute;
+    font-size: 40px;
+}
+
+/* Treasure */
+.treasure {
+    position: absolute;
+    right: 20px;
+    bottom: 90px;
+    font-size: 70px;
+    transition: transform 0.5s;
+}
+
+.gold {
+    position: absolute;
+    right: 35px;
+    bottom: 150px;
+    font-size: 40px;
+    display: none;
+}
+
+/* Fireworks */
+.firework {
+    position: absolute;
+    font-size: 40px;
+    animation: pop 1s ease-out forwards;
+}
+
+@keyframes pop {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+/* Sea floor decorations */
+.seafloor {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 90px;
+    background: #fde68a;
+    border-top: 6px solid #f59e0b;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🐠 Our School of Fish 🐠</h1>
+
+<div class="controls">
+    Grade:
+    <select id="grade" onchange="updateFish()">
+        <option value="2">2nd Grade</option>
+        <option value="3">3rd Grade</option>
+    </select>
+
+    Season:
+    <select id="season" onchange="updateFish()">
+        <option value="fall">🍁 Fall</option>
+        <option value="winter">❄️ Winter</option>
+        <option value="spring">🌸 Spring</option>
+    </select>
+
+    Fish:
+    <select id="fishType">
+        <option>🐟</option>
+        <option>🐠</option>
+        <option>🐡</option>
+        <option>🦈</option>
+        <option>🐬</option>
+        <option>🦑</option>
+        <option>🦀</option>
+        <option>🐙</option>
+        <option>🦐</option>
+        <option>🪸</option>
+    </select>
+
+    Score:
+    <input type="number" id="score" min="0">
+
+    <button onclick="addFish()">➕ Add Fish</button>
+    <button onclick="resetOcean()">🔄 Reset</button>
+</div>
+
+<div class="ocean" id="ocean">
+    <div class="kelp k25"></div>
+    <div class="kelp k50"></div>
+    <div class="kelp k75"></div>
+
+    <div class="treasure" id="treasure">🧰</div>
+    <div class="gold" id="gold">🪙🪙🪙</div>
+
+    <div class="seafloor">
+        🐚🏰⭐🪨🪼🪸🐚
+    </div>
+</div>
+
+<script>
+const benchmarks = {
+    2: { fall: 56, winter: 84, spring: 101 },
+    3: { fall: 87, winter: 110, spring: 125 }
+};
+
+const ocean = document.getElementById("ocean");
+const gold = document.getElementById("gold");
+let fishList = [];
+
+// Create bubbles
+for (let i = 0; i < 30; i++) {
+    const b = document.createElement("div");
+    b.className = "bubble";
+    b.style.left = Math.random() * 100 + "%";
+    b.style.animationDuration = 5 + Math.random() * 5 + "s";
+    ocean.appendChild(b);
+}
+
+function goal() {
+    return benchmarks[grade.value][season.value];
+}
+
+function addFish() {
+    const score = Number(document.getElementById("score").value);
+    if (!score) return;
+
+    const fish = document.createElement("div");
+    fish.className = "fish";
+    fish.textContent = fishType.value;
+    const lane = 70 + fishList.length * 45;
+    fish.style.top = lane + "px";
+    fish.style.left = "10px";
+
+    ocean.appendChild(fish);
+    fishList.push({ fish, score });
+    swimFish(fish, score, lane);
+}
+
+function swimFish(fish, score, lane) {
+    const percent = Math.min(score / goal(), 1);
+    const maxX = ocean.clientWidth - 140;
+
+    // curved swim with sine wave
+    let start = performance.now();
+    let duration = 1500;
+
+    function animate(time) {
+        let elapsed = time - start;
+        let progress = Math.min(elapsed / duration, 1);
+        let x = 10 + progress * percent * maxX;
+        let y = lane + Math.sin(progress * Math.PI * 2) * 8;
+        fish.style.left = x + "px";
+        fish.style.top = y + "px";
+        if (progress < 1) requestAnimationFrame(animate);
+        else if (percent === 1) celebrate(fish);
+    }
+    requestAnimationFrame(animate);
+}
+
+function celebrate(fish) {
+    gold.style.display = "block";
+    const treasure = document.getElementById("treasure");
+    treasure.textContent = "🪙"; // chest opens
+
+    // Fireworks
+    for (let i = 0; i < 5; i++) {
+        const f = document.createElement("div");
+        f.className = "firework";
+        f.textContent = "✨";
+        f.style.left = fish.offsetLeft + (Math.random()*40-20) + "px";
+        f.style.top = fish.offsetTop + (Math.random()*20-10) + "px";
+        ocean.appendChild(f);
+        setTimeout(() => f.remove(), 1000);
+    }
+}
+
+function updateFish() {
+    fishList.forEach(f => swimFish(f.fish, f.score, parseFloat(f.fish.style.top)));
+}
+
+function resetOcean() {
+    fishList.forEach(f => f.fish.remove());
+    fishList = [];
+    gold.style.display = "none";
+    document.getElementById("treasure").textContent = "🧰";
+}
+</script>
+
+</body>
+</html>
