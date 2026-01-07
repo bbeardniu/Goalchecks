@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gumball</title>
+<title>Smiley Gumball Machines</title>
 <style>
 body {
   font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
@@ -53,6 +53,15 @@ h1 {
   background: #dc2626;
   margin: 0 auto;
   border-radius: 0 0 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.count {
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
 }
 
 input {
@@ -81,7 +90,7 @@ button {
 </head>
 <body>
 
-<h1>😊 Smile Collector 😊</h1>
+<h1>😊 Smiley Gumball Machines 😊</h1>
 
 <div style="margin-bottom:20px; font-size:1.3em;">
   Show 
@@ -97,7 +106,7 @@ button {
 
   <div class="machine" data-count="0">
     <div class="jar"></div>
-    <div class="base"></div>
+    <div class="base"><div class="count">0</div></div>
     <input type="number" placeholder="Smiles" onkeydown="if(event.key==='Enter') addSmiles(this)">
     <br>
     <button onclick="resetMachine(this)">Reset</button>
@@ -106,7 +115,7 @@ button {
 
   <div class="machine" data-count="0">
     <div class="jar"></div>
-    <div class="base"></div>
+    <div class="base"><div class="count">0</div></div>
     <input type="number" placeholder="Smiles" onkeydown="if(event.key==='Enter') addSmiles(this)">
     <br>
     <button onclick="resetMachine(this)">Reset</button>
@@ -115,7 +124,7 @@ button {
 
   <div class="machine" data-count="0">
     <div class="jar"></div>
-    <div class="base"></div>
+    <div class="base"><div class="count">0</div></div>
     <input type="number" placeholder="Smiles" onkeydown="if(event.key==='Enter') addSmiles(this)">
     <br>
     <button onclick="resetMachine(this)">Reset</button>
@@ -147,6 +156,7 @@ function addSmiles(input) {
   }
 
   machine.dataset.count = count;
+  machine.querySelector('.count').textContent = count;
   input.value = '';
 
   if (count >= 100) celebrate(machine);
@@ -155,6 +165,7 @@ function addSmiles(input) {
 function resetMachine(btn) {
   const machine = btn.closest('.machine');
   machine.dataset.count = 0;
+  machine.querySelector('.count').textContent = 0;
   machine.querySelector('.jar').innerHTML = '';
   machine.querySelector('.celebrate').innerHTML = '';
 }
@@ -175,4 +186,3 @@ function updateMachines() {
 
 </body>
 </html>
-
