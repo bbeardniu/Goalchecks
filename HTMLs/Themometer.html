@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weekly Reading Thermometers</title>
+
+<style>
+body {
+    font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif;
+    background: linear-gradient(135deg, #dbeafe, #fef3c7);
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 32px;
+    color: #1e3a8a;
+}
+
+.controls {
+    background: white;
+    border-radius: 16px;
+    padding: 15px;
+    display: inline-block;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    margin-bottom: 25px;
+}
+
+.controls select, .controls button {
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 2px solid #60a5fa;
+    margin: 5px;
+}
+
+.controls button {
+    background: #f87171;
+    color: white;
+    cursor: pointer;
+}
+
+.thermometers {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.thermometer-container {
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    width: 150px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.benchmark {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.day {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.thermometer {
+    width: 50px;
+    height: 220px;
+    border-radius: 25px;
+    border: 3px solid #334155;
+    margin: 10px auto;
+    background: #e5e7eb;
+    position: relative;
+    overflow: hidden;
+}
+
+.fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 0%;
+    transition: height 0.4s ease;
+}
+
+/* Day colors */
+.monday { background: linear-gradient(to top, #fecaca, #dc2626); }
+.tuesday { background: linear-gradient(to top, #bbf7d0, #16a34a); }
+.wednesday { background: linear-gradient(to top, #bfdbfe, #2563eb); }
+.thursday { background: linear-gradient(to top, #e9d5ff, #7c3aed); }
+.friday { background: linear-gradient(to top, #fbcfe8, #db2777); }
+
+input[type="number"] {
+    width: 80px;
+    font-size: 18px;
+    border-radius: 14px;
+    border: 2px solid #22c55e;
+    text-align: center;
+    padding: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📘 Weekly Reading Thermometers</h2>
+
+<div class="controls">
+    Grade:
+    <select id="grade" onchange="updateBenchmarks()">
+        <option value="2">2nd Grade</option>
+        <option value="3">3rd Grade</option>
+    </select>
+
+    Season:
+    <select id="season" onchange="updateBenchmarks()">
+        <option value="fall">🍁 Fall</option>
+        <option value="winter">❄️ Winter</option>
+        <option value="spring">🌸 Spring</option>
+    </select>
+
+    Today Is:
+    <select id="currentDay" onchange="updateDayVisibility()">
+        <option value="0">Monday</option>
+        <option value="1">Tuesday</option>
+        <option value="2">Wednesday</option>
+        <option value="3">Thursday</option>
+        <option value="4">Friday</option>
+    </select>
+
+    <button onclick="resetAll()">🔄 Reset</button>
+</div>
+
+<div class="thermometers" id="thermometers"></div>
+
+<script>
+const days = [
+    { name: "Monday", class: "monday" },
+    { name: "Tuesday", class: "tuesday" },
+    { name: "Wednesday", class: "wednesday" },
+    { name: "Thursday", class: "thursday" },
+    { name: "Friday", class: "friday" }
+];
+
+const benchmarks = {
+    2: { fall: 56, winter: 84, spring: 101 },
+    3: { fall: 87, winter: 110, spring: 125 }
+};
+
+const container = document.getElementById("thermometers");
+
+days.forEach((day, index) => {
+    const div = document.createElement("div");
+    div.className = "thermometer-container";
+    div.dataset.index = index;
+
+    div.innerHTML = `
+        <div class="benchmark" id="benchmark-${index}"></div>
+        <div class="thermometer">
+            <div class="fill ${day.class}" id="fill-${index}"></div>
+        </div>
+        <div class="day">${day.name}</div>
+        <input type="number" min="0" placeholder="Score"
+               onchange="updateFill(${index}, this.value)">
+    `;
+
+    container.appendChild(div);
+});
+
+function updateBenchmarks() {
+    const grade = document.getElementById("grade").value;
+    const season = document.getElementById("season").value;
+    const max = benchmarks[grade][season];
+
+    days.forEach((_, i) => {
+        document.getElementById(`benchmark-${i}`).innerText = `Goal: ${max}`;
+        updateFill(i, document.querySelectorAll("input")[i].value);
+    });
+}
+
+function updateFill(index, value) {
+    const grade = document.getElementById("grade").value;
+    const season = document.getElementById("season").value;
+    const max = benchmarks[grade][season];
+
+    const fill = document.getElementById(`fill-${index}`);
+    const percent = Math.min((value / max) * 100, 100);
+    fill.style.height = percent + "%";
+}
+
+function updateDayVisibility() {
+    const currentDay = Number(document.getElementById("currentDay").value);
+
+    document.querySelectorAll(".thermometer-container").forEach(div => {
+        const index = Number(div.dataset.index);
+        div.style.display = index <= currentDay ? "block" : "none";
+    });
+}
+
+function resetAll() {
+    document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
+    document.querySelectorAll(".fill").forEach(fill => fill.style.height = "0%");
+}
+
+updateBenchmarks();
+updateDayVisibility();
+</script>
+
+</body>
+</html>
