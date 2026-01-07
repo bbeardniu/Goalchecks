@@ -53,6 +53,7 @@ h2 {
     padding: 15px;
     width: 150px;
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    position: relative;
 }
 
 .benchmark {
@@ -63,7 +64,20 @@ h2 {
 .day {
     font-size: 22px;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 5px;
+}
+
+.star {
+    font-size: 36px;
+    color: gold;
+    display: none;
+    animation: pop 0.6s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.3); }
+    100% { transform: scale(1); }
 }
 
 .thermometer {
@@ -158,6 +172,7 @@ days.forEach((day, index) => {
 
     div.innerHTML = `
         <div class="benchmark" id="benchmark-${index}"></div>
+        <div class="star" id="star-${index}">⭐</div>
         <div class="thermometer">
             <div class="fill ${day.class}" id="fill-${index}"></div>
         </div>
@@ -169,25 +184,34 @@ days.forEach((day, index) => {
     container.appendChild(div);
 });
 
-function updateBenchmarks() {
+function getGoal() {
     const grade = document.getElementById("grade").value;
     const season = document.getElementById("season").value;
-    const max = benchmarks[grade][season];
+    return benchmarks[grade][season];
+}
+
+function updateBenchmarks() {
+    const goal = getGoal();
 
     days.forEach((_, i) => {
-        document.getElementById(`benchmark-${i}`).innerText = `Goal: ${max}`;
+        document.getElementById(`benchmark-${i}`).innerText = `Goal: ${goal}`;
         updateFill(i, document.querySelectorAll("input")[i].value);
     });
 }
 
 function updateFill(index, value) {
-    const grade = document.getElementById("grade").value;
-    const season = document.getElementById("season").value;
-    const max = benchmarks[grade][season];
-
+    const goal = getGoal();
     const fill = document.getElementById(`fill-${index}`);
-    const percent = Math.min((value / max) * 100, 100);
+    const star = document.getElementById(`star-${index}`);
+
+    const percent = Math.min((value / goal) * 100, 100);
     fill.style.height = percent + "%";
+
+    if (value >= goal && value !== "") {
+        star.style.display = "block";
+    } else {
+        star.style.display = "none";
+    }
 }
 
 function updateDayVisibility() {
@@ -202,6 +226,7 @@ function updateDayVisibility() {
 function resetAll() {
     document.querySelectorAll("input[type='number']").forEach(input => input.value = "");
     document.querySelectorAll(".fill").forEach(fill => fill.style.height = "0%");
+    document.querySelectorAll(".star").forEach(star => star.style.display = "none");
 }
 
 updateBenchmarks();
