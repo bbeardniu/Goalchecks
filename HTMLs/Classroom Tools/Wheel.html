@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sparkle Prize Wheel</title>
+
+<style>
+body {
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    text-align: center;
+    background: radial-gradient(circle at center, #b3e5fc, #64b5f6);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+h1 {
+    font-size: 42px;
+    text-shadow: 2px 2px white;
+}
+
+textarea {
+    width: 320px;
+    height: 200px;
+    font-size: 18px;
+    font-family: "Comic Sans MS", cursive;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 22px;
+    font-family: "Comic Sans MS", cursive;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(to bottom, #ff9800, #f57c00);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px #bf360c;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+#wheelContainer { display: none; }
+
+#result {
+    margin-top: 25px;
+    font-size: 80px;
+    font-family: "Comic Sans MS", cursive;
+    font-weight: bold;
+    color: gold;
+    text-shadow:
+        2px 2px 0 #ff4081,
+        4px 4px 8px rgba(0,0,0,0.6);
+    animation: sparkle 1s infinite alternate;
+}
+
+@keyframes sparkle {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+
+canvas { border-radius: 50%; }
+
+#confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>✨ SUPER SPARKLE PRIZE WHEEL ✨</h1>
+
+<div id="setup">
+    <p>Enter items (one per line):</p>
+    <textarea id="itemsInput"></textarea><br><br>
+    <label>
+        <input type="checkbox" id="removeWinner"> Remove winner after spin
+    </label><br><br>
+    <button onclick="createWheel()">Create Wheel</button>
+</div>
+
+<div id="wheelContainer">
+    <canvas id="wheel" width="550" height="550"></canvas><br>
+    <button onclick="spinWheel()">SPIN!</button>
+    <div id="result"></div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<script>
+let items = [];
+let startAngle = 0;
+let arc = 0;
+let spinning = false;
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+
+function createWheel() {
+    const input = document.getElementById("itemsInput").value.trim();
+    if (!input) return alert("Enter at least one item!");
+
+    items = input.split("\n").filter(i => i.trim() !== "");
+    arc = Math.PI * 2 / items.length;
+
+    document.getElementById("setup").style.display = "none";
+    document.getElementById("wheelContainer").style.display = "block";
+    drawWheel();
+}
+
+function drawWheel() {
+    const radius = canvas.width / 2;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < items.length; i++) {
+        const angle = startAngle + i * arc;
+
+        // Glossy gradient slice
+        const gradient = ctx.createRadialGradient(
+            radius, radius, radius * 0.2,
+            radius, radius, radius
+        );
+        gradient.addColorStop(0, `hsl(${i*360/items.length}, 100%, 80%)`);
+        gradient.addColorStop(1, `hsl(${i*360/items.length}, 80%, 45%)`);
+
+        ctx.beginPath();
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arc);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Sparkle overlay dots
+        for (let s = 0; s < 8; s++) {
+            ctx.fillStyle = "rgba(255,255,255,0.3)";
+            ctx.beginPath();
+            ctx.arc(
+                radius + Math.cos(angle + Math.random()*arc) * (radius * Math.random()),
+                radius + Math.sin(angle + Math.random()*arc) * (radius * Math.random()),
+                Math.random()*3,
+                0, Math.PI*2
+            );
+            ctx.fill();
+        }
+
+        // Layered text effect
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "right";
+        ctx.font = "bold 20px Comic Sans MS";
+
+        // Shadow layer
+        ctx.fillStyle = "black";
+        ctx.fillText(items[i], radius - 15, 8);
+
+        // Gold layer
+        ctx.fillStyle = "gold";
+        ctx.fillText(items[i], radius - 18, 5);
+
+        ctx.restore();
+    }
+
+    // Pointer
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.moveTo(radius - 15, 0);
+    ctx.lineTo(radius + 15, 0);
+    ctx.lineTo(radius, 35);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function spinWheel() {
+    if (spinning || items.length === 0) return;
+    spinning = true;
+    document.getElementById("result").innerText = "";
+
+    playSpinSound();
+
+    const spinDegrees = Math.random() * 360 + 1800;
+    const duration = 4500;
+    const start = performance.now();
+    const initialAngle = startAngle;
+
+    function animate(time) {
+        const progress = Math.min((time - start) / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        startAngle = initialAngle + (spinDegrees * Math.PI / 180) * easeOut;
+        drawWheel();
+
+        if (progress < 1) requestAnimationFrame(animate);
+        else finishSpin();
+    }
+    requestAnimationFrame(animate);
+}
+
+function finishSpin() {
+    const degrees = startAngle * 180 / Math.PI + 90;
+    const arcd = arc * 180 / Math.PI;
+    const index = Math.floor((360 - degrees % 360) / arcd);
+    const winner = items[index];
+
+    document.getElementById("result").innerText = winner;
+    launchConfetti();
+
+    if (document.getElementById("removeWinner").checked) {
+        items.splice(index, 1);
+        if (items.length > 0) {
+            arc = Math.PI * 2 / items.length;
+            drawWheel();
+        }
+    }
+    spinning = false;
+}
+
+function playSpinSound() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 4);
+    osc.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 4);
+}
+
+function launchConfetti() {
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const confettiCtx = confettiCanvas.getContext("2d");
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+
+    let pieces = [];
+    for (let i = 0; i < 200; i++) {
+        pieces.push({
+            x: Math.random() * confettiCanvas.width,
+            y: Math.random() * -confettiCanvas.height,
+            size: Math.random() * 8 + 4,
+            speed: Math.random() * 4 + 2,
+            color: `hsl(${Math.random()*360}, 100%, 60%)`
+        });
+    }
+
+    let frame = 0;
+    function update() {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        pieces.forEach(p => {
+            p.y += p.speed;
+            confettiCtx.fillStyle = p.color;
+            confettiCtx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        frame++;
+        if (frame < 250) requestAnimationFrame(update);
+    }
+    update();
+}
+</script>
+
+</body>
+</html>
