@@ -106,7 +106,7 @@
 
 <script>
 // ----------------------
-// RANDOMIZER ADDED HERE!
+// RANDOMIZER
 // ----------------------
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -135,7 +135,7 @@ let incorrectWords = [];
 let startTime = null;
 let timerInterval = null;
 
-shuffle(cvcWords); // <-- RANDOMIZE ON LOAD
+shuffle(cvcWords); // randomize on load
 
 const wordDisplay = document.getElementById("word");
 const timerDisplay = document.getElementById("timer");
@@ -181,7 +181,7 @@ function stopPractice() {
 
   const total = correctWords.length + incorrectWords.length;
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
 
   summaryDiv.innerHTML = `
     <h2>Results</h2>
@@ -202,7 +202,7 @@ function resetPractice() {
   correctWords = [];
   incorrectWords = [];
 
-  shuffle(cvcWords);   // <-- RANDOMIZE ON RESET TOO
+  shuffle(cvcWords);   // randomize on reset
   currentIndex = 0;
 
   summaryDiv.style.display = "none";
@@ -214,17 +214,29 @@ function resetPractice() {
   nextWord();
 }
 
+// ----------------------
+// KEYBOARD SUPPORT
+// ----------------------
 document.addEventListener("keydown", (event) => {
   startTimer();
-  if (event.key === "1") markCorrect();
-  else if (event.key === "2") markIncorrect();
+  if (event.repeat) return;
+
+  if (event.key === "1") {
+    markCorrect();
+  } else if (event.key === "2") {
+    markIncorrect();
+  } else if (event.key === "3") {
+    stopPractice(); // safe stop even if no words answered
+  }
 });
 
+// BUTTONS
 document.getElementById("resetButton").addEventListener("click", resetPractice);
 document.getElementById("stopButton").addEventListener("click", stopPractice);
 document.getElementById("btnCorrect").addEventListener("click", markCorrect);
 document.getElementById("btnIncorrect").addEventListener("click", markIncorrect);
 
+// START
 nextWord();
 startTimer();
 </script>
