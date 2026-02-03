@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Smiley Gumball Machines</title>
+
 <style>
 body {
-  font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+  font-family: 'Comic Sans MS', cursive;
   background: linear-gradient(#fde68a, #fca5a5);
   text-align: center;
 }
@@ -15,10 +16,26 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* Sparkly animated text */
+.sparkle {
+  font-weight: bold;
+  background: linear-gradient(90deg, #fff, #facc15, #fff);
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
 .machine-area {
   display: flex;
   justify-content: center;
-  gap: 80px;
+  gap: 50px;
+  flex-wrap: wrap;
 }
 
 .machine {
@@ -31,20 +48,24 @@ h1 {
   height: 240px;
   border-radius: 50%;
   border: 8px solid #dc2626;
-  background: radial-gradient(circle at top, #ffffff, #fef3c7);
   overflow: hidden;
   margin: 0 auto 10px;
+  background: #fff;
 }
 
-.smile {
+/* Fill layer */
+.fill {
   position: absolute;
-  font-size: 32px;
-  animation: drop 0.6s ease-in;
+  bottom: 0;
+  width: 100%;
+  background: radial-gradient(circle at top, #fde047, #f59e0b);
+  transition: height 0.5s ease;
 }
 
-@keyframes drop {
-  from { transform: translateY(-60px); }
-  to { transform: translateY(0); }
+.smile-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .base {
@@ -65,14 +86,13 @@ h1 {
 }
 
 input {
-  width: 90px;
-  font-size: 1.2em;
+  width: 100px;
+  margin: 4px;
   text-align: center;
 }
 
 button {
-  margin-top: 6px;
-  font-size: 1em;
+  margin-top: 5px;
   cursor: pointer;
 }
 
@@ -97,91 +117,148 @@ button {
   <select id="machineSelect" onchange="updateMachines()">
     <option value="1">1</option>
     <option value="2">2</option>
-    <option value="3" selected>3</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
   </select>
-  gumball machine(s)
+  machines
 </div>
 
-<div class="machine-area" id="machineArea">
-
-  <div class="machine" data-count="0">
-    <div class="jar"></div>
-    <div class="base"><div class="count">0</div></div>
-    <input type="number" placeholder="Smiles" onkeydown="if(event.key==='Enter') addSmiles(this)">
-    <br>
-    <button onclick="resetMachine(this)">Reset</button>
-    <div class="celebrate"></div>
-  </div>
-
-  <div class="machine" data-count="0">
-    <div class="jar"></div>
-    <div class="base"><div class="count">0</div></div>
-    <input type="number" placeholder="Smiles" onkeydown="if(event.key==='Enter') addSmiles(this)">
-    <br>
-    <button onclick="resetMachine(this)">Reset</button>
-    <div class="celebrate"></div>
-  </div>
-
-  <div class="machine" data-count="0">
-    <div class="jar"></div>
-    <div class="base"><div class="count">0</div></div>
-    <input type="number" placeholder="Smiles" onkeydown="if(event.key==='Enter') addSmiles(this)">
-    <br>
-    <button onclick="resetMachine(this)">Reset</button>
-    <div class="celebrate"></div>
-  </div>
-
-</div>
+<div class="machine-area" id="machineArea"></div>
 
 <script>
-function addSmiles(input) {
-  const machine = input.closest('.machine');
-  const jar = machine.querySelector('.jar');
-  let count = parseInt(machine.dataset.count);
-  const add = parseInt(input.value);
-  if (!add || count >= 100) return;
+const machineArea = document.getElementById("machineArea");
 
-  for (let i = 0; i < add && count < 100; i++) {
-    const smile = document.createElement('div');
-    smile.className = 'smile';
-    smile.textContent = '😊';
+/* CREATE MACHINES */
+for (let i = 1; i <= 6; i++) {
 
-    const angle = Math.random() * Math.PI * 2;
-    const radius = Math.random() * 90;
-    smile.style.left = 120 + Math.cos(angle) * radius - 16 + 'px';
-    smile.style.top = 200 - (count * 2) + 'px';
+  const machine = document.createElement("div");
+  machine.className = "machine";
+  machine.dataset.index = i;
 
-    jar.appendChild(smile);
-    count++;
-  }
+  machine.innerHTML = `
+    <input class="machine-name sparkle" placeholder="Machine Name">
+    <div>
+      Goal: <input type="number" class="goal-input" value="100">
+    </div>
+    <div class="jar">
+      <div class="fill"></div>
+      <div class="smile-layer"></div>
+    </div>
+    <div class="base"><div class="count">0</div></div>
+    <input type="number" placeholder="Add Smiles"
+      onkeydown="if(event.key==='Enter') addSmiles(this)">
+    <br>
+    <button onclick="resetMachine(this)">Reset</button>
+    <div class="celebrate"></div>
+  `;
 
-  machine.dataset.count = count;
-  machine.querySelector('.count').textContent = count;
-  input.value = '';
-
-  if (count >= 100) celebrate(machine);
+  machineArea.appendChild(machine);
 }
 
+/* ADD SMILES */
+function addSmiles(input) {
+  const machine = input.closest('.machine');
+  const index = machine.dataset.index;
+  const goal = parseInt(machine.querySelector('.goal-input').value) || 100;
+  let count = parseInt(localStorage.getItem('count'+index)) || 0;
+
+  const add = parseInt(input.value);
+  if (!add || count >= goal) return;
+
+  count += add;
+  if (count > goal) count = goal;
+
+  localStorage.setItem('count'+index, count);
+
+  updateMachine(machine);
+  input.value = '';
+}
+
+/* UPDATE MACHINE VISUAL */
+function updateMachine(machine) {
+  const index = machine.dataset.index;
+  const goal = parseInt(machine.querySelector('.goal-input').value) || 100;
+  const count = parseInt(localStorage.getItem('count'+index)) || 0;
+
+  machine.querySelector('.count').textContent = count;
+
+  // Update fill height
+  const percent = (count / goal) * 100;
+  machine.querySelector('.fill').style.height = percent + '%';
+
+  // Celebration
+  if (count >= goal) {
+    machine.querySelector('.celebrate').innerHTML =
+      '<div class="fireworks">🎆🎇✨</div>';
+  } else {
+    machine.querySelector('.celebrate').innerHTML = '';
+  }
+
+  saveMachineSettings(machine);
+}
+
+/* RESET */
 function resetMachine(btn) {
   const machine = btn.closest('.machine');
-  machine.dataset.count = 0;
+  const index = machine.dataset.index;
+
+  localStorage.removeItem('count'+index);
   machine.querySelector('.count').textContent = 0;
-  machine.querySelector('.jar').innerHTML = '';
+  machine.querySelector('.fill').style.height = '0%';
   machine.querySelector('.celebrate').innerHTML = '';
 }
 
-function celebrate(machine) {
-  machine.querySelector('.celebrate').innerHTML = '<div class="fireworks">🎆🎇✨</div>';
+/* SAVE SETTINGS */
+function saveMachineSettings(machine) {
+  const index = machine.dataset.index;
+  localStorage.setItem('goal'+index,
+    machine.querySelector('.goal-input').value);
+  localStorage.setItem('name'+index,
+    machine.querySelector('.machine-name').value);
 }
 
+/* LOAD SAVED DATA */
+function loadData() {
+  for (let i = 1; i <= 6; i++) {
+    const machine = document.querySelector(
+      `.machine[data-index='${i}']`);
+
+    machine.querySelector('.goal-input').value =
+      localStorage.getItem('goal'+i) || 100;
+
+    machine.querySelector('.machine-name').value =
+      localStorage.getItem('name'+i) || '';
+
+    updateMachine(machine);
+  }
+
+  const savedCount = localStorage.getItem('machineCount') || 3;
+  document.getElementById('machineSelect').value = savedCount;
+  updateMachines();
+}
+
+/* SHOW/HIDE MACHINES */
 function updateMachines() {
   const count = parseInt(document.getElementById('machineSelect').value);
-  const machines = document.querySelectorAll('.machine');
+  localStorage.setItem('machineCount', count);
 
-  machines.forEach((machine, index) => {
-    machine.style.display = index < count ? 'block' : 'none';
-  });
+  document.querySelectorAll('.machine')
+    .forEach((m, i) =>
+      m.style.display = i < count ? 'block' : 'none');
 }
+
+/* AUTO SAVE INPUT CHANGES */
+document.addEventListener("input", function(e) {
+  if (e.target.classList.contains("goal-input") ||
+      e.target.classList.contains("machine-name")) {
+    const machine = e.target.closest('.machine');
+    updateMachine(machine);
+  }
+});
+
+loadData();
 </script>
 
 </body>
