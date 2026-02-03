@@ -57,17 +57,14 @@ h1 {
   position: absolute;
   bottom: 0;
   width: 100%;
-}
-
-.smile-row {
-  display: flex;
-  justify-content: center;
-  line-height: 1;
+  height: 100%;
 }
 
 .smile {
-  font-size: 20px;
-  margin: -2px;
+  position: absolute;
+  font-size: 22px;
+  line-height: 1;
+  user-select: none;
 }
 
 .base {
@@ -132,9 +129,13 @@ button {
 <script>
 const machineArea = document.getElementById("machineArea");
 
-const ROWS = 12;          // how tall the jar fills
-const SMILES_PER_ROW = 10; // width density
-const MAX_SMILES = ROWS * SMILES_PER_ROW;
+const ROWS = 14;
+const COLS = 11;
+const MAX_SMILES = ROWS * COLS;
+
+const SMILE_SIZE = 22;
+const VERTICAL_SPACING = 18;  // smaller than size = overlap
+const HORIZONTAL_SPACING = 20; // slight overlap
 
 /* CREATE MACHINES */
 for (let i = 1; i <= 6; i++) {
@@ -180,7 +181,7 @@ function addSmiles(input) {
   updateMachine(machine);
 }
 
-/* REBUILD JAR WITH STACKED SMILES */
+/* PACKED STACK FILL */
 function updateMachine(machine) {
   const index = machine.dataset.index;
   const goal = parseInt(machine.querySelector('.goal-input').value) || 100;
@@ -192,27 +193,32 @@ function updateMachine(machine) {
   smileLayer.innerHTML = '';
 
   const percent = count / goal;
-  const totalSmilesToShow = Math.floor(percent * MAX_SMILES);
+  const totalToShow = Math.floor(percent * MAX_SMILES);
 
-  let remaining = totalSmilesToShow;
+  let placed = 0;
 
-  for (let r = 0; r < ROWS; r++) {
-    if (remaining <= 0) break;
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
 
-    const row = document.createElement('div');
-    row.className = 'smile-row';
+      if (placed >= totalToShow) break;
 
-    const rowCount = Math.min(SMILES_PER_ROW, remaining);
-
-    for (let s = 0; s < rowCount; s++) {
-      const smile = document.createElement('span');
+      const smile = document.createElement('div');
       smile.className = 'smile';
       smile.textContent = '😊';
-      row.appendChild(smile);
-    }
 
-    smileLayer.prepend(row);
-    remaining -= rowCount;
+      // Offset every other row (brick pattern)
+      const offset = (row % 2 === 0) ? 0 : HORIZONTAL_SPACING / 2;
+
+      const x = col * HORIZONTAL_SPACING + offset + 10;
+      const y = row * VERTICAL_SPACING;
+
+      smile.style.left = x + "px";
+      smile.style.bottom = y + "px";
+
+      smileLayer.appendChild(smile);
+
+      placed++;
+    }
   }
 
   if (count >= goal) {
@@ -262,7 +268,6 @@ function loadData() {
   updateMachines();
 }
 
-/* SHOW/HIDE */
 function updateMachines() {
   const count = parseInt(document.getElementById('machineSelect').value);
   localStorage.setItem('machineCount', count);
