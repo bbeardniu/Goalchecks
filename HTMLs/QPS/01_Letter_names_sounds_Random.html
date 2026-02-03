@@ -257,12 +257,20 @@
     setTimeout(()=>{showLetter(pickNext());},350);
   }
 
-  // keyboard support
-  document.addEventListener('keydown',(e)=>{
-    if(e.repeat) return;
-    if(e.key==='1') markAnswer(true);
-    else if(e.key==='2') markAnswer(false);
-  });
+ // keyboard support
+document.addEventListener('keydown',(e)=>{
+  if(e.repeat) return;
+
+  if(e.key === '1') {
+    markAnswer(true);
+  }
+  else if(e.key === '2') {
+    markAnswer(false);
+  }
+  else if(e.key === '3') {
+    stopSession();   // <-- NEW: go to report page
+  }
+});
 
   function stopSession(){
     stopTimer();
@@ -330,3 +338,4 @@
 </script>
 </body>
 </html>
+
