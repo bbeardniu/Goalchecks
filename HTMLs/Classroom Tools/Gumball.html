@@ -48,24 +48,26 @@ h1 {
   height: 240px;
   border-radius: 50%;
   border: 8px solid #dc2626;
+  background: radial-gradient(circle at top, #ffffff, #fef3c7);
   overflow: hidden;
   margin: 0 auto 10px;
-  background: #fff;
-}
-
-/* Fill layer */
-.fill {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: radial-gradient(circle at top, #fde047, #f59e0b);
-  transition: height 0.5s ease;
 }
 
 .smile-layer {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+.smile {
+  position: absolute;
+  font-size: 20px;
+  animation: drop 0.4s ease-in;
+}
+
+@keyframes drop {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .base {
@@ -117,7 +119,7 @@ button {
   <select id="machineSelect" onchange="updateMachines()">
     <option value="1">1</option>
     <option value="2">2</option>
-    <option value="3">3</option>
+    <option value="3" selected>3</option>
     <option value="4">4</option>
     <option value="5">5</option>
     <option value="6">6</option>
@@ -143,7 +145,6 @@ for (let i = 1; i <= 6; i++) {
       Goal: <input type="number" class="goal-input" value="100">
     </div>
     <div class="jar">
-      <div class="fill"></div>
       <div class="smile-layer"></div>
     </div>
     <div class="base"><div class="count">0</div></div>
@@ -171,12 +172,12 @@ function addSmiles(input) {
   if (count > goal) count = goal;
 
   localStorage.setItem('count'+index, count);
+  input.value = '';
 
   updateMachine(machine);
-  input.value = '';
 }
 
-/* UPDATE MACHINE VISUAL */
+/* REBUILD JAR */
 function updateMachine(machine) {
   const index = machine.dataset.index;
   const goal = parseInt(machine.querySelector('.goal-input').value) || 100;
@@ -184,11 +185,30 @@ function updateMachine(machine) {
 
   machine.querySelector('.count').textContent = count;
 
-  // Update fill height
-  const percent = (count / goal) * 100;
-  machine.querySelector('.fill').style.height = percent + '%';
+  const jar = machine.querySelector('.smile-layer');
+  jar.innerHTML = '';
 
-  // Celebration
+  const jarSize = 220;
+  const center = jarSize / 2;
+  const radius = jarSize / 2;
+
+  for (let i = 0; i < count; i++) {
+    const smile = document.createElement('div');
+    smile.className = 'smile';
+    smile.textContent = '😊';
+
+    let x, y;
+    do {
+      x = Math.random() * jarSize;
+      y = Math.random() * jarSize;
+    } while (Math.pow(x - center, 2) + Math.pow(y - center, 2) > Math.pow(radius - 12, 2));
+
+    smile.style.left = x + 'px';
+    smile.style.top = y + 'px';
+
+    jar.appendChild(smile);
+  }
+
   if (count >= goal) {
     machine.querySelector('.celebrate').innerHTML =
       '<div class="fireworks">🎆🎇✨</div>';
@@ -205,9 +225,7 @@ function resetMachine(btn) {
   const index = machine.dataset.index;
 
   localStorage.removeItem('count'+index);
-  machine.querySelector('.count').textContent = 0;
-  machine.querySelector('.fill').style.height = '0%';
-  machine.querySelector('.celebrate').innerHTML = '';
+  updateMachine(machine);
 }
 
 /* SAVE SETTINGS */
