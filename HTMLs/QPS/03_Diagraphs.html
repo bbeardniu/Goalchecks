@@ -68,7 +68,6 @@
     .wrap{padding:18px;}
   }
 
-  /* Teacher buttons */
   .teacher-buttons{
     position:fixed;
     bottom:20px;
@@ -95,7 +94,7 @@
 <body>
 <div class="wrap" role="application" aria-label="QPS Digraphs Practice">
   <h1>QPS — Digraphs (sh, th, ch, wh, ph)</h1>
-  <div id="word" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
+  <div id="word" aria-live="polite">Press 1 (correct), 2 (incorrect), or 3 (stop)</div>
 
   <div class="controls">
     <button class="btn-red" id="resetBtn">Reset</button>
@@ -103,13 +102,12 @@
   </div>
 
   <div id="feedback" aria-live="polite"></div>
-  <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect. 100 digraph words randomized.</div>
+  <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect, <strong>3</strong> to stop.</div>
   <div id="summary" aria-live="polite"></div>
 </div>
 
 <div id="timer">Time: 0s</div>
 
-<!-- Teacher buttons -->
 <div class="teacher-buttons">
   <button class="teacher-btn incorrect" id="teacherIncorrect">Incorrect</button>
   <button class="teacher-btn correct" id="teacherCorrect">Correct</button>
@@ -167,10 +165,19 @@
     setTimeout(()=>{showWord(pickNext());},350);
   }
 
+  // UPDATED KEYBOARD SUPPORT (1, 2, 3)
   document.addEventListener('keydown',e=>{
     if(e.repeat)return;
-    if(e.key==='1')markAnswer(true);
-    else if(e.key==='2')markAnswer(false);
+
+    if(e.key==='1'){
+      markAnswer(true);
+    }
+    else if(e.key==='2'){
+      markAnswer(false);
+    }
+    else if(e.key==='3'){
+      stopSession();
+    }
   });
 
   teacherCorrect.addEventListener('click',()=>markAnswer(true));
@@ -196,7 +203,6 @@
     html+=`</div><div style="text-align:center;margin-top:16px"><button id="playAgain" class="btn-red" style="padding:8px 14px;border-radius:8px;">Play Again</button></div>`;
     summaryDiv.innerHTML=html;
     summaryDiv.style.display='block';
-    summaryDiv.scrollTo(0,0);
     const pa=document.getElementById('playAgain');
     if(pa)pa.addEventListener('click',resetAll);
   }
@@ -214,11 +220,8 @@
   resetBtn.addEventListener('click',resetAll);
   stopBtn.addEventListener('click',stopSession);
 
-  // Auto-start timer and first word
   startTimer();
   showWord(pickNext());
-
-  window._qps={resetAll,stopSession,getHistory:()=>history.slice()};
 })();
 </script>
 </body>
