@@ -16,7 +16,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Sparkly animated text */
+/* Sparkle text */
 .sparkle {
   font-weight: bold;
   background: linear-gradient(90deg, #fff, #facc15, #fff);
@@ -55,19 +55,19 @@ h1 {
 
 .smile-layer {
   position: absolute;
+  bottom: 0;
   width: 100%;
-  height: 100%;
+}
+
+.smile-row {
+  display: flex;
+  justify-content: center;
+  line-height: 1;
 }
 
 .smile {
-  position: absolute;
   font-size: 20px;
-  animation: drop 0.4s ease-in;
-}
-
-@keyframes drop {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  margin: -2px;
 }
 
 .base {
@@ -132,9 +132,12 @@ button {
 <script>
 const machineArea = document.getElementById("machineArea");
 
+const ROWS = 12;          // how tall the jar fills
+const SMILES_PER_ROW = 10; // width density
+const MAX_SMILES = ROWS * SMILES_PER_ROW;
+
 /* CREATE MACHINES */
 for (let i = 1; i <= 6; i++) {
-
   const machine = document.createElement("div");
   machine.className = "machine";
   machine.dataset.index = i;
@@ -177,7 +180,7 @@ function addSmiles(input) {
   updateMachine(machine);
 }
 
-/* REBUILD JAR */
+/* REBUILD JAR WITH STACKED SMILES */
 function updateMachine(machine) {
   const index = machine.dataset.index;
   const goal = parseInt(machine.querySelector('.goal-input').value) || 100;
@@ -185,28 +188,31 @@ function updateMachine(machine) {
 
   machine.querySelector('.count').textContent = count;
 
-  const jar = machine.querySelector('.smile-layer');
-  jar.innerHTML = '';
+  const smileLayer = machine.querySelector('.smile-layer');
+  smileLayer.innerHTML = '';
 
-  const jarSize = 220;
-  const center = jarSize / 2;
-  const radius = jarSize / 2;
+  const percent = count / goal;
+  const totalSmilesToShow = Math.floor(percent * MAX_SMILES);
 
-  for (let i = 0; i < count; i++) {
-    const smile = document.createElement('div');
-    smile.className = 'smile';
-    smile.textContent = '😊';
+  let remaining = totalSmilesToShow;
 
-    let x, y;
-    do {
-      x = Math.random() * jarSize;
-      y = Math.random() * jarSize;
-    } while (Math.pow(x - center, 2) + Math.pow(y - center, 2) > Math.pow(radius - 12, 2));
+  for (let r = 0; r < ROWS; r++) {
+    if (remaining <= 0) break;
 
-    smile.style.left = x + 'px';
-    smile.style.top = y + 'px';
+    const row = document.createElement('div');
+    row.className = 'smile-row';
 
-    jar.appendChild(smile);
+    const rowCount = Math.min(SMILES_PER_ROW, remaining);
+
+    for (let s = 0; s < rowCount; s++) {
+      const smile = document.createElement('span');
+      smile.className = 'smile';
+      smile.textContent = '😊';
+      row.appendChild(smile);
+    }
+
+    smileLayer.prepend(row);
+    remaining -= rowCount;
   }
 
   if (count >= goal) {
@@ -223,7 +229,6 @@ function updateMachine(machine) {
 function resetMachine(btn) {
   const machine = btn.closest('.machine');
   const index = machine.dataset.index;
-
   localStorage.removeItem('count'+index);
   updateMachine(machine);
 }
@@ -237,7 +242,7 @@ function saveMachineSettings(machine) {
     machine.querySelector('.machine-name').value);
 }
 
-/* LOAD SAVED DATA */
+/* LOAD DATA */
 function loadData() {
   for (let i = 1; i <= 6; i++) {
     const machine = document.querySelector(
@@ -257,7 +262,7 @@ function loadData() {
   updateMachines();
 }
 
-/* SHOW/HIDE MACHINES */
+/* SHOW/HIDE */
 function updateMachines() {
   const count = parseInt(document.getElementById('machineSelect').value);
   localStorage.setItem('machineCount', count);
@@ -267,7 +272,6 @@ function updateMachines() {
       m.style.display = i < count ? 'block' : 'none');
 }
 
-/* AUTO SAVE INPUT CHANGES */
 document.addEventListener("input", function(e) {
   if (e.target.classList.contains("goal-input") ||
       e.target.classList.contains("machine-name")) {
