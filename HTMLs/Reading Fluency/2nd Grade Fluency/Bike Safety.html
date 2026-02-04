@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading Passage Timer - Multi Student</title>
+<style>
+    body {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        padding: 20px;
+        background-color: #fefefe;
+    }
+    #passage {
+        line-height: 1.6;
+        font-size: 24px;
+        margin-top: 20px;
+        cursor: pointer;
+        white-space: pre-wrap;
+    }
+    .word {
+        padding: 2px 4px;
+        border-radius: 50%;
+        transition: background-color 0.3s, color 0.3s;
+        user-select: none;
+    }
+    #counter, #timer {
+        margin-top: 20px;
+        font-size: 20px;
+    }
+    button {
+        margin-top: 10px;
+        font-size: 18px;
+        padding: 5px 10px;
+        margin-right: 5px;
+    }
+    select, input {
+        font-size: 18px;
+        margin-top: 10px;
+        margin-right: 5px;
+    }
+    #dayBoxes {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+    }
+    .dayBox {
+        flex: 1;
+        padding: 10px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 5px;
+    }
+    .red { background-color: red; }
+    .green { background-color: green; }
+    .blue { background-color: blue; }
+    .purple { background-color: purple; }
+    .pink { background-color: pink; }
+    .danger { background-color: darkred; color: white; }
+</style>
+</head>
+<body>
+
+<!-- Student selection -->
+<label for="studentSelect">Select student:</label>
+<select id="studentSelect"></select>
+<input type="text" id="newStudent" placeholder="Add student">
+<button onclick="addStudent()">Add</button>
+
+<br>
+
+<!-- Color/day selection -->
+<label for="colorSelect">Select highlight color/day:</label>
+<select id="colorSelect">
+    <option value="red">Monday</option>
+    <option value="green">Tuesday</option>
+    <option value="blue">Wednesday</option>
+    <option value="purple">Thursday</option>
+    <option value="pink">Friday</option>
+</select>
+
+<!-- Passage -->
+<div id="passage">
+Bike Safety
+Imagine riding your bike. It is a lot of fun!
+You can glide down a slope. You can pedal hard
+to climb a hill. Do you have good rules to follow
+when you ride a bike?
+Do you think about what could happen? Do
+you judge how to stay safe? City streets are full
+of signs you need to read. You learn to look twice
+before you cross a road.
+There are other rules to follow when you cycle.
+You should not ride too fast. This can surprise or
+scare other people. Ride in a line with other bikes.
+Slow down when others are around.
+You also need to wear a bike helmet. This will
+help keep you safe if you fall off your bike. Your
+helmet should be tight on your head. You need to
+look at your bike, too. Is it safe to ride? Use tools
+to make your bike safe.
+Bikes are fun to ride at any age. Just
+remember to keep your ride safe!
+</div>
+
+<div id="counter">Words read: 0</div>
+
+<div id="timer">Time: 01:00</div>
+<button onclick="startTimer()">Start Timer</button>
+<button onclick="stopTimer()">Stop Timer</button>
+<button onclick="resetTimer()">Reset Timer</button>
+<button onclick="resetPassage()">Reset Passage</button>
+<button class="danger" onclick="resetAll()">Reset All</button>
+
+<!-- Day boxes -->
+<div id="dayBoxes">
+    <div id="mondayBox" class="dayBox red">Monday: 0</div>
+    <div id="tuesdayBox" class="dayBox green">Tuesday: 0</div>
+    <div id="wednesdayBox" class="dayBox blue">Wednesday: 0</div>
+    <div id="thursdayBox" class="dayBox purple">Thursday: 0</div>
+    <div id="fridayBox" class="dayBox pink">Friday: 0</div>
+</div>
+
+<script>
+    const passageDiv = document.getElementById('passage');
+    const counterDiv = document.getElementById('counter');
+    const timerDiv = document.getElementById('timer');
+    const colorSelect = document.getElementById('colorSelect');
+    const studentSelect = document.getElementById('studentSelect');
+    const newStudentInput = document.getElementById('newStudent');
+
+    const originalPassage = passageDiv.innerText;
+    let allWordSpans = [];
+
+    const dayBoxes = {
+        red: document.getElementById('mondayBox'),
+        green: document.getElementById('tuesdayBox'),
+        blue: document.getElementById('wednesdayBox'),
+        purple: document.getElementById('thursdayBox'),
+        pink: document.getElementById('fridayBox')
+    };
+
+    // Store student data
+    let students = {};
+    let currentStudent = null;
+
+    function wrapWords(text) {
+        const words = text.split(/(\s+)/);
+        const fragment = document.createDocumentFragment();
+        words.forEach(word => {
+            if (word.trim() === '') {
+                fragment.appendChild(document.createTextNode(word));
+            } else {
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.className = 'word';
+                span.dataset.index = allWordSpans.length;
+                span.addEventListener('click', () => highlightWord(span));
+                allWordSpans.push(span);
+                fragment.appendChild(span);
+            }
+        });
+        return fragment;
+    }
+
+    function initializePassage() {
+        passageDiv.innerHTML = '';
+        allWordSpans = [];
+        passageDiv.appendChild(wrapWords(originalPassage));
+        updateCounter(0);
+        if(currentStudent) restoreHighlights();
+    }
+
+    function addStudent() {
+        const name = newStudentInput.value.trim();
+        if(!name) return;
+        if(!students[name]){
+            students[name] = { red: 0, green: 0, blue: 0, purple: 0, pink: 0, highlights: [] };
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            studentSelect.appendChild(option);
+        }
+        studentSelect.value = name;
+        currentStudent = students[name];
+        initializePassage();
+        updateDayBoxes();
+        newStudentInput.value = '';
+    }
+
+    studentSelect.addEventListener('change', () => {
+        const name = studentSelect.value;
+        if(!students[name]) return;
+        currentStudent = students[name];
+        initializePassage();
+        updateDayBoxes();
+    });
+
+    function highlightWord(span) {
+        if(!currentStudent) return;
+        const selectedColor = colorSelect.value;
+        const index = parseInt(span.dataset.index);
+        span.style.backgroundColor = selectedColor;
+        span.style.color = 'white';
+
+        currentStudent.highlights[index] = selectedColor;
+        const wordsRead = index + 1;
+        currentStudent[selectedColor] = wordsRead;
+        updateCounter(wordsRead);
+        updateDayBoxes();
+    }
+
+    function restoreHighlights() {
+        allWordSpans.forEach((span, i) => {
+            const color = currentStudent.highlights[i];
+            if(color){
+                span.style.backgroundColor = color;
+                span.style.color = 'white';
+            }
+        });
+    }
+
+    function updateCounter(count) {
+        counterDiv.innerText = `Words read: ${count}`;
+    }
+
+    function updateDayBoxes() {
+        for(const color in dayBoxes){
+            dayBoxes[color].innerText = `${capitalizeDay(color)}: ${currentStudent[color] || 0}`;
+        }
+    }
+
+    function capitalizeDay(color) {
+        switch(color){
+            case 'red': return 'Monday';
+            case 'green': return 'Tuesday';
+            case 'blue': return 'Wednesday';
+            case 'purple': return 'Thursday';
+            case 'pink': return 'Friday';
+        }
+    }
+
+    function resetPassage() {
+        if(!currentStudent) return;
+        // Clear only current student's highlights and day scores
+        currentStudent.highlights = [];
+        currentStudent.red = 0;
+        currentStudent.green = 0;
+        currentStudent.blue = 0;
+        currentStudent.purple = 0;
+        currentStudent.pink = 0;
+
+        initializePassage();
+        updateDayBoxes();
+        resetTimer();
+    }
+
+    function resetAll() {
+        // Clear all students
+        students = {};
+        currentStudent = null;
+
+        // Clear student dropdown
+        studentSelect.innerHTML = '';
+        
+        // Clear highlights and day boxes
+        allWordSpans.forEach(span => {
+            span.style.backgroundColor = '';
+            span.style.color = '';
+        });
+        resetDayBoxes();
+        updateCounter(0);
+        resetTimer();
+    }
+
+    function resetDayBoxes() {
+        for(const color in dayBoxes){
+            dayBoxes[color].innerText = `${capitalizeDay(color)}: 0`;
+        }
+    }
+
+    // Timer
+    let timer = 60;
+    let interval;
+
+    function updateTimerDisplay() {
+        let minutes = Math.floor(timer / 60).toString().padStart(2, '0');
+        let seconds = (timer % 60).toString().padStart(2, '0');
+        timerDiv.innerText = `Time: ${minutes}:${seconds}`;
+    }
+
+    function startTimer() {
+        stopTimer();
+        interval = setInterval(() => {
+            if(timer > 0){
+                timer--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
+
+    function stopTimer() { clearInterval(interval); }
+
+    function resetTimer() {
+        stopTimer();
+        timer = 60;
+        updateTimerDisplay();
+    }
+
+    document.addEventListener('keydown', (e)=>{
+    if(e.key === '1') startTimer();
+    if(e.key === '2') stopTimer();
+    if(e.key === '3') resetTimer();
+    if(e.key === '4') resetPassage();
+    if(e.key === '5') resetAll();
+});
+
+    updateTimerDisplay();
+    initializePassage();
+</script>
+
+</body>
+</html>
