@@ -149,38 +149,6 @@ const colorSelect = document.getElementById('colorSelect');
 const studentSelect = document.getElementById('studentSelect');
 const newStudentInput = document.getElementById('newStudent');
 
-let audioContext;
-
-// Unlock audio on first interaction
-document.addEventListener("click", () => {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-}, { once: true });
-
-function playBell() {
-    if (!audioContext) return;
-
-    const duration = 1.2;
-    const now = audioContext.currentTime;
-
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(880, now);
-    osc.frequency.exponentialRampToValueAtTime(440, now + duration);
-
-    gain.gain.setValueAtTime(0.5, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-
-    osc.start(now);
-    osc.stop(now + duration);
-}
-
 const originalPassage = passageDiv.innerText;
 let allWordSpans = [];
 
@@ -342,7 +310,6 @@ function startTimer() {
             updateTimerDisplay();
         } else {
             clearInterval(interval);
-            playbell();
         }
     }, 1000);
 }
