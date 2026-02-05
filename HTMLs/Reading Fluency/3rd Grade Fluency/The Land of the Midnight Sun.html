@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Land of the Might Sun Fluency</title>
+<style>
+    body {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fefefe;
+    }
+    #container {
+        display: flex;
+        height: 100vh;
+    }
+    #leftColumn {
+        flex: 2;
+        padding: 20px;
+        overflow-y: auto;
+        border-right: 2px solid #ccc;
+    }
+    #rightColumn {
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+    }
+    #passage {
+        line-height: 1.6;
+        font-size: 24px;
+        cursor: pointer;
+        white-space: pre-wrap;
+    }
+    .word {
+        padding: 2px 4px;
+        border-radius: 50%;
+        transition: background-color 0.3s, color 0.3s;
+        user-select: none;
+    }
+    #counter, #timer {
+        font-size: 20px;
+    }
+    button, select, input {
+        font-size: 18px;
+        padding: 5px 10px;
+    }
+    #dayBoxes {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    .dayBox {
+        padding: 10px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 5px;
+    }
+    .red { background-color: red; }
+    .green { background-color: green; }
+    .blue { background-color: blue; }
+    .purple { background-color: purple; }
+    .pink { background-color: pink; }
+    .danger { background-color: darkred; color: white; }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <!-- Left Column: Passage -->
+    <div id="leftColumn">
+        <div id="passage">
+The Land of the Midnight Sun
+Iceland is a country that is also a large island. It 
+is a great place to see. It is very far north in the North 
+Atlantic Ocean. In the winter, it is very dark. There is 
+daylight for only four to six hours a day. But for about 
+three months in summer, it doesn’t get dark at all. 
+That is why some people call Iceland “the land of the 
+midnight Sun.”
+Even though Iceland is very far north, it is not 
+as cold as you might think. Most people in Iceland 
+live near the sea. Warm winds from the sea help to 
+keep the land from getting very cold. The summers 
+in Iceland are cool, too. It feels more like spring than 
+the hot summers we are used to in the United States. 
+Iceland is a wonderful place to visit. It is very pretty, 
+and many animals live there, including foxes, rabbits, 
+and reindeer. You should think about going to see this 
+island soon!
+        </div>
+    </div>
+
+    <!-- Right Column: Tools -->
+    <div id="rightColumn">
+        <!-- Student selection -->
+        <label for="studentSelect">Select student:</label>
+        <select id="studentSelect"></select>
+        <input type="text" id="newStudent" placeholder="Add student">
+        <button onclick="addStudent()">Add</button>
+
+        <!-- Color/day selection -->
+        <label for="colorSelect">Select highlight color/day:</label>
+        <select id="colorSelect">
+            <option value="red">Monday</option>
+            <option value="green">Tuesday</option>
+            <option value="blue">Wednesday</option>
+            <option value="purple">Thursday</option>
+            <option value="pink">Friday</option>
+        </select>
+
+        <!-- Timer -->
+        <div id="timer">Time: 01:00</div>
+        <button onclick="startTimer()">Start Timer</button>
+        <button onclick="stopTimer()">Stop Timer</button>
+        <button onclick="resetTimer()">Reset Timer</button>
+        <button onclick="resetPassage()">Reset Passage</button>
+        <button class="danger" onclick="resetAll()">Reset All</button>
+
+        <!-- Counter -->
+        <div id="counter">Words read: 0</div>
+
+        <!-- Day boxes -->
+        <div id="dayBoxes">
+            <div id="mondayBox" class="dayBox red">Monday: 0</div>
+            <div id="tuesdayBox" class="dayBox green">Tuesday: 0</div>
+            <div id="wednesdayBox" class="dayBox blue">Wednesday: 0</div>
+            <div id="thursdayBox" class="dayBox purple">Thursday: 0</div>
+            <div id="fridayBox" class="dayBox pink">Friday: 0</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const passageDiv = document.getElementById('passage');
+const counterDiv = document.getElementById('counter');
+const timerDiv = document.getElementById('timer');
+const colorSelect = document.getElementById('colorSelect');
+const studentSelect = document.getElementById('studentSelect');
+const newStudentInput = document.getElementById('newStudent');
+
+const originalPassage = passageDiv.innerText;
+let allWordSpans = [];
+
+const dayBoxes = {
+    red: document.getElementById('mondayBox'),
+    green: document.getElementById('tuesdayBox'),
+    blue: document.getElementById('wednesdayBox'),
+    purple: document.getElementById('thursdayBox'),
+    pink: document.getElementById('fridayBox')
+};
+
+// Store student data
+let students = {};
+let currentStudent = null;
+
+function wrapWords(text) {
+    const words = text.split(/(\s+)/);
+    const fragment = document.createDocumentFragment();
+    words.forEach(word => {
+        if (word.trim() === '') {
+            fragment.appendChild(document.createTextNode(word));
+        } else {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.className = 'word';
+            span.dataset.index = allWordSpans.length;
+            span.addEventListener('click', () => highlightWord(span));
+            allWordSpans.push(span);
+            fragment.appendChild(span);
+        }
+    });
+    return fragment;
+}
+
+function initializePassage() {
+    passageDiv.innerHTML = '';
+    allWordSpans = [];
+    passageDiv.appendChild(wrapWords(originalPassage));
+    updateCounter(0);
+    if(currentStudent) restoreHighlights();
+}
+
+function addStudent() {
+    const name = newStudentInput.value.trim();
+    if(!name) return;
+    if(!students[name]){
+        students[name] = { red: 0, green: 0, blue: 0, purple: 0, pink: 0, highlights: [] };
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        studentSelect.appendChild(option);
+    }
+    studentSelect.value = name;
+    currentStudent = students[name];
+    initializePassage();
+    updateDayBoxes();
+    newStudentInput.value = '';
+}
+
+studentSelect.addEventListener('change', () => {
+    const name = studentSelect.value;
+    if(!students[name]) return;
+    currentStudent = students[name];
+    initializePassage();
+    updateDayBoxes();
+});
+
+function highlightWord(span) {
+    if(!currentStudent) return;
+    const selectedColor = colorSelect.value;
+    const index = parseInt(span.dataset.index);
+    span.style.backgroundColor = selectedColor;
+    span.style.color = 'white';
+
+    currentStudent.highlights[index] = selectedColor;
+    const wordsRead = index + 1;
+    currentStudent[selectedColor] = wordsRead;
+    updateCounter(wordsRead);
+    updateDayBoxes();
+}
+
+function restoreHighlights() {
+    allWordSpans.forEach((span, i) => {
+        const color = currentStudent.highlights[i];
+        if(color){
+            span.style.backgroundColor = color;
+            span.style.color = 'white';
+        }
+    });
+}
+
+function updateCounter(count) {
+    counterDiv.innerText = `Words read: ${count}`;
+}
+
+function updateDayBoxes() {
+    for(const color in dayBoxes){
+        dayBoxes[color].innerText = `${capitalizeDay(color)}: ${currentStudent[color] || 0}`;
+    }
+}
+
+function capitalizeDay(color) {
+    switch(color){
+        case 'red': return 'Monday';
+        case 'green': return 'Tuesday';
+        case 'blue': return 'Wednesday';
+        case 'purple': return 'Thursday';
+        case 'pink': return 'Friday';
+    }
+}
+
+function resetPassage() {
+    if(!currentStudent) return;
+    currentStudent.highlights = [];
+    currentStudent.red = 0;
+    currentStudent.green = 0;
+    currentStudent.blue = 0;
+    currentStudent.purple = 0;
+    currentStudent.pink = 0;
+    initializePassage();
+    updateDayBoxes();
+    resetTimer();
+}
+
+function resetAll() {
+    students = {};
+    currentStudent = null;
+    studentSelect.innerHTML = '';
+    allWordSpans.forEach(span => {
+        span.style.backgroundColor = '';
+        span.style.color = '';
+    });
+    resetDayBoxes();
+    updateCounter(0);
+    resetTimer();
+}
+
+function resetDayBoxes() {
+    for(const color in dayBoxes){
+        dayBoxes[color].innerText = `${capitalizeDay(color)}: 0`;
+    }
+}
+
+// Timer
+let timer = 60;
+let interval;
+
+function updateTimerDisplay() {
+    let minutes = Math.floor(timer / 60).toString().padStart(2, '0');
+    let seconds = (timer % 60).toString().padStart(2, '0');
+    timerDiv.innerText = `Time: ${minutes}:${seconds}`;
+}
+
+function startTimer() {
+    stopTimer();
+    interval = setInterval(() => {
+        if(timer > 0){
+            timer--;
+            updateTimerDisplay();
+        } else {
+            clearInterval(interval);
+        }
+    }, 1000);
+}
+
+function stopTimer() { clearInterval(interval); }
+
+function resetTimer() {
+    stopTimer();
+    timer = 60;
+    updateTimerDisplay();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e)=>{
+    if(e.key === '1') startTimer();
+    if(e.key === '2') stopTimer();
+    if(e.key === '3') resetTimer();
+    if(e.key === '4') resetPassage();
+    if(e.key === '5') resetAll();
+});
+
+updateTimerDisplay();
+initializePassage();
+</script>
+
+</body>
+</html>
+
