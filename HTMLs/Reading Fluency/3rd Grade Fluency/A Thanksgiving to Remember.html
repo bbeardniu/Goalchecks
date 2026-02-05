@@ -310,6 +310,7 @@ function startTimer() {
             updateTimerDisplay();
         } else {
             clearInterval(interval);
+            document.getElementById("bellSound").play();
         }
     }, 1000);
 }
@@ -335,6 +336,11 @@ updateTimerDisplay();
 initializePassage();
 </script>
 
+    <audio id="bellSound" preload="auto">
+    <source src="https://actions.google.com/sounds/v1/alarms/school_bell_ring.ogg" type="audio/ogg">
+</audio>
+
+    
 </body>
 </html>
 
