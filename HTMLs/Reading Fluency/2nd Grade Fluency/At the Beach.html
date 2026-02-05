@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>At the Beach Fluency</title>
+<style>
+    body {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fefefe;
+    }
+    #container {
+        display: flex;
+        height: 100vh;
+    }
+    #leftColumn {
+        flex: 2;
+        padding: 20px;
+        overflow-y: auto;
+        border-right: 2px solid #ccc;
+    }
+    #rightColumn {
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+    }
+    #passage {
+        line-height: 1.6;
+        font-size: 24px;
+        cursor: pointer;
+        white-space: pre-wrap;
+    }
+    .word {
+        padding: 2px 4px;
+        border-radius: 50%;
+        transition: background-color 0.3s, color 0.3s;
+        user-select: none;
+    }
+    #counter, #timer {
+        font-size: 20px;
+    }
+    button, select, input {
+        font-size: 18px;
+        padding: 5px 10px;
+    }
+    #dayBoxes {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    .dayBox {
+        padding: 10px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 5px;
+    }
+    .red { background-color: red; }
+    .green { background-color: green; }
+    .blue { background-color: blue; }
+    .purple { background-color: purple; }
+    .pink { background-color: pink; }
+    .danger { background-color: darkred; color: white; }
+</style>
+</head>
+<body>
+
+<div id="container">
+    <!-- Left Column: Passage -->
+    <div id="leftColumn">
+        <div id="passage">
+At the Beach
+Ben and his family walked on the beach. Ben 
+liked the beach and the sunshine. He hopped in 
+the sand. It was rough with pebbles, but he kept 
+hopping.
+Ben spotted fish in a narrow bit of water. 
+They were swimming close together. His father 
+snapped a photo. Then Ben watched two crabs 
+hiding near some shells. He wondered which 
+shell the bigger crab would decide to live in. He 
+also saw a few birds flying high in the sky. Would 
+they catch some fish to eat?
+Many people were swimming and splashing in 
+the water. A dog chased a yellow ball. Ben saw 
+children making sandcastles. What would it be 
+like to join them later? They were having a lot 
+of fun.
+He sat near some children on the beach and 
+watched. Then he helped to make the sandcastle. 
+Ben had a happy day at the beach!
+    </div>
+
+    <!-- Right Column: Tools -->
+    <div id="rightColumn">
+        <!-- Student selection -->
+        <label for="studentSelect">Select student:</label>
+        <select id="studentSelect"></select>
+        <input type="text" id="newStudent" placeholder="Add student">
+        <button onclick="addStudent()">Add</button>
+
+        <!-- Color/day selection -->
+        <label for="colorSelect">Select highlight color/day:</label>
+        <select id="colorSelect">
+            <option value="red">Monday</option>
+            <option value="green">Tuesday</option>
+            <option value="blue">Wednesday</option>
+            <option value="purple">Thursday</option>
+            <option value="pink">Friday</option>
+        </select>
+
+        <!-- Timer -->
+        <div id="timer">Time: 01:00</div>
+        <button onclick="startTimer()">Start Timer</button>
+        <button onclick="stopTimer()">Stop Timer</button>
+        <button onclick="resetTimer()">Reset Timer</button>
+        <button onclick="resetPassage()">Reset Passage</button>
+        <button class="danger" onclick="resetAll()">Reset All</button>
+
+        <!-- Counter -->
+        <div id="counter">Words read: 0</div>
+
+        <!-- Day boxes -->
+        <div id="dayBoxes">
+            <div id="mondayBox" class="dayBox red">Monday: 0</div>
+            <div id="tuesdayBox" class="dayBox green">Tuesday: 0</div>
+            <div id="wednesdayBox" class="dayBox blue">Wednesday: 0</div>
+            <div id="thursdayBox" class="dayBox purple">Thursday: 0</div>
+            <div id="fridayBox" class="dayBox pink">Friday: 0</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const passageDiv = document.getElementById('passage');
+const counterDiv = document.getElementById('counter');
+const timerDiv = document.getElementById('timer');
+const colorSelect = document.getElementById('colorSelect');
+const studentSelect = document.getElementById('studentSelect');
+const newStudentInput = document.getElementById('newStudent');
+
+const originalPassage = passageDiv.innerText;
+let allWordSpans = [];
+
+const dayBoxes = {
+    red: document.getElementById('mondayBox'),
+    green: document.getElementById('tuesdayBox'),
+    blue: document.getElementById('wednesdayBox'),
+    purple: document.getElementById('thursdayBox'),
+    pink: document.getElementById('fridayBox')
+};
+
+// 🔔 Bell Audio Setup
+let audioContext = null;
+
+function unlockAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playBell() {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc1.type = "sine";
+    osc2.type = "sine";
+
+    osc1.frequency.setValueAtTime(880, now);
+    osc2.frequency.setValueAtTime(660, now);
+
+    gain.gain.setValueAtTime(0.6, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 1.5);
+    osc2.stop(now + 1.5);
+}
+
+// Store student data
+let students = {};
+let currentStudent = null;
+
+function wrapWords(text) {
+    const words = text.split(/(\s+)/);
+    const fragment = document.createDocumentFragment();
+    words.forEach(word => {
+        if (word.trim() === '') {
+            fragment.appendChild(document.createTextNode(word));
+        } else {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.className = 'word';
+            span.dataset.index = allWordSpans.length;
+            span.addEventListener('click', () => highlightWord(span));
+            allWordSpans.push(span);
+            fragment.appendChild(span);
+        }
+    });
+    return fragment;
+}
+
+function initializePassage() {
+    passageDiv.innerHTML = '';
+    allWordSpans = [];
+    passageDiv.appendChild(wrapWords(originalPassage));
+    updateCounter(0);
+    if(currentStudent) restoreHighlights();
+}
+
+function addStudent() {
+    const name = newStudentInput.value.trim();
+    if(!name) return;
+    if(!students[name]){
+        students[name] = { red: 0, green: 0, blue: 0, purple: 0, pink: 0, highlights: [] };
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        studentSelect.appendChild(option);
+    }
+    studentSelect.value = name;
+    currentStudent = students[name];
+    initializePassage();
+    updateDayBoxes();
+    newStudentInput.value = '';
+}
+
+studentSelect.addEventListener('change', () => {
+    const name = studentSelect.value;
+    if(!students[name]) return;
+    currentStudent = students[name];
+    initializePassage();
+    updateDayBoxes();
+});
+
+function highlightWord(span) {
+    if(!currentStudent) return;
+    const selectedColor = colorSelect.value;
+    const index = parseInt(span.dataset.index);
+    span.style.backgroundColor = selectedColor;
+    span.style.color = 'white';
+
+    currentStudent.highlights[index] = selectedColor;
+    const wordsRead = index + 1;
+    currentStudent[selectedColor] = wordsRead;
+    updateCounter(wordsRead);
+    updateDayBoxes();
+}
+
+function restoreHighlights() {
+    allWordSpans.forEach((span, i) => {
+        const color = currentStudent.highlights[i];
+        if(color){
+            span.style.backgroundColor = color;
+            span.style.color = 'white';
+        }
+    });
+}
+
+function updateCounter(count) {
+    counterDiv.innerText = `Words read: ${count}`;
+}
+
+function updateDayBoxes() {
+    for(const color in dayBoxes){
+        dayBoxes[color].innerText = `${capitalizeDay(color)}: ${currentStudent[color] || 0}`;
+    }
+}
+
+function capitalizeDay(color) {
+    switch(color){
+        case 'red': return 'Monday';
+        case 'green': return 'Tuesday';
+        case 'blue': return 'Wednesday';
+        case 'purple': return 'Thursday';
+        case 'pink': return 'Friday';
+    }
+}
+
+function resetPassage() {
+    if(!currentStudent) return;
+    currentStudent.highlights = [];
+    currentStudent.red = 0;
+    currentStudent.green = 0;
+    currentStudent.blue = 0;
+    currentStudent.purple = 0;
+    currentStudent.pink = 0;
+    initializePassage();
+    updateDayBoxes();
+    resetTimer();
+}
+
+function resetAll() {
+    students = {};
+    currentStudent = null;
+    studentSelect.innerHTML = '';
+    allWordSpans.forEach(span => {
+        span.style.backgroundColor = '';
+        span.style.color = '';
+    });
+    resetDayBoxes();
+    updateCounter(0);
+    resetTimer();
+}
+
+function resetDayBoxes() {
+    for(const color in dayBoxes){
+        dayBoxes[color].innerText = `${capitalizeDay(color)}: 0`;
+    }
+}
+
+// Timer
+let timer = 60;
+let interval;
+
+function updateTimerDisplay() {
+    let minutes = Math.floor(timer / 60).toString().padStart(2, '0');
+    let seconds = (timer % 60).toString().padStart(2, '0');
+    timerDiv.innerText = `Time: ${minutes}:${seconds}`;
+}
+
+function startTimer() {
+    unlockAudio();  // unlocks sound on button press
+    stopTimer();
+
+    interval = setInterval(() => {
+        if(timer > 0){
+            timer--;
+            updateTimerDisplay();
+        } else {
+            clearInterval(interval);
+            playBell(); // 🔔 plays bell when time hits 0
+        }
+    }, 1000);
+}
+
+function stopTimer() { clearInterval(interval); }
+
+function resetTimer() {
+    stopTimer();
+    timer = 60;
+    updateTimerDisplay();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e)=>{
+    if(e.key === '1') startTimer();
+    if(e.key === '2') stopTimer();
+    if(e.key === '3') resetTimer();
+    if(e.key === '4') resetPassage();
+    if(e.key === '5') resetAll();
+});
+
+updateTimerDisplay();
+initializePassage();
+</script>
+
+</body>
+</html>
+
