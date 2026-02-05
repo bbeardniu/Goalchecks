@@ -160,6 +160,43 @@ const dayBoxes = {
     pink: document.getElementById('fridayBox')
 };
 
+// 🔔 Bell Audio Setup
+let audioContext = null;
+
+function unlockAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playBell() {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc1.type = "sine";
+    osc2.type = "sine";
+
+    osc1.frequency.setValueAtTime(880, now);
+    osc2.frequency.setValueAtTime(660, now);
+
+    gain.gain.setValueAtTime(0.6, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 1.5);
+    osc2.stop(now + 1.5);
+}
+
 // Store student data
 let students = {};
 let currentStudent = null;
@@ -303,13 +340,16 @@ function updateTimerDisplay() {
 }
 
 function startTimer() {
+    unlockAudio();  // unlocks sound on button press
     stopTimer();
+
     interval = setInterval(() => {
         if(timer > 0){
             timer--;
             updateTimerDisplay();
         } else {
             clearInterval(interval);
+            playBell(); // 🔔 plays bell when time hits 0
         }
     }, 1000);
 }
