@@ -27,7 +27,7 @@ h1 {
     gap: 25px;
 }
 
-/* FOLDER CARD */
+/* CARD STYLE */
 details {
     background: white;
     border-radius: 14px;
@@ -40,7 +40,7 @@ details:hover {
     transform: translateY(-4px);
 }
 
-/* REMOVE DEFAULT TRIANGLE */
+/* Summary styling */
 summary {
     list-style: none;
     cursor: pointer;
@@ -56,7 +56,7 @@ summary::-webkit-details-marker {
     display: none;
 }
 
-/* Custom arrow */
+/* Arrow */
 summary::after {
     content: "▼";
     font-size: 14px;
@@ -67,7 +67,7 @@ details[open] summary::after {
     transform: rotate(180deg);
 }
 
-/* Dropdown animation */
+/* List styling */
 ul {
     list-style: none;
     padding-left: 10px;
@@ -93,15 +93,22 @@ a {
 a:hover {
     text-decoration: underline;
 }
-</style>
 
+/* Audio styling */
+audio {
+    width: 100%;
+    margin-top: 5px;
+}
+</style>
 </head>
+
 <body>
 
 <h1>Beard Classroom Goal Checks Index</h1>
 
 <div class="container">
 
+<!-- MATH ADD / SUB -->
 <details>
 <summary>Math Addition and Subtraction</summary>
 <ul>
@@ -116,6 +123,7 @@ a:hover {
 </ul>
 </details>
 
+<!-- MATH MULT / DIV -->
 <details>
 <summary>Math Multiplication and Division</summary>
 <ul>
@@ -124,6 +132,36 @@ a:hover {
 </ul>
 </details>
 
+<!-- MATH SONGS -->
+<details>
+<summary>Math Songs</summary>
+<ul>
+
+<li>
+Count by 10s Song
+<audio controls>
+    <source src="HTMLs/Songs/Count by 10s song.mp3" type="audio/mpeg">
+</audio>
+</li>
+
+<li>
+Count by 5s Song
+<audio controls>
+    <source src="HTMLs/Songs/Count by 5s Song.mp3" type="audio/mpeg">
+</audio>
+</li>
+
+<li>
+Count by 2s Song
+<audio controls>
+    <source src="HTMLs/Songs/count by 2s Song.mp3" type="audio/mpeg">
+</audio>
+</li>
+
+</ul>
+</details>
+
+<!-- QPS -->
 <details>
 <summary>QPS</summary>
 <ul>
@@ -138,6 +176,7 @@ a:hover {
 </ul>
 </details>
 
+<!-- READING COMP -->
 <details>
 <summary>Reading Comprehension</summary>
 <ul>
@@ -149,6 +188,7 @@ a:hover {
 </ul>
 </details>
 
+<!-- READING FLUENCY -->
 <details>
 <summary>Reading Fluency</summary>
 <ul>
@@ -157,6 +197,7 @@ a:hover {
 </ul>
 </details>
 
+<!-- WRITING -->
 <details>
 <summary>Writing</summary>
 <ul>
@@ -166,6 +207,7 @@ a:hover {
 </ul>
 </details>
 
+<!-- CLASSROOM TOOLS -->
 <details>
 <summary>Classroom Tools</summary>
 <ul>
