@@ -6,7 +6,7 @@
 <title>Dinosaur Museum Fluency</title>
 <style>
     body {
-        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', Arial, sans-serif;
+       font-family: 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', Arial, sans-serif;
         margin: 0;
         padding: 0;
         background-color: #fefefe;
@@ -96,7 +96,9 @@ if you want to peek at something else. Objects
 are old and break easily, so do not touch things in 
 the museum. Be very careful!
 Have fun while you visit. It is a pleasure to 
-have you here!    </div>
+have you here!
+        </div>
+    </div>
 
     <!-- Right Column: Tools -->
     <div id="rightColumn">
@@ -374,4 +376,5 @@ initializePassage();
 
 </body>
 </html>
+
 
