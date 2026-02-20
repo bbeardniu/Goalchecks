@@ -3,58 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <title>BBeard Site</title>
+
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f7fa;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
 
-    /* Headings changed to Comic Sans */
-    h1, h2 {
-        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', Arial, sans-serif;
-    }
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #2c3e50;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', Arial, sans-serif;
+}
 
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #2c3e50;
-    }
+/* TWO COLUMN LAYOUT */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+}
 
-    .folder {
-        margin: 15px 0;
-        padding: 15px;
-        border-radius: 12px;
-        background: white;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+/* FOLDER CARD */
+details {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 15px 20px;
+    transition: transform 0.2s ease;
+}
 
-    .folder h2 {
-        margin: 0 0 10px 0;
-        font-size: 20px;
-        color: #34495e;
-    }
+details:hover {
+    transform: translateY(-4px);
+}
 
-    ul {
-        list-style-type: none;
-        padding-left: 15px;
-    }
+/* REMOVE DEFAULT TRIANGLE */
+summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: #34495e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    ul li {
-        padding: 5px 0;
-    }
+summary::-webkit-details-marker {
+    display: none;
+}
 
-    a {
-        text-decoration: none;
-        color: #1e88e5;
-        font-weight: bold;
-    }
+/* Custom arrow */
+summary::after {
+    content: "▼";
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+details[open] summary::after {
+    transform: rotate(180deg);
+}
+
+/* Dropdown animation */
+ul {
+    list-style: none;
+    padding-left: 10px;
+    margin-top: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-5px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+ul li {
+    padding: 6px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #1e88e5;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
 </style>
 
 </head>
@@ -62,193 +100,83 @@
 
 <h1>Beard Classroom Goal Checks Index</h1>
 
-<div class="folder">
-    <h2>Math Addition and Subtraction</h2>
-    <ul>
-        <li><a href="HTMLs/Math/2digit_addition_and_subtraction_no_regrouping.html">
-            2-Digit Addition & Subtraction (No Regrouping)
-        </a></li>
+<div class="container">
 
-        <li><a href="HTMLs/Math/addition_and_subtraction_within_20.html">
-            Addition & Subtraction Within 20
-        </a></li>
+<details>
+<summary>Math Addition and Subtraction</summary>
+<ul>
+<li><a href="HTMLs/Math/2digit_addition_and_subtraction_no_regrouping.html">2-Digit Addition & Subtraction (No Regrouping)</a></li>
+<li><a href="HTMLs/Math/addition_and_subtraction_within_20.html">Addition & Subtraction Within 20</a></li>
+<li><a href="HTMLs/Math/addition_and_subtraction_within_100.html">Addition & Subtraction Within 100</a></li>
+<li><a href="HTMLs/Math/Addition_Within20_Assessment.html">Addition Within 20</a></li>
+<li><a href="HTMLs/Math/Addition_Within100_Assessment.html">Addition Within 100</a></li>
+<li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">One Step Word Problems Within 20</a></li>
+<li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_100.html">One Step Word Problems Within 100</a></li>
+<li><a href="HTMLs/Math/Two_Step_Word_Add_Subtract_Within_100.html">Two Step Word Problems Within 100</a></li>
+</ul>
+</details>
 
-        <li><a href="HTMLs/Math/addition_and_subtraction_within_100.html">
-            Addition & Subtraction Within 100
-        </a></li>
+<details>
+<summary>Math Multiplication and Division</summary>
+<ul>
+<li><a href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">Single Digit Multiplication / Division</a></li>
+<li><a href="HTMLs/Math/multiplication_singledigit.html">Multiplication Single Digit</a></li>
+</ul>
+</details>
 
-        <li><a href="HTMLs/Math/Addition_Within20_Assessment.html">
-            Addition Within 20
-        </a></li>
+<details>
+<summary>QPS</summary>
+<ul>
+<li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">Letter Names & Sounds</a></li>
+<li><a href="HTMLs/QPS/02_CVC_Words.html">CVC Words</a></li>
+<li><a href="HTMLs/QPS/03_Diagraphs.html">Diagraphs</a></li>
+<li><a href="HTMLs/QPS/04_Blends.html">Blends</a></li>
+<li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">VCE Wordlist</a></li>
+<li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">R Controlled</a></li>
+<li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">Other Vowel Patterns</a></li>
+<li><a href="HTMLs/QPS/09_Multisyllable_Words.html">Multisyllable Words</a></li>
+</ul>
+</details>
 
-        <li><a href="HTMLs/Math/Addition_Within100_Assessment.html">
-            Addition Within 100
-        </a></li>
+<details>
+<summary>Reading Comprehension</summary>
+<ul>
+<li><a href="HTMLs/Reading Comp/Fact_Opinion.html">Fact and Opinion</a></li>
+<li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">Inferencing & Predictions</a></li>
+<li><a href="HTMLs/Reading Comp/Similes.html">Similes</a></li>
+<li><a href="HTMLs/Reading Comp/Cause and Effect.html">Cause and Effect</a></li>
+<li><a href="HTMLs/Reading Comp/Past Present Future Tenses.html">Past, Present & Future Tenses</a></li>
+</ul>
+</details>
 
-        <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">
-           One Step Word Problems Addition & Subtraction Within 20
-        </a></li>
+<details>
+<summary>Reading Fluency</summary>
+<ul>
+<li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">Fry Words First 100</a></li>
+<li><a href="HTMLs/Reading Fluency/Fluency Passages.html">Fluency Passages</a></li>
+</ul>
+</details>
 
-        <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_100.html">
-           One Step Word Problems Addition & Subtraction Within 100
-        </a></li>
+<details>
+<summary>Writing</summary>
+<ul>
+<li><a href="HTMLs/Writing/Nouns_and_Verbs.html">Nouns and Verbs</a></li>
+<li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">Nouns, Verbs, Adjectives, Adverbs</a></li>
+<li><a href="HTMLs/Writing/Writing Sentence Fill.html">Writing Sentence Fill</a></li>
+</ul>
+</details>
 
-        <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">
-           One Step Word Problems Addition & Subtraction Within 1000
-        </a></li>
+<details>
+<summary>Classroom Tools</summary>
+<ul>
+<li><a href="HTMLs/Thermometer.html">Reading Thermometers</a></li>
+<li><a href="HTMLs/Sea Reading.html">Sea Reading</a></li>
+<li><a href="HTMLs/Classroom Tools/Gumball.html">Smile Collector</a></li>
+<li><a href="HTMLs/Classroom Tools/Wheel.html">Wheel</a></li>
+</ul>
+</details>
 
-		<li><a href="HTMLs/Math/Two_Step_Word_Add_Subtract_Within_100.html">
-           Two Step Word Problems Addition & Subtraction Within 100
-        </a></li>
-
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>Math Multiplication and Division</h2>
-    <ul>
-
-        <li><a href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">
-            Single Digit Multipliaction or Single Digit Quotient Division
-        </a></li>
-
-        <li><a href="HTMLs/Math/multiplication_singledigit.html">
-            Multiplication Single Digit
-        </a></li>
-
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>QPS</h2>
-    <ul>
-	<li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">
-           Upper and Lower Case Random Lettername Sounds
-        </a></li>
-
-	<li><a href="HTMLs/QPS/02_CVC_Words.html">
-           CVC Words
-        </a></li>
-
-	<li><a href="HTMLs/QPS/03_Diagraphs.html">
-           Diagraphs
-        </a></li>
-
-	<li><a href="HTMLs/QPS/04_Blends.html">
-           Blends
-        </a></li>
-
-	<li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">
-           VCE Wordlist
-        </a></li>
-
-	<li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">
-           R Controlled Assessment
-        </a></li>
-
-	<li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">
-           Other Vowel Patterns
-        </a></li>
-
-	<li><a href="HTMLs/QPS/09_Multisyllable_Words.html">
-           Multisyllable Words
-        </a></li>
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>Reading Comp</h2>
-    <ul>
-        <li><a href="HTMLs/Reading Comp/Fact_Opinion.html">
-           Fact and Opinion
-        </a></li>
-
-        <li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">
-           Inferencing and Predictions
-        </a></li>
-
-        <li><a href="HTMLs/Reading Comp/Similes.html">
-           Similes
-        </a></li>
-
-		 <li><a href="HTMLs/Reading Comp/Cause and Effect.html">
-           Cause and Effect
-        </a></li>
-
- <li><a href="HTMLs/Reading Comp/Past Present Future Tenses.html">
-           Past, Present, & Future Tenses
-        </a></li>
-		
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>Reading Fluency</h2>
-    <ul>
-        <li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">
-           Fry Words First 100
-        </a></li>
-
-		<li><a href="HTMLs/Reading Fluency/Fluency Passages.html">
-           Fluency Passages
-        </a></li>
-
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>Vocabulary</h2>
-    <ul>
-        <!-- Add files here -->
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>Writing</h2>
-    <ul>
-        <li><a href="HTMLs/Writing/Nouns_and_Verbs.html">
-           Nouns and Verbs
-        </a></li>
-
-        <li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">
-           Nouns, Verbs, Adjectives, and Adverbs
-        </a></li>
-
-        <li><a href="HTMLs/Writing/Writing Sentence Fill.html">
-           Writing Sentence Fill
-        </a></li>
-    </ul>
-</div>
-
-
-<div class="folder">
-    <h2>Classroom Tools</h2>
-    <ul>
-
-        <li><a href="HTMLs/Thermometer.html">
-            Reading Thermometers
-        </a></li>
-
-        <li><a href="HTMLs/Sea Reading.html">
-            Sea Reading
-        </a></li>
-
-        <li><a href="HTMLs/Classroom Tools/Gumball.html">
-            Smile Collector
-        </a></li>
-
-		 <li><a href="HTMLs/Classroom Tools/Wheel.html">
-            Wheel
-        </a></li>
-		
-    </ul>
 </div>
 
 </body>
 </html>
-
-
-
-
-
-
