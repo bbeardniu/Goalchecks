@@ -3,220 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <title>BBeard Fluency Passages</title>
+
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f7fa;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
 
-    /* Headings changed to Comic Sans */
-    h1, h2 {
-        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', Arial, sans-serif;
-    }
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #2c3e50;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', Arial, sans-serif;
+}
 
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #2c3e50;
-    }
+/* TWO COLUMN LAYOUT */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
 
-    .folder {
-        margin: 15px 0;
-        padding: 15px;
-        border-radius: 12px;
-        background: white;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+/* CARD STYLE */
+details {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 15px 20px;
+    transition: transform 0.2s ease;
+}
 
-    .folder h2 {
-        margin: 0 0 10px 0;
-        font-size: 20px;
-        color: #34495e;
-    }
+details:hover {
+    transform: translateY(-4px);
+}
 
-    ul {
-        list-style-type: none;
-        padding-left: 15px;
-    }
+/* Summary styling */
+summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+    color: #34495e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    ul li {
-        padding: 5px 0;
-    }
+summary::-webkit-details-marker {
+    display: none;
+}
 
-    a {
-        text-decoration: none;
-        color: #1e88e5;
-        font-weight: bold;
-    }
+/* Arrow */
+summary::after {
+    content: "▼";
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+details[open] summary::after {
+    transform: rotate(180deg);
+}
+
+/* Passage list */
+ul {
+    list-style: none;
+    padding-left: 10px;
+    margin-top: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-5px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+ul li {
+    padding: 6px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #1e88e5;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
 </style>
-
 </head>
+
 <body>
 
 <h1>Reading Fluency Passages</h1>
 
-<div class="folder">
-    <h2>2nd Grade</h2>
-    <ul>
-        
-		<li><a href="2nd Grade Fluency/Bike Safety.html">
-           Bike Safety Fluency
-        </a></li>
+<div class="container">
 
-		<li><a href="2nd Grade Fluency/Birthday Pie.html">
-           Birthday Pie
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Lily's Collection.html">
-           Lily's Collection
-        </a></li>
+<details open>
+<summary>2nd Grade</summary>
+<ul>
+<li><a href="2nd Grade Fluency/Bike Safety.html">Bike Safety Fluency</a></li>
+<li><a href="2nd Grade Fluency/Birthday Pie.html">Birthday Pie</a></li>
+<li><a href="2nd Grade Fluency/Lily's Collection.html">Lily's Collection</a></li>
+<li><a href="2nd Grade Fluency/Amazing Earthworms.html">Amazing Earthworms</a></li>
+<li><a href="2nd Grade Fluency/At the Beach.html">At the Beach</a></li>
+<li><a href="2nd Grade Fluency/Bumblebees.html">Bumblebees</a></li>
+<li><a href="2nd Grade Fluency/Tom Saves the Day.html">Tom Saves the Day</a></li>
+<li><a href="2nd Grade Fluency/Dinosaur Museum.html">Dinosaur Museum</a></li>
+<li><a href="2nd Grade Fluency/Digging for Clams.html">Digging for Clams</a></li>
+<li><a href="2nd Grade Fluency/Dr Seuss.html">Dr. Seuss</a></li>
+<li><a href="2nd Grade Fluency/A Good Day.html">A Good Day</a></li>
+<li><a href="2nd Grade Fluency/The King of Insects.html">The King of Insects</a></li>
+<li><a href="2nd Grade Fluency/The Park.html">The Park</a></li>
+<li><a href="2nd Grade Fluency/A Silly Day.html">A Silly Day</a></li>
+<li><a href="2nd Grade Fluency/Space Story.html">Space Story</a></li>
+<li><a href="2nd Grade Fluency/Ramona and Ben.html">Ramona and Ben</a></li>
+<li><a href="2nd Grade Fluency/Mike's Idea.html">Mike's Idea</a></li>
+<li><a href="2nd Grade Fluency/Wanda's Swamp.html">Wanda's Swamp</a></li>
+</ul>
+</details>
 
-		<li><a href="2nd Grade Fluency/Amazing Earthworms.html">
-           Amazing Earthworms
-        </a></li>
+<details>
+<summary>3rd Grade</summary>
+<ul>
+<li><a href="3rd Grade Fluency/Going Fishing.html">Going Fishing</a></li>
+<li><a href="3rd Grade Fluency/A Thanksgiving to Remember.html">A Thanksgiving to Remember</a></li>
+<li><a href="3rd Grade Fluency/The Land of the Midnight Sun.html">The Land of the Midnight Sun</a></li>
+<li><a href="3rd Grade Fluency/The Quick Save.html">The Quick Save</a></li>
+<li><a href="3rd Grade Fluency/Jennys Game.html">Jenny's Game</a></li>
+<li><a href="3rd Grade Fluency/Symbols of Freedom.html">Symbols of Freedom</a></li>
+<li><a href="3rd Grade Fluency/Mr. Clark's Class.html">Mr. Clark's Class</a></li>
+<li><a href="3rd Grade Fluency/The Busy Night.html">The Busy Night</a></li>
+<li><a href="3rd Grade Fluency/Two Ground Birds.html">Two Ground Birds</a></li>
+<li><a href="3rd Grade Fluency/La Brea Tar Pits.html">La Brea Tar Pits</a></li>
+<li><a href="3rd Grade Fluency/Amy and Tom.html">Amy and Tom</a></li>
+<li><a href="3rd Grade Fluency/Trip To the North Pole.html">Trip to the North Pole</a></li>
+<li><a href="3rd Grade Fluency/Pizza Party.html">Pizza Party</a></li>
+<li><a href="3rd Grade Fluency/Pigeons.html">Pigeons</a></li>
+<li><a href="3rd Grade Fluency/Benedict Arnold.html">Benedict Arnold</a></li>
+<li><a href="3rd Grade Fluency/Volcano.html">Volcano</a></li>
+<li><a href="3rd Grade Fluency/The Mouse House.html">The Mouse House</a></li>
+<li><a href="3rd Grade Fluency/Wilma Rudolph.html">Wilma Rudolph</a></li>
+</ul>
+</details>
 
-		<li><a href="2nd Grade Fluency/At the Beach.html">
-           At the Beach
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Bumblebees.html">
-           Bumblebees
-        </a></li>
-
-		<li><a href="2nd Grade Fluency/Tom Saves the Day.html">
-           Tom Saves the Day
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Dinosaur Museum.html">
-           Dinosaur Museum
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Digging for Clams.html">
-           Digging for Clams
-        </a></li>
-
-		<li><a href="2nd Grade Fluency/Dr Seuss.html">
-           Dr. Seuss
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/A Good Day.html">
-           A Good Day
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/The King of Insects.html">
-           The King of Insects
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/The Park.html">
-           The Park
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/A Silly Day.html">
-           A Silly Day
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Space Story.html">
-           Space Story
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Ramona and Ben.html">
-           Ramona and Ben
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Mike's Idea.html">
-           Mike's Idea
-        </a></li>
-		
-		<li><a href="2nd Grade Fluency/Wanda's Swamp.html">
-           Wanda's Swamp
-        </a></li>
-		
-    </ul>
-</div>
-
-<div class="folder">
-    <h2>3rd Grade</h2>
-    <ul>
-		<li><a href="3rd Grade Fluency/Going Fishing.html">
-           Going Fishing
-        </a></li>
-
-		<li><a href="3rd Grade Fluency/A Thanksgiving to Remember.html">
-           A Thanksgiving to Remember
-        </a></li>
-		
-		<li><a href="3rd Grade Fluency/The Land of the Midnight Sun.html">
-           The Land of the Midnight Sun
-        </a></li>
-		
-		<li><a href="3rd Grade Fluency/The Quick Save.html">
-           The Quick Save
-        </a></li>
-
-		<li><a href="3rd Grade Fluency/Jennys Game.html">
-           Jenny's Game
-        </a></li>
-
-		<li><a href="3rd Grade Fluency/Symbols of Freedom.html">
-           Symbols of Freedom
-        </a></li>
-		
-		<li><a href="3rd Grade Fluency/Mr. Clark's Class.html">
-           Mr. Clark's Class
-        </a></li>
-		
-		<li><a href="3rd Grade Fluency/The Busy Night.html">
-           The Busy Night
-        </a></li>
-		
-		<li><a href="3rd Grade Fluency/Two Ground Birds.html">
-           Two Ground Birds
-        </a></li>
-
-        <li><a href="3rd Grade Fluency/La Brea Tar Pits.html">
-           La Brea Tar Pits
-        </a></li>
-
-		<li><a href="3rd Grade Fluency/Amy and Tom.html">
-           Amy and Tom
-        </a></li>			
-		
-		<li><a href="3rd Grade Fluency/Trip To the North Pole.html">
-           Trip to the North Pole
-        </a></li>
-				
-		<li><a href="3rd Grade Fluency/Pizza Party.html">
-           Pizza Party
-        </a></li>
-				
-		<li><a href="3rd Grade Fluency/Pigeons.html">
-           Pigeons
-        </a></li>
-				
-		<li><a href="3rd Grade Fluency/Benedict Arnold.html">
-           Benedict Arnold
-        </a></li>
-				
-		<li><a href="3rd Grade Fluency/Volcano.html">
-           Volcano
-        </a></li>
-				
-		<li><a href="3rd Grade Fluency/The Mouse House.html">
-           The Mouse House
-        </a></li>
-				
-		<li><a href="3rd Grade Fluency/Wilma Rudolph.html">
-           Wilma Rudolph
-        </a></li>
-		
-    </ul>
 </div>
 
 </body>
