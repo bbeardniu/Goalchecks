@@ -80,11 +80,14 @@
     <button class="check" onclick="checkAnswer()">Check</button>
     <button class="reset" onclick="resetGame()">Reset</button>
     <button class="stop" onclick="stopGame()">Stop</button>
+    <button class="check" onclick="downloadPDF()">Download PDF</button>
   </div>
   <div id="result"></div>
   <div id="attempts">Attempts: 0</div>
   <div id="summary"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
 <script>
 let correct = 0, attempts = 0, startTime, timerInterval;
 let currentAnswer, currentProblem, history = [];
@@ -194,6 +197,41 @@ answerInput.addEventListener("keydown", e => {
 
 startTimer();
 generateNoRegroupingProblem();
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const percent = ((correct / attempts) * 100).toFixed(0);
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+  // Title
+  doc.setFontSize(16);
+  doc.text("Goal Check Assessment Report", 20, 20);
+
+  // Student info (use initials or ID if you want)
+  doc.setFontSize(12);
+  doc.text("Student: ___", 20, 40);
+  doc.text("Assessment: Addition & Subtraction (No Regrouping)", 20, 50);
+  doc.text(`Score: ${percent}%`, 20, 60);
+  doc.text(`Time: ${elapsed} seconds`, 20, 70);
+  doc.text(`Questions Attempted: ${attempts}`, 20, 80);
+
+  // Add history of answers
+  let y = 100;
+  history.forEach((h, i) => {
+    const mark = h.correct ? "✅" : "❌";
+    doc.text(`${i+1}. ${h.problem} ${mark}`, 20, y);
+    y += 10;
+    if(y > 280) { // page break if necessary
+      doc.addPage();
+      y = 20;
+    }
+  });
+
+  doc.save(`GoalCheck_${new Date().toISOString().split('T')[0]}.pdf`);
+}
 </script>
 </body>
 </html>
+
