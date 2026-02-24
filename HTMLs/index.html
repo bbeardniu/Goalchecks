@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>HTMLs Index</title>
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -11,11 +12,13 @@
         padding: 20px;
         color: #333;
     }
+
     h1 {
         text-align: center;
         margin-bottom: 30px;
         color: #2c3e50;
     }
+
     .folder {
         margin: 15px 0;
         padding: 15px;
@@ -23,32 +26,163 @@
         background: white;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
+
     .folder h2 {
         margin: 0 0 10px 0;
         font-size: 20px;
         color: #34495e;
     }
+
     ul {
         list-style-type: none;
         padding-left: 15px;
     }
+
     ul li {
         padding: 5px 0;
     }
+
     a {
         text-decoration: none;
         color: #1e88e5;
         font-weight: bold;
     }
+
     a:hover {
         text-decoration: underline;
     }
+
+    /* Substitute Dropdown Styles */
+    .dropdown-header {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .rotate {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+    }
+
+    .dropdown-content.open {
+        max-height: 400px;
+        margin-top: 15px;
+    }
+
+    input[type="password"] {
+        padding: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-right: 8px;
+    }
+
+    button {
+        background: #1e88e5;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #1565c0;
+    }
+
+    .error {
+        color: red;
+        margin-top: 8px;
+    }
+
+    #subLink {
+        display: none;
+        margin-top: 12px;
+    }
+
 </style>
+
+<script>
+function toggleDropdown() {
+    const content = document.getElementById("subDropdown");
+    const arrow = document.getElementById("arrow");
+
+    content.classList.toggle("open");
+    arrow.classList.toggle("rotate");
+
+    // Auto-hide link if collapsing
+    if (!content.classList.contains("open")) {
+        document.getElementById("subLink").style.display = "none";
+        document.getElementById("pinInput").value = "";
+        document.getElementById("errorMsg").innerText = "";
+    }
+}
+
+function checkPIN() {
+    const pin = document.getElementById("pinInput").value;
+    const correctPin = "367";
+
+    if (pin === correctPin) {
+        document.getElementById("subLink").style.display = "block";
+        document.getElementById("errorMsg").innerText = "";
+    } else {
+        document.getElementById("errorMsg").innerText = "Incorrect PIN";
+        document.getElementById("subLink").style.display = "none";
+        document.getElementById("pinInput").value = "";
+    }
+}
+
+// Allow Enter key to submit PIN
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("pinInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            checkPIN();
+        }
+    });
+});
+</script>
+
 </head>
 <body>
 
 <h1>Beard Classroom Goal Checks Index</h1>
 
+<!-- SUBSTITUTE SECTION -->
+<div class="folder">
+    <div class="dropdown-header" onclick="toggleDropdown()">
+        <h2>Substitute</h2>
+        <span id="arrow" class="arrow">▾</span>
+    </div>
+
+    <div id="subDropdown" class="dropdown-content">
+        <p>Enter PIN to access substitute plans:</p>
+        <input type="password" id="pinInput" placeholder="Enter PIN">
+        <button onclick="checkPIN()">Access</button>
+        <div id="errorMsg" class="error"></div>
+
+        <div id="subLink">
+            <ul>
+                <li>
+                    <a href="https://drive.google.com/drive/folders/1S1wLofNBiFnALzMI0rdM2_VcVdN8irKh?usp=sharing" target="_blank">
+                        Daily Substitute Plans (Google Drive)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Math Addition and Subtraction -->
 <div class="folder">
     <h2>Math Addition and Subtraction</h2>
     <ul>
@@ -83,110 +217,69 @@
         <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">
            One Step Word Problems Addition & Subtraction Within 1000
         </a></li>
-
-
     </ul>
 </div>
 
+<!-- Math Multiplication and Division -->
 <div class="folder">
     <h2>Math Multiplication and Division</h2>
     <ul>
-
         <li><a href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">
-            Single Digit Multipliaction or Single Digit Quotient Division
+            Single Digit Multiplication or Single Digit Quotient Division
         </a></li>
 
         <li><a href="HTMLs/Math/multiplication_singledigit.html">
             Multiplication Single Digit
         </a></li>
-
     </ul>
 </div>
 
+<!-- QPS -->
 <div class="folder">
     <h2>QPS</h2>
     <ul>
-	<li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">
-           Upper and Lower Case Random Lettername Sounds
-        </a></li>
-
-	<li><a href="HTMLs/QPS/02_CVC_Words.html">
-           CVC Words
-        </a></li>
-
-	<li><a href="HTMLs/QPS/03_Diagraphs.html">
-           Diagraphs
-        </a></li>
-
-	<li><a href="HTMLs/QPS/04_Blends.html">
-           Blends
-        </a></li>
-
-	<li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">
-           VCE Wordlist
-        </a></li>
-
-	<li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">
-           R Controlled Assessment
-        </a></li>
-
-	<li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">
-           Other Vowel Patterns
-        </a></li>
-
-	<li><a href="HTMLs/QPS/09_Multisyllable_Words.html">
-           Multisyllable Words
-        </a></li>
+        <li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">Upper and Lower Case Random Lettername Sounds</a></li>
+        <li><a href="HTMLs/QPS/02_CVC_Words.html">CVC Words</a></li>
+        <li><a href="HTMLs/QPS/03_Diagraphs.html">Diagraphs</a></li>
+        <li><a href="HTMLs/QPS/04_Blends.html">Blends</a></li>
+        <li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">VCE Wordlist</a></li>
+        <li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">R Controlled Assessment</a></li>
+        <li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">Other Vowel Patterns</a></li>
+        <li><a href="HTMLs/QPS/09_Multisyllable_Words.html">Multisyllable Words</a></li>
     </ul>
 </div>
 
+<!-- Reading Comp -->
 <div class="folder">
     <h2>Reading Comp</h2>
     <ul>
-        <li><a href="HTMLs/Reading Comp/Fact_Opinion.html">
-           Fact and Opinion
-        </a></li>
-
-        <li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">
-           Inferencing and Predictions
-        </a></li>
-
-        <li><a href="HTMLs/Reading Comp/Similes.html">
-           Similes
-        </a></li>
+        <li><a href="HTMLs/Reading Comp/Fact_Opinion.html">Fact and Opinion</a></li>
+        <li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">Inferencing and Predictions</a></li>
+        <li><a href="HTMLs/Reading Comp/Similes.html">Similes</a></li>
     </ul>
 </div>
 
+<!-- Reading Fluency -->
 <div class="folder">
     <h2>Reading Fluency</h2>
     <ul>
-        <li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">
-           Fry Words First 100
-        </a></li>
+        <li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">Fry Words First 100</a></li>
     </ul>
 </div>
 
+<!-- Vocabulary -->
 <div class="folder">
     <h2>Vocabulary</h2>
-    <ul>
-        <!-- Add files here -->
-    </ul>
+    <ul></ul>
 </div>
 
+<!-- Writing -->
 <div class="folder">
     <h2>Writing</h2>
     <ul>
-        <li><a href="HTMLs/Writing/Nouns_and_Verbs.html">
-           Nouns and Verbs
-        </a></li>
-
-        <li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">
-           Nouns, Verbs, Adjectives, and Adverbs
-        </a></li>
-
-        <li><a href="HTMLs/Writing/Writing Sentence Fill.html">
-           Writing Sentence Fill
-        </a></li>
+        <li><a href="HTMLs/Writing/Nouns_and_Verbs.html">Nouns and Verbs</a></li>
+        <li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">Nouns, Verbs, Adjectives, and Adverbs</a></li>
+        <li><a href="HTMLs/Writing/Writing Sentence Fill.html">Writing Sentence Fill</a></li>
     </ul>
 </div>
 
