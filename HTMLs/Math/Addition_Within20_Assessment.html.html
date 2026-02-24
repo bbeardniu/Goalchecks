@@ -39,53 +39,25 @@
     margin: 10px;
     cursor: pointer;
   }
-  button:hover {
-    background-color: #45a049;
-  }
-  #reset {
-    background-color: #f44336;
-  }
-  #reset:hover {
-    background-color: #d73833;
-  }
-  #stop {
-    background-color: #2196f3;
-  }
-  #stop:hover {
-    background-color: #1a7bd6;
-  }
+  button:hover { background-color: #45a049; }
+  #reset { background-color: #f44336; }
+  #reset:hover { background-color: #d73833; }
+  #stop { background-color: #2196f3; }
+  #stop:hover { background-color: #1a7bd6; }
   #feedback {
     font-size: 1.3rem;
     font-weight: bold;
     margin-top: 15px;
   }
-  #score {
+  #score, #attempts, #timer {
     position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 1.2rem;
-    background-color: #ffffff99;
-    padding: 8px 12px;
-    border-radius: 10px;
-  }
-  #attempts {
-    position: absolute;
-    bottom: 15px;
-    right: 25px;
-    font-size: 1.1rem;
-    background-color: #ffffff99;
+    background-color: #ffffffcc;
     padding: 6px 10px;
     border-radius: 10px;
   }
-  #timer {
-    position: absolute;
-    bottom: 15px;
-    left: 25px;
-    font-size: 1.1rem;
-    background-color: #ffffff99;
-    padding: 6px 10px;
-    border-radius: 10px;
-  }
+  #score { top: 15px; right: 25px; font-size: 1.2rem; }
+  #attempts { bottom: 15px; right: 25px; font-size: 1.1rem; }
+  #timer { bottom: 15px; left: 25px; font-size: 1.1rem; }
   #summary {
     display: none;
     flex-direction: column;
@@ -97,14 +69,11 @@
     padding: 20px;
     margin-top: 20px;
   }
-  .correct {
-    color: green;
-    font-weight: bold;
-  }
-  .incorrect {
-    color: red;
-    font-weight: bold;
-  }
+  .correct { color: green; font-weight: bold; }
+  .incorrect { color: red; font-weight: bold; }
+  .pdf-reminder { font-size:0.9rem; color:#333; text-align:center; max-width:300px; margin:5px auto; }
+  .pdf-button { background-color:#ff9800; }
+  .pdf-button:hover { background-color:#fb8c00; }
 </style>
 </head>
 <body>
@@ -119,12 +88,17 @@
   </div>
   <button id="stop" onclick="stopSession()">Stop</button>
 
+  <div class="pdf-reminder">
+    💡 Download the PDF and place it in the student’s folder for documentation.
+  </div>
+  <button class="pdf-button" onclick="downloadPDF()">Download PDF</button>
+
   <div id="feedback"></div>
   <div id="attempts">Attempts: 0</div>
   <div id="timer">Time: 0s</div>
-
   <div id="summary"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   let num1, num2;
   let totalQuestions = 0;
@@ -239,13 +213,49 @@
   }
 
   document.getElementById("answer").addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
-      checkAnswer();
-    }
+    if (event.key === "Enter") checkAnswer();
   });
+
+  // ---------- PDF Download Function ----------
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
+    const now = new Date();
+    const dateStr = now.toLocaleDateString();
+    const timeStr = now.toLocaleTimeString();
+
+    doc.setFontSize(16);
+    doc.setTextColor(255, 87, 34); // orange title
+    doc.text("Goal Check Assessment Report", 20, 20);
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Assessment: Addition Facts ≤ 20`, 20, 35);
+    doc.text(`Score: ${percent}%`, 20, 45);
+    doc.text(`Time Taken: ${timeElapsed} seconds`, 20, 55);
+    doc.text(`Questions Attempted: ${totalQuestions}`, 20, 65);
+    doc.text(`Date: ${dateStr}`, 20, 75);
+    doc.text(`Time: ${timeStr}`, 20, 85);
+
+    // History
+    let y = 100;
+    questionHistory.forEach((q, i) => {
+      const mark = q.correct ? "✅" : "❌";
+      doc.text(`${i+1}. ${q.question} ${mark}`, 20, y);
+      y += 10;
+      if (y > 280) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    doc.save(`GoalCheck_${dateStr.replace(/\//g,'-')}_${timeStr.replace(/:/g,'-')}.pdf`);
+  }
 
   newProblem();
   startTimer();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
