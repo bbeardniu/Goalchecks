@@ -216,8 +216,12 @@
     if (event.key === "Enter") checkAnswer();
   });
 
-  // ---------- PDF Download Function ----------
+  // ---------- PDF Download Function with confirmation ----------
   function downloadPDF() {
+    // ⚠️ Confirmation popup
+    const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+    if (!proceed) return;
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
@@ -242,7 +246,7 @@
     let y = 100;
     questionHistory.forEach((q, i) => {
       const mark = q.correct ? "✅" : "❌";
-      doc.text(`${i+1}. ${q.question} ${mark}`, 20, y);
+      doc.text(`${i + 1}. ${q.question} ${mark}`, 20, y);
       y += 10;
       if (y > 280) {
         doc.addPage();
@@ -256,6 +260,5 @@
   newProblem();
   startTimer();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
