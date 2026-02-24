@@ -40,6 +40,8 @@
   #submitBtn { background-color: #4CAF50; color: white; }
   #resetBtn { background-color: #ff4d4d; color: white; }
   #stopBtn { background-color: #007bff; color: white; display: block; margin: 10px auto; }
+  .pdf-button { background-color: #ff9800; color: white; }
+  .pdf-button:hover { background-color: #fb8c00; }
   #feedback { font-size: 1.2em; margin-top: 10px; }
   #score { position: absolute; top: 10px; right: 20px; font-weight: bold; }
   #timer { position: absolute; bottom: 10px; left: 20px; font-weight: bold; }
@@ -57,22 +59,24 @@
 </style>
 </head>
 <body>
-  <h1>Word Problems</h1>
-  <div id="score">Score: 0%</div>
-  <div id="problem"></div>
-  <input type="number" id="answer" placeholder="Your answer" />
-  <br />
-  <button id="submitBtn">Submit</button>
-  <button id="resetBtn">Reset</button>
-  <div id="feedback"></div>
-  <div id="timer">Time: 0s</div>
-  <div id="attempts">Attempts: 0</div>
-  <button id="stopBtn">Stop</button>
-  <div id="summary"></div>
+<h1>Word Problems</h1>
+<div id="score">Score: 0%</div>
+<div id="problem"></div>
+<input type="number" id="answer" placeholder="Your answer" />
+<br />
+<button id="submitBtn">Submit</button>
+<button id="resetBtn">Reset</button>
+<button class="pdf-button" onclick="downloadPDF()">Download PDF</button>
+<div id="feedback"></div>
+<div id="timer">Time: 0s</div>
+<div id="attempts">Attempts: 0</div>
+<button id="stopBtn">Stop</button>
+<div id="summary"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const names = ["Liam", "Emma", "Noah", "Olivia", "Ava", "Mia", "Ethan", "Sophia", "Lucas", "Isabella"];
-const items = ["apples", "pencils", "marbles", "books", "candies", "balls", "stickers", "toys", "blocks", "coins"];
+const names = ["Liam","Emma","Noah","Olivia","Ava","Mia","Ethan","Sophia","Lucas","Isabella"];
+const items = ["apples","pencils","marbles","books","candies","balls","stickers","toys","blocks","coins"];
 
 let correct = 0;
 let attempts = 0;
@@ -80,7 +84,6 @@ let time = 0;
 let timerInterval;
 let questions = [];
 let currentProblem = {};
-let startTime;
 
 function startTimer() {
   timerInterval = setInterval(() => {
@@ -88,10 +91,7 @@ function startTimer() {
     document.getElementById("timer").textContent = "Time: " + time + "s";
   }, 1000);
 }
-
-function stopTimer() {
-  clearInterval(timerInterval);
-}
+function stopTimer() { clearInterval(timerInterval); }
 
 function randomWordProblem() {
   const type = Math.random() < 0.5 ? "add" : "subtract";
@@ -151,10 +151,7 @@ function submitAnswer() {
 
 function resetAll() {
   stopTimer();
-  correct = 0;
-  attempts = 0;
-  time = 0;
-  questions = [];
+  correct = 0; attempts = 0; time = 0; questions = [];
   document.getElementById("score").textContent = "Score: 0%";
   document.getElementById("timer").textContent = "Time: 0s";
   document.getElementById("attempts").textContent = "Attempts: 0";
@@ -169,20 +166,54 @@ function stopAll() {
   let summaryHTML = `<h2>Results</h2>`;
   summaryHTML += `<p><strong>Time:</strong> ${time}s<br><strong>Attempts:</strong> ${attempts}<br><strong>Score:</strong> ${percent}%</p>`;
   summaryHTML += "<ul>";
-  questions.forEach((q, i) => {
-    summaryHTML += `<li class="${q.correct ? 'correct' : 'incorrect'}">${q.question} — ${q.correct ? '✔' : '✖'} (Answer: ${q.answer})</li>`;
+  questions.forEach((q,i)=>{
+    summaryHTML += `<li class="${q.correct?'correct':'incorrect'}">${q.question} — ${q.correct?'✔':'✖'} (Answer: ${q.answer})</li>`;
   });
   summaryHTML += "</ul>";
   document.getElementById("summary").innerHTML = summaryHTML;
   document.getElementById("summary").style.display = "block";
 }
 
+// ---------- PDF Download ----------
+function downloadPDF() {
+  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  if (!proceed) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString();
+  const timeStr = now.toLocaleTimeString();
+
+  doc.setFontSize(16);
+  doc.setTextColor(255, 87, 34);
+  doc.text("Goal Check Assessment Report", 20, 20);
+
+  doc.setFontSize(12);
+  doc.setTextColor(0,0,0);
+  doc.text(`Assessment: Word Problems`, 20, 35);
+  doc.text(`Score: ${percent}%`, 20, 45);
+  doc.text(`Time Taken: ${time} seconds`, 20, 55);
+  doc.text(`Questions Attempted: ${attempts}`, 20, 65);
+  doc.text(`Date: ${dateStr}`, 20, 75);
+  doc.text(`Time: ${timeStr}`, 20, 85);
+
+  let y = 100;
+  questions.forEach((q,i)=>{
+    const mark = q.correct ? "✅":"❌";
+    doc.text(`${i+1}. ${q.question} ${mark} (Answer: ${q.answer})`, 20, y);
+    y += 10;
+    if(y>280){ doc.addPage(); y=20; }
+  });
+
+  doc.save(`GoalCheck_${dateStr.replace(/\//g,'-')}_${timeStr.replace(/:/g,'-')}.pdf`);
+}
+
 document.getElementById("submitBtn").addEventListener("click", submitAnswer);
 document.getElementById("resetBtn").addEventListener("click", resetAll);
 document.getElementById("stopBtn").addEventListener("click", stopAll);
-document.getElementById("answer").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") submitAnswer();
-});
+document.getElementById("answer").addEventListener("keydown",(e)=>{if(e.key==="Enter") submitAnswer();});
 
 startTimer();
 newProblem();
