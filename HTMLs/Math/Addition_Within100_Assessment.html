@@ -52,6 +52,7 @@
 </style>
 </head>
 <body>
+
 <div id="score">Score: 0%</div>
 <h1>Addition Practice (≤ 100)</h1>
 <div id="problem"></div>
@@ -70,7 +71,6 @@
 
 <!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script>
 let num1, num2;
 let totalQuestions = 0;
@@ -163,8 +163,7 @@ function stopPractice() {
 }
 
 function downloadPDF() {
-  // ✅ Confirmation popup
-  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  const proceed = confirm("⚠️ Make sure you place this PDF in the correct folder. Click OK to continue.");
   if (!proceed) return;
 
   const { jsPDF } = window.jspdf;
@@ -173,17 +172,16 @@ function downloadPDF() {
   const now = new Date();
   const formattedDate = now.toLocaleString();
 
-  // Header bar
+  // Header
   doc.setFillColor(33, 150, 243);
   doc.rect(0, 0, 210, 30, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.text("Goal Check Assessment Report", 105, 18, { align: "center" });
 
+  // Summary box
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(12);
-
-  // Summary box
   doc.setFillColor(243, 244, 246);
   doc.roundedRect(15, 40, 180, 45, 5, 5, "FD");
   doc.text("Assessment: Addition Facts ≤ 100", 20, 55);
@@ -192,9 +190,9 @@ function downloadPDF() {
   doc.text(`Questions Attempted: ${totalQuestions}`, 120, 75);
   doc.text(`Time: ${timeElapsed} seconds`, 120, 65);
 
+  // Response breakdown
   doc.setFontSize(14);
   doc.text("Response Breakdown:", 20, 100);
-
   let y = 110;
   problemHistory.forEach((p, i) => {
     if (y > 280) { doc.addPage(); y = 20; }
