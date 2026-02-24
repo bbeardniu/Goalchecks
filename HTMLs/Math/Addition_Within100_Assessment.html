@@ -10,10 +10,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    justify-content: flex-start;
+    min-height: 100vh;
     background: linear-gradient(135deg, #a0e3ff, #fff0a5);
     margin: 0;
+    padding-top: 60px;
   }
   h1 { margin-bottom: 20px; }
   #problem { font-size: 2.5rem; margin-bottom: 20px; }
@@ -33,9 +34,9 @@
   .red:hover { background-color: #e53935; }
   .blue { background-color: #2196f3; }
   .blue:hover { background-color: #1e88e5; }
-  .pdf { background-color: #f59e0b; }
+  .pdf { background-color: #f59e0b; display:none; }
   .pdf:hover { background-color: #d97706; }
-  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 15px; }
+  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
   #score, #attempts, #timer {
     position: absolute;
     font-size: 1.2rem;
@@ -46,7 +47,7 @@
   #score { top: 15px; right: 25px; }
   #attempts { bottom: 15px; right: 25px; }
   #timer { bottom: 15px; left: 25px; }
-  #results { display: none; text-align: center; margin-top: 30px; max-height: 300px; overflow-y: auto; }
+  #results { display: none; text-align: center; margin-top: 30px; max-height: 300px; overflow-y: auto; width: 90%; }
   .correct { color: green; }
   .incorrect { color: red; }
 </style>
@@ -62,7 +63,7 @@
   <button class="green" onclick="newProblem()">Next</button>
   <button class="red" onclick="resetAll()">Reset</button>
   <button class="blue" onclick="stopPractice()">Stop</button>
-  <button class="pdf" onclick="downloadPDF()">Download PDF</button>
+  <button class="pdf" id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
 </div>
 <div id="feedback"></div>
 <div id="results"></div>
@@ -142,6 +143,7 @@ function resetAll() {
   document.getElementById("attempts").textContent = "Attempts: 0";
   document.getElementById("feedback").textContent = "";
   document.getElementById("results").style.display = "none";
+  document.getElementById("pdfBtn").style.display = "none";
   startTimer();
   newProblem();
 }
@@ -160,10 +162,11 @@ function stopPractice() {
     resultDiv.innerHTML += `<p class="${color}">${text}</p>`;
   });
   resultDiv.style.display = "block";
+  document.getElementById("pdfBtn").style.display = "inline-block";
 }
 
 function downloadPDF() {
-  const proceed = confirm("⚠️ Make sure you place this PDF in the correct folder. Click OK to continue.");
+  const proceed = confirm("⚠️ This will download a PDF report. Click OK to continue.");
   if (!proceed) return;
 
   const { jsPDF } = window.jspdf;
@@ -190,24 +193,28 @@ function downloadPDF() {
   doc.text(`Questions Attempted: ${totalQuestions}`, 120, 75);
   doc.text(`Time: ${timeElapsed} seconds`, 120, 65);
 
-  // Response breakdown
+  // Response breakdown table
   doc.setFontSize(14);
   doc.text("Response Breakdown:", 20, 100);
   let y = 110;
   problemHistory.forEach((p, i) => {
     if (y > 280) { doc.addPage(); y = 20; }
+    doc.setFillColor(i % 2 === 0 ? 230 : 245); // Alternate row colors
+    doc.rect(15, y - 6, 180, 8, "F");
     doc.setTextColor(p.correct ? [76, 175, 80] : [244, 67, 54]);
     doc.text(`${i + 1}. ${p.question}`, 20, y);
     y += 8;
   });
   doc.setTextColor(0, 0, 0);
-  doc.save(`GoalCheck_${now.toISOString().split('T')[0]}.pdf`);
+  const filename = `GoalCheck_${now.toISOString().replace(/:/g,'-')}.pdf`;
+  doc.save(filename);
 }
 
 document.getElementById("answer").addEventListener("keyup", e => {
   if (e.key === "Enter") checkAnswer();
 });
 
+// Initialize
 startTimer();
 newProblem();
 </script>
