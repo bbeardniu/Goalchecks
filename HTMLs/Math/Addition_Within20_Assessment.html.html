@@ -10,48 +10,38 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    justify-content: flex-start;
+    min-height: 100vh;
     background: linear-gradient(135deg, #a0e3ff, #fff0a5);
     margin: 0;
+    padding-top: 60px;
     transition: all 0.4s ease;
   }
-  h1 {
-    margin-bottom: 20px;
-  }
-  #problem {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  input {
-    font-size: 1.5rem;
-    text-align: center;
-    width: 80px;
-    padding: 5px;
-  }
+  h1 { margin-bottom: 20px; }
+  #problem { font-size: 2.5rem; margin-bottom: 20px; }
+  input { font-size: 1.5rem; text-align: center; width: 80px; padding: 5px; }
   button {
     font-size: 1.2rem;
     padding: 10px 20px;
     border: none;
-    background-color: #4caf50;
     color: white;
     border-radius: 10px;
     margin: 10px;
     cursor: pointer;
     transition: 0.3s;
   }
-  button:hover { background-color: #45a049; }
+  button:hover { opacity: 0.9; }
   #reset { background-color: #f44336; }
   #reset:hover { background-color: #d73833; }
   #stop { background-color: #2196f3; }
   #stop:hover { background-color: #1a7bd6; }
-  .pdf-button { background-color:#ff9800; }
+  .check { background-color: #4caf50; }
+  .check:hover { background-color: #45a049; }
+  .next { background-color: #4caf50; }
+  .next:hover { background-color: #45a049; }
+  .pdf-button { background-color: #ff9800; display:none; }
   .pdf-button:hover { background-color:#fb8c00; }
-  #feedback {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-top: 15px;
-  }
+  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
   #score, #attempts, #timer {
     position: absolute;
     background-color: #ffffffcc;
@@ -74,6 +64,7 @@
   }
   .correct { color: green; font-weight: bold; }
   .incorrect { color: red; font-weight: bold; }
+  ul { list-style:none; padding:0; margin:0; }
 </style>
 </head>
 <body>
@@ -82,11 +73,11 @@
   <div id="problem"></div>
   <input type="number" id="answer" placeholder="?" />
   <div>
-    <button onclick="checkAnswer()">Check Answer</button>
-    <button onclick="newProblem()">Next</button>
+    <button class="check" onclick="checkAnswer()">Check Answer</button>
+    <button class="next" onclick="newProblem()">Next</button>
     <button id="reset" onclick="resetAll()">Reset</button>
     <button id="stop" onclick="stopSession()">Stop</button>
-    <button class="pdf-button" onclick="downloadPDF()">Download PDF</button>
+    <button class="pdf-button" id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
   </div>
   <div id="feedback"></div>
   <div id="attempts">Attempts: 0</div>
@@ -103,7 +94,7 @@ let timeElapsed = 0;
 let timerInterval = null;
 let questionHistory = [];
 
-// -------- Problem Generation --------
+// Problem generation
 function newProblem() {
   num1 = Math.floor(Math.random() * 11);
   num2 = Math.floor(Math.random() * 11);
@@ -118,7 +109,7 @@ function newProblem() {
   answered = false;
 }
 
-// -------- Check Answer --------
+// Check answer
 function checkAnswer() {
   if (answered) return;
   const userAnswer = parseInt(document.getElementById("answer").value);
@@ -148,14 +139,14 @@ function checkAnswer() {
   setTimeout(newProblem, 1000);
 }
 
-// -------- Stats Update --------
+// Update stats
 function updateStats() {
   const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
   document.getElementById("score").textContent = `Score: ${percent}%`;
   document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
 }
 
-// -------- Reset --------
+// Reset
 function resetAll() {
   totalQuestions = 0;
   correctAnswers = 0;
@@ -166,45 +157,45 @@ function resetAll() {
   document.getElementById("feedback").textContent = "";
   document.getElementById("timer").textContent = "Time: 0s";
   document.getElementById("summary").style.display = "none";
-  updateStats();
+  document.getElementById("pdfBtn").style.display = "none";
   document.getElementById("problem").style.display = "block";
   document.getElementById("answer").style.display = "inline-block";
   document.querySelectorAll("button").forEach(btn => btn.style.display = "inline-block");
+  updateStats();
   newProblem();
   startTimer();
 }
 
-// -------- Stop Session --------
+// Stop session
 function stopSession() {
   clearInterval(timerInterval);
-  document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
   document.getElementById("problem").style.display = "none";
   document.getElementById("answer").style.display = "none";
   document.getElementById("feedback").textContent = "";
+  document.querySelectorAll("button").forEach(btn => {
+    if(btn.id !== 'pdfBtn') btn.style.display = "none";
+  });
+  document.getElementById("pdfBtn").style.display = "inline-block";
 
   const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
-
   let summaryHTML = `<h2>Session Summary</h2>`;
   summaryHTML += `<p><strong>Time Taken:</strong> ${timeElapsed}s</p>`;
   summaryHTML += `<p><strong>Total Questions:</strong> ${totalQuestions}</p>`;
   summaryHTML += `<p><strong>Score:</strong> ${percent}%</p><hr>`;
-  summaryHTML += `<h3>Answers:</h3><ul style="list-style:none;padding:0;">`;
+  summaryHTML += `<h3>Answers:</h3><ul>`;
 
-  questionHistory.forEach(q => {
-    if (q.correct) {
-      summaryHTML += `<li class="correct">${q.question}</li>`;
-    } else {
-      summaryHTML += `<li class="incorrect">${q.question} (Correct: ${q.correctAnswer})</li>`;
-    }
+  questionHistory.forEach((q, i) => {
+    summaryHTML += `<li style="background-color:${i%2===0?'#e8f5e9':'#fce4ec'};padding:4px;border-radius:4px;" class="${q.correct?'correct':'incorrect'}">`;
+    summaryHTML += `${q.question} ${q.correct?'✔':'✖'}${!q.correct?` (Correct: ${q.correctAnswer})`:''}</li>`;
   });
-
   summaryHTML += `</ul><button id="reset" onclick="resetAll()">Play Again</button>`;
+
   const summaryDiv = document.getElementById("summary");
   summaryDiv.innerHTML = summaryHTML;
   summaryDiv.style.display = "flex";
 }
 
-// -------- Timer --------
+// Timer
 function startTimer() {
   if (timerInterval) return;
   timerInterval = setInterval(() => {
@@ -213,9 +204,9 @@ function startTimer() {
   }, 1000);
 }
 
-// -------- PDF Download --------
+// PDF download
 function downloadPDF() {
-  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  const proceed = confirm("⚠️ This will download a PDF report. Click OK to continue.");
   if (!proceed) return;
 
   const { jsPDF } = window.jspdf;
@@ -225,38 +216,39 @@ function downloadPDF() {
   const dateStr = now.toLocaleDateString();
   const timeStr = now.toLocaleTimeString();
 
-  // Header bar
-  doc.setFillColor(33, 150, 243); 
-  doc.rect(0, 0, 210, 25, "F");
-  doc.setTextColor(255, 255, 255);
+  // Header
+  doc.setFillColor(33,150,243);
+  doc.rect(0,0,210,25,'F');
+  doc.setTextColor(255,255,255);
   doc.setFontSize(18);
-  doc.text("Goal Check Assessment Report", 105, 17, { align: "center" });
+  doc.text("Goal Check Assessment Report",105,17,{align:"center"});
 
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(0,0,0);
   doc.setFontSize(12);
-  doc.text(`Assessment: Addition Facts ≤ 20`, 20, 35);
-  doc.text(`Score: ${percent}%`, 20, 45);
-  doc.text(`Time Taken: ${timeElapsed}s`, 20, 55);
-  doc.text(`Questions Attempted: ${totalQuestions}`, 20, 65);
-  doc.text(`Date: ${dateStr}`, 20, 75);
-  doc.text(`Time: ${timeStr}`, 20, 85);
+  doc.text(`Assessment: Addition Facts ≤ 20`,20,35);
+  doc.text(`Score: ${percent}%`,20,45);
+  doc.text(`Time Taken: ${timeElapsed}s`,20,55);
+  doc.text(`Questions Attempted: ${totalQuestions}`,20,65);
+  doc.text(`Date: ${dateStr}`,20,75);
+  doc.text(`Time: ${timeStr}`,20,85);
 
   let y = 100;
-  questionHistory.forEach((q, i) => {
-    if (y > 280) { doc.addPage(); y = 20; }
-    doc.setTextColor(q.correct ? [76, 175, 80] : [244, 67, 54]);
-    const mark = q.correct ? "✔" : "✖";
-    doc.text(`${i + 1}. ${q.question} ${mark}`, 20, y);
-    y += 10;
+  questionHistory.forEach((q,i)=>{
+    if(y>280){ doc.addPage(); y=20; }
+    doc.setFillColor(i%2===0?230:245);
+    doc.rect(15,y-6,180,8,'F');
+    doc.setTextColor(q.correct?[76,175,80]:[244,67,54]);
+    doc.text(`${i+1}. ${q.question} ${q.correct?'✔':'✖'}`,20,y);
+    y+=10;
   });
 
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(0,0,0);
   doc.save(`GoalCheck_${dateStr.replace(/\//g,'-')}_${timeStr.replace(/:/g,'-')}.pdf`);
 }
 
-// Enter key check
-document.getElementById("answer").addEventListener("keyup", e => {
-  if (e.key === "Enter") checkAnswer();
+// Enter key
+document.getElementById("answer").addEventListener("keyup", e=>{
+  if(e.key==="Enter") checkAnswer();
 });
 
 // Initialize
