@@ -17,73 +17,25 @@
     color: #333;
   }
 
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .problem {
-    font-size: 3rem;
-    font-weight: bold;
-    margin: 1rem 0;
-    text-align: center;
-  }
-
-  input {
-    font-size: 1.5rem;
-    text-align: center;
-    width: 100px;
-    padding: 5px;
-    border-radius: 8px;
-    border: 2px solid #60a5fa;
-    margin-bottom: 1rem;
-  }
-
-  button {
-    margin: 0.5rem;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
+  h1 { font-size: 2rem; margin-bottom: 1rem; }
+  .problem { font-size: 3rem; font-weight: bold; margin: 1rem 0; text-align: center; }
+  input { font-size: 1.5rem; text-align: center; width: 100px; padding: 5px; border-radius: 8px; border: 2px solid #60a5fa; margin-bottom: 1rem; }
+  button { margin: 0.5rem; padding: 10px 20px; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; transition: 0.3s; }
   .check { background-color: #10b981; color: white; }
   .check:hover { background-color: #059669; }
-
   .reset { background-color: #ef4444; color: white; }
   .reset:hover { background-color: #dc2626; }
-
   .stop { background-color: #3b82f6; color: white; }
   .stop:hover { background-color: #2563eb; }
-
   .pdf { background-color: #f59e0b; color: white; }
   .pdf:hover { background-color: #d97706; }
 
   #result { font-size: 1.5rem; margin-top: 0.5rem; }
-
-  #score, #attempts, #timer {
-    position: absolute;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-
+  #score, #attempts, #timer { position: absolute; font-weight: bold; font-size: 1.2rem; }
   #score { top: 10px; right: 10px; }
   #attempts { bottom: 10px; right: 10px; }
   #timer { bottom: 10px; left: 10px; }
-
-  #summary {
-    display: none;
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    text-align: center;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-
+  #summary { display: none; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: center; max-height: 300px; overflow-y: auto; }
   .correct { color: green; }
   .incorrect { color: red; }
 </style>
@@ -140,22 +92,13 @@ function generateNoRegroupingProblem() {
   while (true) {
     a = Math.floor(Math.random() * 90) + 10;
     b = Math.floor(Math.random() * 90) + 10;
-
     const a1 = a % 10, a10 = Math.floor(a / 10);
     const b1 = b % 10, b10 = Math.floor(b / 10);
 
     if (isAddition) {
-      if (a1 + b1 < 10 && a10 + b10 < 10) {
-        op = '+';
-        currentAnswer = a + b;
-        break;
-      }
+      if (a1 + b1 < 10 && a10 + b10 < 10) { op = '+'; currentAnswer = a + b; break; }
     } else {
-      if (a1 >= b1 && a10 >= b10) {
-        op = '-';
-        currentAnswer = a - b;
-        break;
-      }
+      if (a1 >= b1 && a10 >= b10) { op = '-'; currentAnswer = a - b; break; }
     }
   }
 
@@ -168,7 +111,6 @@ function checkAnswer() {
   if (isNaN(userAnswer)) return;
 
   attempts++;
-
   if (userAnswer === currentAnswer) {
     correct++;
     resultEl.textContent = "✅ Correct!";
@@ -232,6 +174,10 @@ function stopGame() {
 }
 
 function downloadPDF() {
+  // ✅ Confirmation popup
+  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  if (!proceed) return;
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
@@ -240,7 +186,7 @@ function downloadPDF() {
   const now = new Date();
   const formattedDate = now.toLocaleString();
 
-  // Header bar
+  // Header
   doc.setFillColor(59, 130, 246);
   doc.rect(0, 0, 210, 30, "F");
 
@@ -249,47 +195,29 @@ function downloadPDF() {
   doc.text("Goal Check Assessment Report", 105, 18, { align: "center" });
 
   doc.setTextColor(0, 0, 0);
-
-  // Summary box
-  doc.setFillColor(243, 244, 246);
-  doc.roundedRect(15, 40, 180, 45, 5, 5, "FD");
-
   doc.setFontSize(12);
-  doc.text("Assessment: Addition & Subtraction (No Regrouping)", 20, 55);
-  doc.text(`Date & Time: ${formattedDate}`, 20, 65);
-  doc.text(`Score: ${percent}%`, 20, 75);
-  doc.text(`Questions Attempted: ${attempts}`, 120, 75);
-  doc.text(`Time: ${elapsed} seconds`, 120, 65);
+  doc.text("Assessment: Addition & Subtraction (No Regrouping)", 20, 45);
+  doc.text(`Date & Time: ${formattedDate}`, 20, 55);
+  doc.text(`Score: ${percent}%`, 20, 65);
+  doc.text(`Questions Attempted: ${attempts}`, 120, 65);
+  doc.text(`Time: ${elapsed} seconds`, 120, 55);
 
   doc.setFontSize(14);
-  doc.text("Response Breakdown:", 20, 100);
+  doc.text("Response Breakdown:", 20, 80);
 
-  let y = 110;
-
+  let y = 90;
   history.forEach((h, i) => {
-    if (y > 280) {
-      doc.addPage();
-      y = 20;
-    }
-
-    if (h.correct) {
-      doc.setTextColor(16, 185, 129);
-    } else {
-      doc.setTextColor(239, 68, 68);
-    }
-
+    if (y > 280) { doc.addPage(); y = 20; }
+    doc.setTextColor(h.correct ? 16, 185, 129 : 239, 68, 68);
     doc.text(`${i + 1}. ${h.problem}`, 20, y);
     y += 8;
   });
 
   doc.setTextColor(0, 0, 0);
-
   doc.save(`GoalCheck_${now.toISOString().split('T')[0]}.pdf`);
 }
 
-answerInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") checkAnswer();
-});
+answerInput.addEventListener("keydown", e => { if (e.key === "Enter") checkAnswer(); });
 
 startTimer();
 generateNoRegroupingProblem();
