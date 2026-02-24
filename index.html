@@ -2,285 +2,280 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>HTMLs Index</title>
+<title>BBeard Site</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f7fa;
-        margin: 0;
-        padding: 20px;
-        color: #333;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
 
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #2c3e50;
-    }
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #2c3e50;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', Arial, sans-serif;
+}
 
-    .folder {
-        margin: 15px 0;
-        padding: 15px;
-        border-radius: 12px;
-        background: white;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+/* TWO COLUMN LAYOUT */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+}
 
-    .folder h2 {
-        margin: 0 0 10px 0;
-        font-size: 20px;
-        color: #34495e;
-    }
+/* CARD STYLE */
+details {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 15px 20px;
+    transition: transform 0.2s ease;
+}
 
-    ul {
-        list-style-type: none;
-        padding-left: 15px;
-    }
+details:hover {
+    transform: translateY(-4px);
+}
 
-    ul li {
-        padding: 5px 0;
-    }
+/* Summary styling */
+summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: #34495e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    a {
-        text-decoration: none;
-        color: #1e88e5;
-        font-weight: bold;
-    }
+summary::-webkit-details-marker {
+    display: none;
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+/* Arrow */
+summary::after {
+    content: "▼";
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
 
-    /* Substitute Dropdown Styles */
-    .dropdown-header {
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+details[open] summary::after {
+    transform: rotate(180deg);
+}
 
-    .arrow {
-        transition: transform 0.3s ease;
-    }
+/* List styling */
+ul {
+    list-style: none;
+    padding-left: 10px;
+    margin-top: 12px;
+    animation: fadeIn 0.3s ease;
+}
 
-    .rotate {
-        transform: rotate(180deg);
-    }
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-5px);}
+    to {opacity: 1; transform: translateY(0);}
+}
 
-    .dropdown-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease;
-    }
+ul li {
+    padding: 6px 0;
+}
 
-    .dropdown-content.open {
-        max-height: 400px;
-        margin-top: 15px;
-    }
+a {
+    text-decoration: none;
+    color: #1e88e5;
+    font-weight: bold;
+}
 
-    input[type="password"] {
-        padding: 6px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        margin-right: 8px;
-    }
+a:hover {
+    text-decoration: underline;
+}
 
-    button {
-        background: #1e88e5;
-        color: white;
-        border: none;
-        padding: 6px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    button:hover {
-        background: #1565c0;
-    }
-
-    .error {
-        color: red;
-        margin-top: 8px;
-    }
-
-    #subLink {
-        display: none;
-        margin-top: 12px;
-    }
-
+/* Audio styling */
+audio {
+    width: 100%;
+    margin-top: 5px;
+}
 </style>
 
 <script>
-function toggleDropdown() {
-    const content = document.getElementById("subDropdown");
-    const arrow = document.getElementById("arrow");
-
-    content.classList.toggle("open");
-    arrow.classList.toggle("rotate");
-
-    // Auto-hide link if collapsing
-    if (!content.classList.contains("open")) {
-        document.getElementById("subLink").style.display = "none";
-        document.getElementById("pinInput").value = "";
-        document.getElementById("errorMsg").innerText = "";
-    }
-}
-
-function checkPIN() {
-    const pin = document.getElementById("pinInput").value;
+function checkSubPIN() {
+    const pin = document.getElementById("subPinInput").value;
     const correctPin = "367";
 
     if (pin === correctPin) {
         document.getElementById("subLink").style.display = "block";
-        document.getElementById("errorMsg").innerText = "";
+        document.getElementById("subError").innerText = "";
     } else {
-        document.getElementById("errorMsg").innerText = "Incorrect PIN";
+        document.getElementById("subError").innerText = "Incorrect PIN";
         document.getElementById("subLink").style.display = "none";
-        document.getElementById("pinInput").value = "";
+        document.getElementById("subPinInput").value = "";
     }
 }
 
-// Allow Enter key to submit PIN
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("pinInput").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            checkPIN();
-        }
-    });
+    const input = document.getElementById("subPinInput");
+    if (input) {
+        input.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                checkSubPIN();
+            }
+        });
+    }
 });
 </script>
 
 </head>
+
 <body>
 
 <h1>Beard Classroom Goal Checks Index</h1>
 
-<!-- SUBSTITUTE SECTION -->
-<div class="folder">
-    <div class="dropdown-header" onclick="toggleDropdown()">
-        <h2>Substitute</h2>
-        <span id="arrow" class="arrow">▾</span>
-    </div>
+<div class="container">
 
-    <div id="subDropdown" class="dropdown-content">
-        <p>Enter PIN to access substitute plans:</p>
-        <input type="password" id="pinInput" placeholder="Enter PIN">
-        <button onclick="checkPIN()">Access</button>
-        <div id="errorMsg" class="error"></div>
+<!-- MATH ADD / SUB -->
+<details>
+<summary>Math Addition and Subtraction</summary>
+<ul>
+<li><a href="HTMLs/Math/2digit_addition_and_subtraction_no_regrouping.html">2-Digit Addition & Subtraction (No Regrouping)</a></li>
+<li><a href="HTMLs/Math/addition_and_subtraction_within_20.html">Addition & Subtraction Within 20</a></li>
+<li><a href="HTMLs/Math/addition_and_subtraction_within_100.html">Addition & Subtraction Within 100</a></li>
+<li><a href="HTMLs/Math/Addition_Within20_Assessment.html">Addition Within 20</a></li>
+<li><a href="HTMLs/Math/Addition_Within100_Assessment.html">Addition Within 100</a></li>
+<li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">One Step Word Problems Within 20</a></li>
+<li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_100.html">One Step Word Problems Within 100</a></li>
+<li><a href="HTMLs/Math/Two_Step_Word_Add_Subtract_Within_100.html">Two Step Word Problems Within 100</a></li>
+</ul>
+</details>
 
-        <div id="subLink">
-            <ul>
-                <li>
-                    <a href="https://drive.google.com/drive/folders/1S1wLofNBiFnALzMI0rdM2_VcVdN8irKh?usp=sharing" target="_blank">
-                        Daily Substitute Plans (Google Drive)
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
+<!-- MATH MULT / DIV -->
+<details>
+<summary>Math Multiplication and Division</summary>
+<ul>
+<li><a href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">Single Digit Multiplication / Division</a></li>
+<li><a href="HTMLs/Math/multiplication_singledigit.html">Multiplication Single Digit</a></li>
+</ul>
+</details>
 
-<!-- Math Addition and Subtraction -->
-<div class="folder">
-    <h2>Math Addition and Subtraction</h2>
-    <ul>
-        <li><a href="HTMLs/Math/2digit_addition_and_subtraction_no_regrouping.html">
-            2-Digit Addition & Subtraction (No Regrouping)
-        </a></li>
+<!-- MATH SONGS -->
+<details>
+<summary>Math Songs</summary>
+<ul>
 
-        <li><a href="HTMLs/Math/addition_and_subtraction_within_20.html">
-            Addition & Subtraction Within 20
-        </a></li>
+<li>
+Count by 10s Song
+<audio controls>
+    <source src="HTMLs/Songs/Count by 10s song.mp3" type="audio/mpeg">
+</audio>
+</li>
 
-        <li><a href="HTMLs/Math/addition_and_subtraction_within_100.html">
-            Addition & Subtraction Within 100
-        </a></li>
+<li>
+Count by 5s Song
+<audio controls>
+    <source src="HTMLs/Songs/Count by 5s Song.mp3" type="audio/mpeg">
+</audio>
+</li>
 
-        <li><a href="HTMLs/Math/Addition_Within20_Assessment.html">
-            Addition Within 20
-        </a></li>
+<li>
+Count by 2s Song
+<audio controls>
+    <source src="HTMLs/Songs/count by 2s Song.mp3" type="audio/mpeg">
+</audio>
+</li>
 
-        <li><a href="HTMLs/Math/Addition_Within100_Assessment.html">
-            Addition Within 100
-        </a></li>
-
-        <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">
-           One Step Word Problems Addition & Subtraction Within 20
-        </a></li>
-
-        <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_100.html">
-           One Step Word Problems Addition & Subtraction Within 100
-        </a></li>
-
-        <li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">
-           One Step Word Problems Addition & Subtraction Within 1000
-        </a></li>
-    </ul>
-</div>
-
-<!-- Math Multiplication and Division -->
-<div class="folder">
-    <h2>Math Multiplication and Division</h2>
-    <ul>
-        <li><a href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">
-            Single Digit Multiplication or Single Digit Quotient Division
-        </a></li>
-
-        <li><a href="HTMLs/Math/multiplication_singledigit.html">
-            Multiplication Single Digit
-        </a></li>
-    </ul>
-</div>
+</ul>
+</details>
 
 <!-- QPS -->
-<div class="folder">
-    <h2>QPS</h2>
-    <ul>
-        <li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">Upper and Lower Case Random Lettername Sounds</a></li>
-        <li><a href="HTMLs/QPS/02_CVC_Words.html">CVC Words</a></li>
-        <li><a href="HTMLs/QPS/03_Diagraphs.html">Diagraphs</a></li>
-        <li><a href="HTMLs/QPS/04_Blends.html">Blends</a></li>
-        <li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">VCE Wordlist</a></li>
-        <li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">R Controlled Assessment</a></li>
-        <li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">Other Vowel Patterns</a></li>
-        <li><a href="HTMLs/QPS/09_Multisyllable_Words.html">Multisyllable Words</a></li>
-    </ul>
+<details>
+<summary>QPS</summary>
+<ul>
+<li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">Letter Names & Sounds</a></li>
+<li><a href="HTMLs/QPS/02_CVC_Words.html">CVC Words</a></li>
+<li><a href="HTMLs/QPS/03_Diagraphs.html">Diagraphs</a></li>
+<li><a href="HTMLs/QPS/04_Blends.html">Blends</a></li>
+<li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">VCE Wordlist</a></li>
+<li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">R Controlled</a></li>
+<li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">Other Vowel Patterns</a></li>
+<li><a href="HTMLs/QPS/09_Multisyllable_Words.html">Multisyllable Words</a></li>
+</ul>
+</details>
+
+<!-- READING COMP -->
+<details>
+<summary>Reading Comprehension</summary>
+<ul>
+<li><a href="HTMLs/Reading Comp/Fact_Opinion.html">Fact and Opinion</a></li>
+<li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">Inferencing & Predictions</a></li>
+<li><a href="HTMLs/Reading Comp/Similes.html">Similes</a></li>
+<li><a href="HTMLs/Reading Comp/Cause and Effect.html">Cause and Effect</a></li>
+<li><a href="HTMLs/Reading Comp/Past Present Future Tenses.html">Past, Present & Future Tenses</a></li>
+</ul>
+</details>
+
+<!-- READING FLUENCY -->
+<details>
+<summary>Reading Fluency</summary>
+<ul>
+<li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">Fry Words First 100</a></li>
+<li><a href="HTMLs/Reading Fluency/Fluency Passages.html">Fluency Passages</a></li>
+</ul>
+</details>
+
+<!-- WRITING -->
+<details>
+<summary>Writing</summary>
+<ul>
+<li><a href="HTMLs/Writing/Nouns_and_Verbs.html">Nouns and Verbs</a></li>
+<li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">Nouns, Verbs, Adjectives, Adverbs</a></li>
+<li><a href="HTMLs/Writing/Writing Sentence Fill.html">Writing Sentence Fill</a></li>
+</ul>
+</details>
+
+<!-- CLASSROOM TOOLS -->
+<details>
+<summary>Classroom Tools</summary>
+<ul>
+<li><a href="HTMLs/Thermometer.html">Reading Thermometers</a></li>
+<li><a href="HTMLs/Sea Reading.html">Sea Reading</a></li>
+<li><a href="HTMLs/Classroom Tools/Gumball.html">Smile Collector</a></li>
+<li><a href="HTMLs/Classroom Tools/Wheel.html">Wheel</a></li>
+</ul>
+</details>
+
+<!-- SUBSTITUTE (LAST FOLDER) -->
+<details>
+<summary>Substitute</summary>
+
+<div style="margin-top:12px;">
+<p>Enter PIN to access substitute plans:</p>
+
+<input type="password" id="subPinInput" placeholder="Enter PIN"
+       style="padding:6px; border-radius:6px; border:1px solid #ccc; margin-right:8px;">
+
+<button onclick="checkSubPIN()"
+        style="background:#1e88e5; color:white; border:none; padding:6px 10px; border-radius:6px; font-weight:bold; cursor:pointer;">
+Access
+</button>
+
+<div id="subError" style="color:red; margin-top:8px;"></div>
+
+<div id="subLink" style="display:none; margin-top:12px;">
+<ul>
+<li>
+<a href="https://drive.google.com/drive/folders/1S1wLofNBiFnALzMI0rdM2_VcVdN8irKh?usp=sharing" target="_blank">
+Daily Substitute Plans (Google Drive)
+</a>
+</li>
+</ul>
 </div>
 
-<!-- Reading Comp -->
-<div class="folder">
-    <h2>Reading Comp</h2>
-    <ul>
-        <li><a href="HTMLs/Reading Comp/Fact_Opinion.html">Fact and Opinion</a></li>
-        <li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">Inferencing and Predictions</a></li>
-        <li><a href="HTMLs/Reading Comp/Similes.html">Similes</a></li>
-    </ul>
 </div>
+</details>
 
-<!-- Reading Fluency -->
-<div class="folder">
-    <h2>Reading Fluency</h2>
-    <ul>
-        <li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">Fry Words First 100</a></li>
-    </ul>
-</div>
-
-<!-- Vocabulary -->
-<div class="folder">
-    <h2>Vocabulary</h2>
-    <ul></ul>
-</div>
-
-<!-- Writing -->
-<div class="folder">
-    <h2>Writing</h2>
-    <ul>
-        <li><a href="HTMLs/Writing/Nouns_and_Verbs.html">Nouns and Verbs</a></li>
-        <li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">Nouns, Verbs, Adjectives, and Adverbs</a></li>
-        <li><a href="HTMLs/Writing/Writing Sentence Fill.html">Writing Sentence Fill</a></li>
-    </ul>
 </div>
 
 </body>
