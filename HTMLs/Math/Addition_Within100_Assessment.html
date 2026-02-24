@@ -15,19 +15,9 @@
     background: linear-gradient(135deg, #a0e3ff, #fff0a5);
     margin: 0;
   }
-  h1 {
-    margin-bottom: 20px;
-  }
-  #problem {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  input {
-    font-size: 1.5rem;
-    text-align: center;
-    width: 80px;
-    padding: 5px;
-  }
+  h1 { margin-bottom: 20px; }
+  #problem { font-size: 2.5rem; margin-bottom: 20px; }
+  input { font-size: 1.5rem; text-align: center; width: 80px; padding: 5px; }
   button {
     font-size: 1.2rem;
     padding: 10px 20px;
@@ -39,21 +29,13 @@
   }
   .green { background-color: #4caf50; }
   .green:hover { background-color: #45a049; }
-
   .red { background-color: #f44336; }
   .red:hover { background-color: #e53935; }
-
   .blue { background-color: #2196f3; }
   .blue:hover { background-color: #1e88e5; }
-
   .pdf { background-color: #f59e0b; }
   .pdf:hover { background-color: #d97706; }
-
-  #feedback {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-top: 15px;
-  }
+  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 15px; }
   #score, #attempts, #timer {
     position: absolute;
     font-size: 1.2rem;
@@ -64,14 +46,7 @@
   #score { top: 15px; right: 25px; }
   #attempts { bottom: 15px; right: 25px; }
   #timer { bottom: 15px; left: 25px; }
-
-  #results {
-    display: none;
-    text-align: center;
-    margin-top: 30px;
-    max-height: 300px;
-    overflow-y: auto;
-  }
+  #results { display: none; text-align: center; margin-top: 30px; max-height: 300px; overflow-y: auto; }
   .correct { color: green; }
   .incorrect { color: red; }
 </style>
@@ -188,6 +163,10 @@ function stopPractice() {
 }
 
 function downloadPDF() {
+  // ✅ Confirmation popup
+  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  if (!proceed) return;
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const percent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
@@ -218,10 +197,7 @@ function downloadPDF() {
 
   let y = 110;
   problemHistory.forEach((p, i) => {
-    if (y > 280) {
-      doc.addPage();
-      y = 20;
-    }
+    if (y > 280) { doc.addPage(); y = 20; }
     doc.setTextColor(p.correct ? [76, 175, 80] : [244, 67, 54]);
     doc.text(`${i + 1}. ${p.question}`, 20, y);
     y += 8;
