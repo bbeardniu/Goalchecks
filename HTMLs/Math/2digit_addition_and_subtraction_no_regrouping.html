@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Addition & Subtraction (No Regrouping)</title>
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -15,16 +16,19 @@
     align-items: center;
     color: #333;
   }
+
   h1 {
     font-size: 2rem;
     margin-bottom: 1rem;
   }
+
   .problem {
     font-size: 3rem;
     font-weight: bold;
     margin: 1rem 0;
     text-align: center;
   }
+
   input {
     font-size: 1.5rem;
     text-align: center;
@@ -34,6 +38,7 @@
     border: 2px solid #60a5fa;
     margin-bottom: 1rem;
   }
+
   button {
     margin: 0.5rem;
     padding: 10px 20px;
@@ -43,21 +48,31 @@
     cursor: pointer;
     transition: 0.3s;
   }
+
   .check { background-color: #10b981; color: white; }
   .check:hover { background-color: #059669; }
+
   .reset { background-color: #ef4444; color: white; }
   .reset:hover { background-color: #dc2626; }
+
   .stop { background-color: #3b82f6; color: white; }
   .stop:hover { background-color: #2563eb; }
+
+  .pdf { background-color: #f59e0b; color: white; }
+  .pdf:hover { background-color: #d97706; }
+
   #result { font-size: 1.5rem; margin-top: 0.5rem; }
+
   #score, #attempts, #timer {
     position: absolute;
     font-weight: bold;
     font-size: 1.2rem;
   }
+
   #score { top: 10px; right: 10px; }
   #attempts { bottom: 10px; right: 10px; }
   #timer { bottom: 10px; left: 10px; }
+
   #summary {
     display: none;
     background: white;
@@ -65,32 +80,43 @@
     border-radius: 16px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     text-align: center;
+    max-height: 300px;
+    overflow-y: auto;
   }
+
   .correct { color: green; }
   .incorrect { color: red; }
 </style>
 </head>
-<body>
-  <h1>Addition & Subtraction (No Regrouping)</h1>
-  <div id="score">Score: 0%</div>
-  <div id="timer">Time: 0s</div>
-  <div id="problem" class="problem"></div>
-  <input type="number" id="answer" placeholder="Answer" autofocus />
-  <div>
-    <button class="check" onclick="checkAnswer()">Check</button>
-    <button class="reset" onclick="resetGame()">Reset</button>
-    <button class="stop" onclick="stopGame()">Stop</button>
-    <button class="check" onclick="downloadPDF()">Download PDF</button>
-  </div>
-  <div id="result"></div>
-  <div id="attempts">Attempts: 0</div>
-  <div id="summary"></div>
 
+<body>
+
+<h1>Addition & Subtraction (No Regrouping)</h1>
+
+<div id="score">Score: 0%</div>
+<div id="timer">Time: 0s</div>
+<div id="problem" class="problem"></div>
+
+<input type="number" id="answer" placeholder="Answer" autofocus />
+
+<div>
+  <button class="check" onclick="checkAnswer()">Check</button>
+  <button class="reset" onclick="resetGame()">Reset</button>
+  <button class="stop" onclick="stopGame()">Stop</button>
+  <button class="pdf" onclick="downloadPDF()">Download PDF</button>
+</div>
+
+<div id="result"></div>
+<div id="attempts">Attempts: 0</div>
+<div id="summary"></div>
+
+<!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
+
 <script>
 let correct = 0, attempts = 0, startTime, timerInterval;
 let currentAnswer, currentProblem, history = [];
+
 const problemEl = document.getElementById("problem");
 const resultEl = document.getElementById("result");
 const scoreEl = document.getElementById("score");
@@ -114,6 +140,7 @@ function generateNoRegroupingProblem() {
   while (true) {
     a = Math.floor(Math.random() * 90) + 10;
     b = Math.floor(Math.random() * 90) + 10;
+
     const a1 = a % 10, a10 = Math.floor(a / 10);
     const b1 = b % 10, b10 = Math.floor(b / 10);
 
@@ -139,7 +166,9 @@ function generateNoRegroupingProblem() {
 function checkAnswer() {
   const userAnswer = parseInt(answerInput.value);
   if (isNaN(userAnswer)) return;
+
   attempts++;
+
   if (userAnswer === currentAnswer) {
     correct++;
     resultEl.textContent = "✅ Correct!";
@@ -150,7 +179,9 @@ function checkAnswer() {
     resultEl.style.color = "red";
     history.push({ problem: `${currentProblem} = ${userAnswer}`, correct: false });
   }
+
   updateStats();
+
   setTimeout(() => {
     answerInput.value = "";
     resultEl.textContent = "";
@@ -159,8 +190,8 @@ function checkAnswer() {
 }
 
 function updateStats() {
-  const percent = ((correct / attempts) * 100).toFixed(0);
-  scoreEl.textContent = `Score: ${isNaN(percent) ? 0 : percent}%`;
+  const percent = attempts > 0 ? ((correct / attempts) * 100).toFixed(0) : 0;
+  scoreEl.textContent = `Score: ${percent}%`;
   attemptsEl.textContent = `Attempts: ${attempts}`;
 }
 
@@ -181,14 +212,79 @@ function resetGame() {
 function stopGame() {
   clearInterval(timerInterval);
   answerInput.disabled = true;
-  const percent = ((correct / attempts) * 100).toFixed(0);
+
+  const percent = attempts > 0 ? ((correct / attempts) * 100).toFixed(0) : 0;
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  summaryEl.innerHTML = `<h2>Results</h2>
+
+  summaryEl.innerHTML = `
+    <h2>Results</h2>
     <p>Time: ${elapsed}s</p>
     <p>Questions: ${attempts}</p>
     <p>Score: ${percent}%</p>
-    <div>${history.map(h => `<p class="${h.correct ? 'correct' : 'incorrect'}">${h.problem}</p>`).join('')}</div>`;
+    <div>
+      ${history.map(h =>
+        `<p class="${h.correct ? 'correct' : 'incorrect'}">${h.problem}</p>`
+      ).join('')}
+    </div>
+  `;
+
   summaryEl.style.display = "block";
+}
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const percent = attempts > 0 ? ((correct / attempts) * 100).toFixed(0) : 0;
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const now = new Date();
+  const formattedDate = now.toLocaleString();
+
+  // Header bar
+  doc.setFillColor(59, 130, 246);
+  doc.rect(0, 0, 210, 30, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.text("Goal Check Assessment Report", 105, 18, { align: "center" });
+
+  doc.setTextColor(0, 0, 0);
+
+  // Summary box
+  doc.setFillColor(243, 244, 246);
+  doc.roundedRect(15, 40, 180, 45, 5, 5, "FD");
+
+  doc.setFontSize(12);
+  doc.text("Assessment: Addition & Subtraction (No Regrouping)", 20, 55);
+  doc.text(`Date & Time: ${formattedDate}`, 20, 65);
+  doc.text(`Score: ${percent}%`, 20, 75);
+  doc.text(`Questions Attempted: ${attempts}`, 120, 75);
+  doc.text(`Time: ${elapsed} seconds`, 120, 65);
+
+  doc.setFontSize(14);
+  doc.text("Response Breakdown:", 20, 100);
+
+  let y = 110;
+
+  history.forEach((h, i) => {
+    if (y > 280) {
+      doc.addPage();
+      y = 20;
+    }
+
+    if (h.correct) {
+      doc.setTextColor(16, 185, 129);
+    } else {
+      doc.setTextColor(239, 68, 68);
+    }
+
+    doc.text(`${i + 1}. ${h.problem}`, 20, y);
+    y += 8;
+  });
+
+  doc.setTextColor(0, 0, 0);
+
+  doc.save(`GoalCheck_${now.toISOString().split('T')[0]}.pdf`);
 }
 
 answerInput.addEventListener("keydown", e => {
@@ -197,41 +293,7 @@ answerInput.addEventListener("keydown", e => {
 
 startTimer();
 generateNoRegroupingProblem();
-
-function downloadPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  const percent = ((correct / attempts) * 100).toFixed(0);
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-
-  // Title
-  doc.setFontSize(16);
-  doc.text("Goal Check Assessment Report", 20, 20);
-
-  // Student info (use initials or ID if you want)
-  doc.setFontSize(12);
-  doc.text("Student: ___", 20, 40);
-  doc.text("Assessment: Addition & Subtraction (No Regrouping)", 20, 50);
-  doc.text(`Score: ${percent}%`, 20, 60);
-  doc.text(`Time: ${elapsed} seconds`, 20, 70);
-  doc.text(`Questions Attempted: ${attempts}`, 20, 80);
-
-  // Add history of answers
-  let y = 100;
-  history.forEach((h, i) => {
-    const mark = h.correct ? "✅" : "❌";
-    doc.text(`${i+1}. ${h.problem} ${mark}`, 20, y);
-    y += 10;
-    if(y > 280) { // page break if necessary
-      doc.addPage();
-      y = 20;
-    }
-  });
-
-  doc.save(`GoalCheck_${new Date().toISOString().split('T')[0]}.pdf`);
-}
 </script>
+
 </body>
 </html>
-
