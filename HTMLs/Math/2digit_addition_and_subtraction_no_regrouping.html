@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Addition & Subtraction (No Regrouping)</title>
 
+<!-- jsPDF + AutoTable CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -42,11 +46,9 @@
     transition: 0.3s;
   }
   .check { background-color: #10b981; color: white; }
-  .check:hover { background-color: #059669; }
   .reset { background-color: #ef4444; color: white; }
-  .reset:hover { background-color: #dc2626; }
   .stop { background-color: #3b82f6; color: white; }
-  .stop:hover { background-color: #2563eb; }
+  .pdf { background-color: #8b5cf6; color: white; }
   #result { font-size: 1.5rem; margin-top: 0.5rem; }
   #score, #attempts, #timer {
     position: absolute;
@@ -63,32 +65,29 @@
     border-radius: 16px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     text-align: center;
-    max-width: 400px;
+    max-width: 500px;
   }
-  .correct { color: green; }
-  .incorrect { color: red; }
 </style>
 </head>
 
 <body>
-  <h1>Addition & Subtraction (No Regrouping)</h1>
+<h1>Addition & Subtraction (No Regrouping)</h1>
 
-  <div id="score">Score: 0%</div>
-  <div id="timer">Time: 0s</div>
+<div id="score">Score: 0%</div>
+<div id="timer">Time: 0s</div>
+<div id="problem" class="problem"></div>
 
-  <div id="problem" class="problem"></div>
+<input type="number" id="answer" placeholder="Answer" autofocus />
 
-  <input type="number" id="answer" placeholder="Answer" autofocus />
+<div>
+  <button class="check" onclick="checkAnswer()">Check</button>
+  <button class="reset" onclick="resetGame()">Reset</button>
+  <button class="stop" onclick="stopGame()">Stop</button>
+</div>
 
-  <div>
-    <button class="check" onclick="checkAnswer()">Check</button>
-    <button class="reset" onclick="resetGame()">Reset</button>
-    <button class="stop" onclick="stopGame()">Stop</button>
-  </div>
-
-  <div id="result"></div>
-  <div id="attempts">Attempts: 0</div>
-  <div id="summary"></div>
+<div id="result"></div>
+<div id="attempts">Attempts: 0</div>
+<div id="summary"></div>
 
 <script>
 let correct = 0;
@@ -98,6 +97,8 @@ let timerInterval;
 let currentAnswer;
 let currentProblem;
 let history = [];
+
+const { jsPDF } = window.jspdf;
 
 const problemEl = document.getElementById("problem");
 const resultEl = document.getElementById("result");
@@ -120,7 +121,7 @@ function generateNoRegroupingProblem() {
   const isAddition = Math.random() < 0.5;
 
   while (true) {
-    a = Math.floor(Math.random() * 90) + 10; // 10–99
+    a = Math.floor(Math.random() * 90) + 10;
     b = Math.floor(Math.random() * 90) + 10;
 
     const a1 = a % 10;
@@ -155,13 +156,13 @@ function checkAnswer() {
 
   if (userAnswer === currentAnswer) {
     correct++;
-    resultEl.textContent = "✅ Correct!";
+    history.push({ problem: currentProblem, response: userAnswer, correct: true });
+    resultEl.textContent = "Correct!";
     resultEl.style.color = "green";
-    history.push({ problem: currentProblem, correct: true });
   } else {
-    resultEl.textContent = `❌ Incorrect! Correct answer: ${currentAnswer}`;
+    history.push({ problem: currentProblem, response: userAnswer, correct: false });
+    resultEl.textContent = `Incorrect! Correct: ${currentAnswer}`;
     resultEl.style.color = "red";
-    history.push({ problem: `${currentProblem} = ${userAnswer}`, correct: false });
   }
 
   updateStats();
@@ -208,14 +209,64 @@ function stopGame() {
     <p>Time: ${elapsed}s</p>
     <p>Questions: ${attempts}</p>
     <p>Score: ${percent}%</p>
-    <div>
-      ${history.map(h =>
-        `<p class="${h.correct ? 'correct' : 'incorrect'}">${h.problem}</p>`
-      ).join('')}
-    </div>
+    <button class="pdf" onclick="generatePDF(${elapsed}, ${percent})">
+      Download PDF
+    </button>
   `;
-
   summaryEl.style.display = "block";
+}
+
+function generatePDF(elapsed, percent) {
+
+  const confirmDownload = confirm(
+    "Don't forget to put the PDF in the correct student's folder and record the results."
+  );
+
+  if (!confirmDownload) return;
+
+  const doc = new jsPDF();
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString();
+  const timeStr = now.toLocaleTimeString();
+
+  // Header box
+  doc.setFillColor(59,130,246);
+  doc.rect(0, 0, 210, 25, "F");
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(16);
+  doc.text("Addition & Subtraction Assessment Results", 105, 15, null, null, "center");
+
+  doc.setTextColor(0,0,0);
+  doc.setFontSize(12);
+
+  doc.text(`Date: ${dateStr}`, 14, 35);
+  doc.text(`Time: ${timeStr}`, 14, 42);
+  doc.text(`Total Time: ${elapsed} seconds`, 14, 49);
+  doc.text(`Score: ${percent}%`, 14, 56);
+
+  const tableData = history.map(h => [
+    h.problem,
+    h.response,
+    h.correct ? "Correct" : "Incorrect"
+  ]);
+
+  doc.autoTable({
+    startY: 65,
+    head: [["Problem", "Student Response", "Result"]],
+    body: tableData,
+    alternateRowStyles: { fillColor: [240,240,240] },
+    didParseCell: function (data) {
+      if (data.column.index === 2 && data.cell.raw === "Correct") {
+        data.cell.styles.textColor = [0,150,0];
+      }
+      if (data.column.index === 2 && data.cell.raw === "Incorrect") {
+        data.cell.styles.textColor = [200,0,0];
+      }
+    }
+  });
+
+  doc.save("Assessment_Results.pdf");
 }
 
 answerInput.addEventListener("keydown", e => {
