@@ -15,10 +15,34 @@
     align-items: center;
     color: #333;
   }
-  h1 { font-size: 2rem; margin-bottom: 1rem; }
-  .problem { font-size: 3rem; font-weight: bold; margin: 1rem 0; text-align: center; }
-  input { font-size: 1.5rem; text-align: center; width: 100px; padding: 5px; border-radius: 8px; border: 2px solid #60a5fa; margin-bottom: 1rem; }
-  button { margin: 0.5rem; padding: 10px 20px; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; transition: 0.3s; }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .problem {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 1rem 0;
+    text-align: center;
+  }
+  input {
+    font-size: 1.5rem;
+    text-align: center;
+    width: 100px;
+    padding: 5px;
+    border-radius: 8px;
+    border: 2px solid #60a5fa;
+    margin-bottom: 1rem;
+  }
+  button {
+    margin: 0.5rem;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
   .check { background-color: #10b981; color: white; }
   .check:hover { background-color: #059669; }
   .reset { background-color: #ef4444; color: white; }
@@ -26,32 +50,41 @@
   .stop { background-color: #3b82f6; color: white; }
   .stop:hover { background-color: #2563eb; }
   #result { font-size: 1.5rem; margin-top: 0.5rem; }
-  #score, #attempts, #timer { position: absolute; font-weight: bold; font-size: 1.2rem; }
+  #score, #attempts, #timer {
+    position: absolute;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
   #score { top: 10px; right: 10px; }
   #attempts { bottom: 10px; right: 10px; }
   #timer { bottom: 10px; left: 10px; }
-  #summary { display: none; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: center; }
+  #summary {
+    display: none;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    text-align: center;
+  }
   .correct { color: green; }
   .incorrect { color: red; }
 </style>
 </head>
 <body>
-<h1>Addition & Subtraction (No Regrouping)</h1>
-<div id="score">Score: 0%</div>
-<div id="timer">Time: 0s</div>
-<div id="problem" class="problem"></div>
-<input type="number" id="answer" placeholder="Answer" autofocus />
-<div>
-  <button class="check" onclick="checkAnswer()">Check</button>
-  <button class="reset" onclick="resetGame()">Reset</button>
-  <button class="stop" onclick="stopGame()">Stop</button>
-  <button class="check" onclick="downloadPDF()">Download PDF</button>
-</div>
-<div id="result"></div>
-<div id="attempts">Attempts: 0</div>
-<div id="summary"></div>
+  <h1>Addition & Subtraction (No Regrouping)</h1>
+  <div id="score">Score: 0%</div>
+  <div id="timer">Time: 0s</div>
+  <div id="problem" class="problem"></div>
+  <input type="number" id="answer" placeholder="Answer" autofocus />
+  <div>
+    <button class="check" onclick="checkAnswer()">Check</button>
+    <button class="reset" onclick="resetGame()">Reset</button>
+    <button class="stop" onclick="stopGame()">Stop</button>
+  </div>
+  <div id="result"></div>
+  <div id="attempts">Attempts: 0</div>
+  <div id="summary"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 let correct = 0, attempts = 0, startTime, timerInterval;
 let currentAnswer, currentProblem, history = [];
@@ -67,25 +100,36 @@ function startTimer() {
   startTime = Date.now();
   timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    timerEl.textContent = `Time: ${elapsed}s`;
+    timerEl.textContent = Time: ${elapsed}s;
   }, 1000);
 }
 
 function generateNoRegroupingProblem() {
   let a, b, op;
   const isAddition = Math.random() < 0.5;
+
   while (true) {
     a = Math.floor(Math.random() * 90) + 10;
     b = Math.floor(Math.random() * 90) + 10;
     const a1 = a % 10, a10 = Math.floor(a / 10);
     const b1 = b % 10, b10 = Math.floor(b / 10);
+
     if (isAddition) {
-      if (a1 + b1 < 10 && a10 + b10 < 10) { op = '+'; currentAnswer = a + b; break; }
+      if (a1 + b1 < 10 && a10 + b10 < 10) {
+        op = '+';
+        currentAnswer = a + b;
+        break;
+      }
     } else {
-      if (a1 >= b1 && a10 >= b10) { op = '-'; currentAnswer = a - b; break; }
+      if (a1 >= b1 && a10 >= b10) {
+        op = '-';
+        currentAnswer = a - b;
+        break;
+      }
     }
   }
-  currentProblem = `${a} ${op} ${b}`;
+
+  currentProblem = ${a} ${op} ${b};
   problemEl.textContent = currentProblem;
 }
 
@@ -99,18 +143,22 @@ function checkAnswer() {
     resultEl.style.color = "green";
     history.push({ problem: currentProblem, correct: true });
   } else {
-    resultEl.textContent = `❌ Incorrect! Correct answer: ${currentAnswer}`;
+    resultEl.textContent = ❌ Incorrect! Correct answer: ${currentAnswer};
     resultEl.style.color = "red";
-    history.push({ problem: `${currentProblem} = ${userAnswer}`, correct: false });
+    history.push({ problem: ${currentProblem} = ${userAnswer}, correct: false });
   }
   updateStats();
-  setTimeout(() => { answerInput.value = ""; resultEl.textContent = ""; generateNoRegroupingProblem(); }, 800);
+  setTimeout(() => {
+    answerInput.value = "";
+    resultEl.textContent = "";
+    generateNoRegroupingProblem();
+  }, 800);
 }
 
 function updateStats() {
   const percent = ((correct / attempts) * 100).toFixed(0);
-  scoreEl.textContent = `Score: ${isNaN(percent) ? 0 : percent}%`;
-  attemptsEl.textContent = `Attempts: ${attempts}`;
+  scoreEl.textContent = Score: ${isNaN(percent) ? 0 : percent}%;
+  attemptsEl.textContent = Attempts: ${attempts};
 }
 
 function resetGame() {
@@ -132,72 +180,20 @@ function stopGame() {
   answerInput.disabled = true;
   const percent = ((correct / attempts) * 100).toFixed(0);
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  summaryEl.innerHTML = `<h2>Results</h2>
+  summaryEl.innerHTML = <h2>Results</h2>
     <p>Time: ${elapsed}s</p>
     <p>Questions: ${attempts}</p>
     <p>Score: ${percent}%</p>
-    <div>${history.map(h => `<p class="${h.correct ? 'correct' : 'incorrect'}">${h.problem}</p>`).join('')}</div>`;
+    <div>${history.map(h => <p class="${h.correct ? 'correct' : 'incorrect'}">${h.problem}</p>).join('')}</div>;
   summaryEl.style.display = "block";
 }
 
-answerInput.addEventListener("keydown", e => { if (e.key === "Enter") checkAnswer(); });
+answerInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
 
 startTimer();
 generateNoRegroupingProblem();
-
-// ===== PDF Function (Colorful & Professional, No Name) =====
-function downloadPDF() {
-  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
-  if (!proceed) return;
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "portrait" });
-  const percent = ((correct / attempts) * 100).toFixed(0);
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  const now = new Date();
-  const fullDate = now.toLocaleString();
-
-  // Header
-  doc.setFillColor(54, 162, 235); // blue
-  doc.rect(0, 0, 210, 25, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.text("Goal Check Assessment Report", 105, 17, null, null, "center");
-
-  // Assessment info
-  doc.setFontSize(12);
-  doc.setTextColor(0,0,0);
-  doc.text(`Assessment: Addition & Subtraction (No Regrouping)`, 20, 40);
-  doc.text(`Date & Time: ${fullDate}`, 20, 50);
-  doc.text(`Score: ${percent}%`, 20, 60);
-  doc.text(`Time: ${elapsed} seconds`, 20, 70);
-  doc.text(`Questions Attempted: ${attempts}`, 20, 80);
-
-  // Table Header
-  let y = 100;
-  doc.setFillColor(200,200,200);
-  doc.rect(15, y-7, 180, 10, "F");
-  doc.setTextColor(0,0,0);
-  doc.text("No.", 20, y);
-  doc.text("Problem", 40, y);
-  doc.text("✔ / ✖", 160, y);
-  y += 5;
-
-  // Table Rows
-  history.forEach((h, i) => {
-    y += 10;
-    if(y > 280){ doc.addPage(); y = 20; }
-    doc.setFillColor(i % 2 === 0 ? 245 : 230, 245, 250); // alternating row colors
-    doc.rect(15, y-7, 180, 10, "F");
-    doc.setTextColor(h.correct ? 0 : 200, h.correct ? 150 : 0, 0);
-    doc.text(`${i+1}`, 20, y);
-    doc.text(`${h.problem}`, 40, y);
-    doc.text(h.correct ? "✔" : "✖", 160, y);
-  });
-
-  const dateStr = now.toISOString().replace(":", "-").split(".")[0];
-  doc.save(`GoalCheck_${dateStr}.pdf`);
-}
 </script>
 </body>
 </html>
