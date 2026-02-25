@@ -4,11 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mixed Multiplication and Division</title>
-
-<!-- jsPDF + AutoTable -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
 <style>
   body {
     font-family: "Poppins", sans-serif;
@@ -21,9 +16,19 @@
     margin: 0;
     transition: all 0.4s ease;
   }
-  h1 { margin-bottom: 20px; }
-  #problem { font-size: 2.5rem; margin-bottom: 20px; }
-  input { font-size: 1.5rem; text-align: center; width: 80px; padding: 5px; }
+  h1 {
+    margin-bottom: 20px;
+  }
+  #problem {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  input {
+    font-size: 1.5rem;
+    text-align: center;
+    width: 80px;
+    padding: 5px;
+  }
   button {
     font-size: 1.2rem;
     padding: 10px 20px;
@@ -34,21 +39,53 @@
     margin: 10px;
     cursor: pointer;
   }
-  button:hover { background-color: #45a049; }
-  #reset { background-color: #f44336; }
-  #reset:hover { background-color: #d73833; }
-  #stop { background-color: #2196f3; }
-  #stop:hover { background-color: #1a7bd6; }
-  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 15px; }
-  #score, #attempts, #timer {
+  button:hover {
+    background-color: #45a049;
+  }
+  #reset {
+    background-color: #f44336;
+  }
+  #reset:hover {
+    background-color: #d73833;
+  }
+  #stop {
+    background-color: #2196f3;
+  }
+  #stop:hover {
+    background-color: #1a7bd6;
+  }
+  #feedback {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+  #score {
     position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 1.2rem;
+    background-color: #ffffff99;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+  #attempts {
+    position: absolute;
+    bottom: 15px;
+    right: 25px;
+    font-size: 1.1rem;
     background-color: #ffffff99;
     padding: 6px 10px;
     border-radius: 10px;
   }
-  #score { top: 15px; right: 25px; font-size: 1.2rem; }
-  #attempts { bottom: 15px; right: 25px; font-size: 1.1rem; }
-  #timer { bottom: 15px; left: 25px; font-size: 1.1rem; }
+  #timer {
+    position: absolute;
+    bottom: 15px;
+    left: 25px;
+    font-size: 1.1rem;
+    background-color: #ffffff99;
+    padding: 6px 10px;
+    border-radius: 10px;
+  }
   #summary {
     display: none;
     flex-direction: column;
@@ -60,191 +97,165 @@
     padding: 20px;
     margin-top: 20px;
   }
-  .correct { color: green; font-weight: bold; }
-  .incorrect { color: red; font-weight: bold; }
-  .pdf-button { background-color:#ff9800; }
-  .pdf-button:hover { background-color:#fb8c00; }
+  .correct {
+    color: green;
+    font-weight: bold;
+  }
+  .incorrect {
+    color: red;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
-<div id="score">Score: 0%</div>
-<h1>Mixed Multiplication & Division</h1>
-<div id="problem"></div>
-<input type="number" id="answer" placeholder="?" />
-<div>
-  <button onclick="checkAnswer()">Check Answer</button>
-  <button onclick="newProblem()">Next</button>
-  <button id="reset" onclick="resetAll()">Reset</button>
-</div>
-<button id="stop" onclick="stopSession()">Stop</button>
+  <div id="score">Score: 0%</div>
+  <h1>Mixed Multiplication & Division</h1>
+  <div id="problem"></div>
+  <input type="number" id="answer" placeholder="?" />
+  <div>
+    <button onclick="checkAnswer()">Check Answer</button>
+    <button onclick="newProblem()">Next</button>
+    <button id="reset" onclick="resetAll()">Reset</button>
+  </div>
+  <button id="stop" onclick="stopSession()">Stop</button>
 
-<div class="pdf-reminder">
-  💡 Download the PDF and place it in the student’s folder for documentation.
-</div>
-<button class="pdf-button" onclick="downloadPDF()">Download PDF</button>
+  <div id="feedback"></div>
+  <div id="attempts">Attempts: 0</div>
+  <div id="timer">Time: 0s</div>
 
-<div id="feedback"></div>
-<div id="attempts">Attempts: 0</div>
-<div id="timer">Time: 0s</div>
-<div id="summary"></div>
+  <div id="summary"></div>
 
 <script>
-let num1, num2, correctAnswer, operation;
-let totalQuestions = 0;
-let correctAnswers = 0;
-let answered = false;
-let timeElapsed = 0;
-let timerInterval = null;
-let questionHistory = [];
+  let num1, num2, correctAnswer, operation;
+  let totalQuestions = 0;
+  let correctAnswers = 0;
+  let answered = false;
+  let timeElapsed = 0;
+  let timerInterval = null;
+  let questionHistory = [];
 
-function newProblem() {
-  answered = false;
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("answer").value = "";
+  function newProblem() {
+    answered = false;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("answer").value = "";
 
-  const isMultiplication = Math.random() < 0.5;
-  if (isMultiplication) {
-    num1 = Math.floor(Math.random() * 9) + 1;
-    num2 = Math.floor(Math.random() * 9) + 1;
-    operation = "×";
-    correctAnswer = num1 * num2;
-  } else {
-    num2 = Math.floor(Math.random() * 9) + 1;
-    const quotient = Math.floor(Math.random() * 9) + 1;
-    num1 = num2 * quotient;
-    operation = "÷";
-    correctAnswer = quotient;
+    const isMultiplication = Math.random() < 0.5;
+
+    if (isMultiplication) {
+      num1 = Math.floor(Math.random() * 9) + 1;
+      num2 = Math.floor(Math.random() * 9) + 1;
+      operation = "×";
+      correctAnswer = num1 * num2;
+    } else {
+      num2 = Math.floor(Math.random() * 9) + 1;
+      const quotient = Math.floor(Math.random() * 9) + 1;
+      num1 = num2 * quotient;
+      operation = "÷";
+      correctAnswer = quotient;
+    }
+
+    document.getElementById("problem").textContent = `${num1} ${operation} ${num2} = ?`;
+    document.getElementById("answer").focus();
   }
 
-  document.getElementById("problem").textContent = `${num1} ${operation} ${num2} = ?`;
-  document.getElementById("answer").focus();
-}
+  function checkAnswer() {
+    if (answered) return;
+    const userAnswer = parseInt(document.getElementById("answer").value);
+    if (isNaN(userAnswer)) return;
 
-function checkAnswer() {
-  if (answered) return;
-  const userAnswer = parseInt(document.getElementById("answer").value);
-  if (isNaN(userAnswer)) return;
+    totalQuestions++;
+    answered = true;
+    let isCorrect = false;
 
-  totalQuestions++;
-  answered = true;
-  let isCorrect = false;
+    if (userAnswer === correctAnswer) {
+      correctAnswers++;
+      isCorrect = true;
+      document.getElementById("feedback").textContent = "✅ Correct!";
+      document.getElementById("feedback").style.color = "green";
+    } else {
+      document.getElementById("feedback").textContent = `❌ Nope, it’s ${correctAnswer}`;
+      document.getElementById("feedback").style.color = "red";
+    }
 
-  if (userAnswer === correctAnswer) {
-    correctAnswers++;
-    isCorrect = true;
-    document.getElementById("feedback").textContent = "✅ Correct!";
-    document.getElementById("feedback").style.color = "green";
-  } else {
-    document.getElementById("feedback").textContent = `❌ Nope, it’s ${correctAnswer}`;
-    document.getElementById("feedback").style.color = "red";
+    questionHistory.push({
+      question: `${num1} ${operation} ${num2} = ${userAnswer}`,
+      correctAnswer: correctAnswer,
+      correct: isCorrect
+    });
+
+    updateStats();
+    setTimeout(newProblem, 1000);
   }
 
-  questionHistory.push({
-    problem: `${num1} ${operation} ${num2}`,
-    response: userAnswer,
-    correctAnswer: correctAnswer,
-    correct: isCorrect
-  });
+  function updateStats() {
+    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
+    document.getElementById("score").textContent = `Score: ${percent}%`;
+    document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
+  }
 
-  updateStats();
-  setTimeout(newProblem, 1000);
-}
+  function resetAll() {
+    totalQuestions = 0;
+    correctAnswers = 0;
+    timeElapsed = 0;
+    questionHistory = [];
+    clearInterval(timerInterval);
+    timerInterval = null;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("timer").textContent = "Time: 0s";
+    document.getElementById("summary").style.display = "none";
+    updateStats();
+    document.getElementById("problem").style.display = "block";
+    document.getElementById("answer").style.display = "inline-block";
+    document.querySelectorAll("button").forEach(btn => btn.style.display = "inline-block");
+    newProblem();
+    startTimer();
+  }
 
-function updateStats() {
-  const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
-  document.getElementById("score").textContent = `Score: ${percent}%`;
-  document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
-}
+  function stopSession() {
+    clearInterval(timerInterval);
+    document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
+    document.getElementById("problem").style.display = "none";
+    document.getElementById("answer").style.display = "none";
+    document.getElementById("feedback").textContent = "";
 
-function resetAll() {
-  totalQuestions = 0;
-  correctAnswers = 0;
-  timeElapsed = 0;
-  questionHistory = [];
-  clearInterval(timerInterval);
-  timerInterval = null;
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("timer").textContent = "Time: 0s";
-  document.getElementById("summary").style.display = "none";
-  updateStats();
-  document.getElementById("problem").style.display = "block";
-  document.getElementById("answer").style.display = "inline-block";
-  document.querySelectorAll("button").forEach(btn => btn.style.display = "inline-block");
-  newProblem();
-  startTimer();
-}
+    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
 
-function stopSession() {
-  clearInterval(timerInterval);
-  document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
-  document.getElementById("problem").style.display = "none";
-  document.getElementById("answer").style.display = "none";
-  document.getElementById("feedback").textContent = "";
-}
+    let summaryHTML = `<h2>Session Summary</h2>`;
+    summaryHTML += `<p><strong>Time Taken:</strong> ${timeElapsed}s</p>`;
+    summaryHTML += `<p><strong>Total Questions:</strong> ${totalQuestions}</p>`;
+    summaryHTML += `<p><strong>Score:</strong> ${percent}%</p><hr>`;
+    summaryHTML += `<h3>Answers:</h3><ul style="list-style:none;padding:0;">`;
 
-function startTimer() {
-  if (timerInterval) return;
-  timerInterval = setInterval(() => {
-    timeElapsed++;
-    document.getElementById("timer").textContent = `Time: ${timeElapsed}s`;
-  }, 1000);
-}
-
-// --------- PROFESSIONAL COLORFUL PDF ---------
-function downloadPDF() {
-  const proceed = confirm("Don't forget to put the PDF in the correct student's folder and record the results");
-  if (!proceed) return;
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
-  const now = new Date();
-
-  // Header bar
-  doc.setFillColor(33,150,243);
-  doc.rect(0,0,210,25,"F");
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(16);
-  doc.text("Mixed Multiplication & Division Assessment",105,15,null,null,"center");
-
-  doc.setTextColor(0,0,0);
-  doc.setFontSize(12);
-  doc.text(`Date: ${now.toLocaleDateString()}`,14,35);
-  doc.text(`Time: ${now.toLocaleTimeString()}`,14,42);
-  doc.text(`Total Time: ${timeElapsed} seconds`,14,49);
-  doc.text(`Score: ${percent}%`,14,56);
-  doc.text(`Questions Attempted: ${totalQuestions}`,14,63);
-
-  const tableData = questionHistory.map(q => [
-    q.problem,
-    q.response,
-    q.correct ? "Correct" : "Incorrect"
-  ]);
-
-  doc.autoTable({
-    startY: 75,
-    head: [["Problem","Student Answer","Result"]],
-    body: tableData,
-    alternateRowStyles: { fillColor: [240,240,240] },
-    didParseCell: function(data) {
-      if (data.column.index === 2 && data.cell.raw === "Correct") {
-        data.cell.styles.textColor = [0,150,0];
+    questionHistory.forEach(q => {
+      if (q.correct) {
+        summaryHTML += `<li class="correct">${q.question}</li>`;
+      } else {
+        summaryHTML += `<li class="incorrect">${q.question} (Correct: ${q.correctAnswer})</li>`;
       }
-      if (data.column.index === 2 && data.cell.raw === "Incorrect") {
-        data.cell.styles.textColor = [200,0,0];
-      }
+    });
+
+    summaryHTML += `</ul><button id="reset" onclick="resetAll()">Play Again</button>`;
+    const summaryDiv = document.getElementById("summary");
+    summaryDiv.innerHTML = summaryHTML;
+    summaryDiv.style.display = "flex";
+  }
+
+  function startTimer() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      timeElapsed++;
+      document.getElementById("timer").textContent = `Time: ${timeElapsed}s`;
+    }, 1000);
+  }
+
+  document.getElementById("answer").addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      checkAnswer();
     }
   });
 
-  doc.save(`Assessment_${now.toLocaleDateString().replace(/\//g,'-')}.pdf`);
-}
-
-document.getElementById("answer").addEventListener("keyup", function(event) {
-  if (event.key === "Enter") checkAnswer();
-});
-
-newProblem();
-startTimer();
+  newProblem();
+  startTimer();
 </script>
 </body>
 </html>
