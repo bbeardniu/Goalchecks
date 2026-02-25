@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Addition & Subtraction ≤ 100</title>
 <style>
@@ -16,242 +16,187 @@
     margin: 0;
     transition: all 0.4s ease;
   }
-  h1 {
-    margin-bottom: 20px;
+  h1 { margin-bottom: 20px; }
+  #problem { font-size: 2.5rem; margin-bottom: 20px; }
+  input { font-size: 1.5rem; text-align: center; width: 100px; padding: 5px; }
+  button { font-size: 1.2rem; padding: 10px 20px; border: none; border-radius: 10px; margin: 10px; cursor: pointer; }
+  button:hover { opacity: 0.9; }
+  #reset { background-color: #f44336; color:white; }
+  #stop { background-color: #2196f3; color:white; }
+  #pdfBtn { background-color: #ff9800; color:white; display:none; }
+  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 15px; }
+  #score, #attempts, #timer {
+    position: absolute; font-size: 1.1rem; background-color: #ffffff99; padding: 6px 10px; border-radius: 10px;
   }
-  #problem {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  input {
-    font-size: 1.5rem;
-    text-align: center;
-    width: 100px;
-    padding: 5px;
-  }
-  button {
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    border: none;
-    background-color: #4caf50;
-    color: white;
-    border-radius: 10px;
-    margin: 10px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #45a049;
-  }
-  #reset {
-    background-color: #f44336;
-  }
-  #reset:hover {
-    background-color: #d73833;
-  }
-  #stop {
-    background-color: #2196f3;
-  }
-  #stop:hover {
-    background-color: #1a7bd6;
-  }
-  #feedback {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-top: 15px;
-  }
-  #score {
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 1.2rem;
-    background-color: #ffffff99;
-    padding: 8px 12px;
-    border-radius: 10px;
-  }
-  #attempts {
-    position: absolute;
-    bottom: 15px;
-    right: 25px;
-    font-size: 1.1rem;
-    background-color: #ffffff99;
-    padding: 6px 10px;
-    border-radius: 10px;
-  }
-  #timer {
-    position: absolute;
-    bottom: 15px;
-    left: 25px;
-    font-size: 1.1rem;
-    background-color: #ffffff99;
-    padding: 6px 10px;
-    border-radius: 10px;
-  }
+  #score { top:15px; right:25px; }
+  #attempts { bottom:15px; right:25px; }
+  #timer { bottom:15px; left:25px; }
   #summary {
     display: none;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    max-width: 600px;
+    max-width: 650px;
     background-color: #ffffffcc;
     border-radius: 20px;
     padding: 20px;
     margin-top: 20px;
   }
-  .correct {
-    color: green;
-    font-weight: bold;
-  }
-  .incorrect {
-    color: red;
-    font-weight: bold;
-  }
+  .correct { color: green; font-weight: bold; }
+  .incorrect { color: red; font-weight: bold; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th { background-color: #0066cc; color: white; padding: 8px; }
+  td { padding: 6px; text-align: center; }
 </style>
 </head>
 <body>
-  <div id="score">Score: 0%</div>
-  <h1>Addition & Subtraction Practice (≤ 100)</h1>
-  <div id="problem"></div>
-  <input type="number" id="answer" placeholder="?" />
-  <div>
-    <button onclick="checkAnswer()">Check Answer</button>
-    <button onclick="newProblem()">Next</button>
-    <button id="reset" onclick="resetAll()">Reset</button>
-  </div>
-  <button id="stop" onclick="stopSession()">Stop</button>
+<div id="score">Score: 0%</div>
+<h1>Addition & Subtraction Practice (≤ 100)</h1>
+<div id="problem"></div>
+<input type="number" id="answer" placeholder="?" />
+<div>
+  <button onclick="checkAnswer()">Check Answer</button>
+  <button onclick="newProblem()">Next</button>
+  <button id="reset" onclick="resetAll()">Reset</button>
+</div>
+<button id="stop" onclick="stopSession()">Stop</button>
+<button id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
 
-  <div id="feedback"></div>
-  <div id="attempts">Attempts: 0</div>
-  <div id="timer">Time: 0s</div>
+<div id="feedback"></div>
+<div id="attempts">Attempts: 0</div>
+<div id="timer">Time: 0s</div>
+<div id="summary"></div>
 
-  <div id="summary"></div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  let num1, num2, operator;
-  let totalQuestions = 0;
-  let correctAnswers = 0;
-  let answered = false;
-  let timeElapsed = 0;
-  let timerInterval = null;
-  let questionHistory = [];
+let num1,num2,operator;
+let totalQuestions=0;
+let correctAnswers=0;
+let answered=false;
+let timeElapsed=0;
+let timerInterval=null;
+let questionHistory=[];
 
-  function newProblem() {
-    answered = false;
-    operator = Math.random() < 0.5 ? '+' : '-';
+function newProblem(){
+  answered=false;
+  operator=Math.random()<0.5?'+':'-';
+  if(operator==='+'){
+    do{ num1=Math.floor(Math.random()*101); num2=Math.floor(Math.random()*101); }while(num1+num2>100);
+  }else{ num1=Math.floor(Math.random()*101); num2=Math.floor(Math.random()*(num1+1)); }
+  document.getElementById("problem").textContent=`${num1} ${operator} ${num2} = ?`;
+  document.getElementById("answer").value="";
+  document.getElementById("feedback").textContent="";
+  document.getElementById("answer").focus();
+}
 
-    if (operator === '+') {
-      do {
-        num1 = Math.floor(Math.random() * 101);
-        num2 = Math.floor(Math.random() * 101);
-      } while (num1 + num2 > 100);
-    } else {
-      num1 = Math.floor(Math.random() * 101);
-      num2 = Math.floor(Math.random() * (num1 + 1)); // ensure non-negative result
-    }
+function checkAnswer(){
+  if(answered) return;
+  const userAnswer=parseInt(document.getElementById("answer").value);
+  if(isNaN(userAnswer)) return;
+  answered=true;
+  totalQuestions++;
+  const correctAnswer=operator==='+'?num1+num2:num1-num2;
+  const isCorrect=userAnswer===correctAnswer;
+  if(isCorrect){ correctAnswers++; document.getElementById("feedback").textContent="✅ Correct!"; document.getElementById("feedback").style.color="green"; }
+  else{ document.getElementById("feedback").textContent=`❌ Nope, it’s ${correctAnswer}`; document.getElementById("feedback").style.color="red"; }
 
-    document.getElementById("problem").textContent = `${num1} ${operator} ${num2} = ?`;
-    document.getElementById("answer").value = "";
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("answer").focus();
-  }
+  questionHistory.push({question:`${num1} ${operator} ${num2} = ${userAnswer}`, correctAnswer, correct:isCorrect});
+  updateStats();
+  setTimeout(newProblem,1000);
+}
 
-  function checkAnswer() {
-    if (answered) return;
-    const userAnswer = parseInt(document.getElementById("answer").value);
-    if (isNaN(userAnswer)) return;
-    answered = true;
-    totalQuestions++;
+function updateStats(){
+  const percent=totalQuestions===0?0:Math.round((correctAnswers/totalQuestions)*100);
+  document.getElementById("score").textContent=`Score: ${percent}%`;
+  document.getElementById("attempts").textContent=`Attempts: ${totalQuestions}`;
+}
 
-    const correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
-    let isCorrect = userAnswer === correctAnswer;
+function resetAll(){
+  totalQuestions=0; correctAnswers=0; timeElapsed=0; questionHistory=[];
+  clearInterval(timerInterval); timerInterval=null;
+  document.getElementById("feedback").textContent="";
+  document.getElementById("timer").textContent="Time: 0s";
+  document.getElementById("summary").style.display="none";
+  document.getElementById("pdfBtn").style.display="none";
+  document.getElementById("problem").style.display="block";
+  document.getElementById("answer").style.display="inline-block";
+  document.querySelectorAll("button").forEach(btn=>btn.style.display="inline-block");
+  updateStats();
+  newProblem(); startTimer();
+}
 
-    if (isCorrect) {
-      correctAnswers++;
-      document.getElementById("feedback").textContent = "✅ Correct!";
-      document.getElementById("feedback").style.color = "green";
-    } else {
-      document.getElementById("feedback").textContent = `❌ Nope, it’s ${correctAnswer}`;
-      document.getElementById("feedback").style.color = "red";
-    }
+function stopSession(){
+  clearInterval(timerInterval);
+  document.querySelectorAll("button").forEach(btn=>btn.style.display="none");
+  document.getElementById("problem").style.display="none";
+  document.getElementById("answer").style.display="none";
+  document.getElementById("feedback").textContent="";
+  const percent=totalQuestions===0?0:Math.round((correctAnswers/totalQuestions)*100);
 
-    questionHistory.push({
-      question: `${num1} ${operator} ${num2} = ${userAnswer}`,
-      correctAnswer,
-      correct: isCorrect
-    });
+  let summaryHTML=`<h2>Session Summary</h2>`;
+  summaryHTML+=`<p><strong>Time Taken:</strong> ${timeElapsed}s</p>`;
+  summaryHTML+=`<p><strong>Total Questions:</strong> ${totalQuestions}</p>`;
+  summaryHTML+=`<p><strong>Score:</strong> ${percent}%</p>`;
+  summaryHTML+=`<hr><h3>Answers:</h3>`;
+  summaryHTML+=`<table><tr><th>Question</th><th>Result</th></tr>`;
+  questionHistory.forEach((q,i)=>{
+    const bg=i%2===0?'#f0f0f0':'#ffffff';
+    summaryHTML+=`<tr style="background:${bg}"><td>${q.question}</td><td style="color:${q.correct?'green':'red'}">${q.correct?'Correct':'Incorrect (Correct: '+q.correctAnswer+')'}</td></tr>`;
+  });
+  summaryHTML+=`</table><br><button id="reset" onclick="resetAll()">Play Again</button>`;
+  const summaryDiv=document.getElementById("summary");
+  summaryDiv.innerHTML=summaryHTML; summaryDiv.style.display="flex";
+  document.getElementById("pdfBtn").style.display="inline-block";
+}
 
-    updateStats();
-    setTimeout(newProblem, 1000);
-  }
+function startTimer(){
+  if(timerInterval) return;
+  timerInterval=setInterval(()=>{ timeElapsed++; document.getElementById("timer").textContent=`Time: ${timeElapsed}s`; },1000);
+}
 
-  function updateStats() {
-    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
-    document.getElementById("score").textContent = `Score: ${percent}%`;
-    document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
-  }
+// -------- PDF Download Function --------
+function downloadPDF(){
+  if(!confirm("Don't forget to put the PDF in the correct student's folder and record the results")) return;
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF();
+  const now=new Date();
+  const dateStr=now.toLocaleDateString();
+  const timeStr=now.toLocaleTimeString();
+  const percent=totalQuestions===0?0:Math.round((correctAnswers/totalQuestions)*100);
 
-  function resetAll() {
-    totalQuestions = 0;
-    correctAnswers = 0;
-    timeElapsed = 0;
-    questionHistory = [];
-    clearInterval(timerInterval);
-    timerInterval = null;
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("timer").textContent = "Time: 0s";
-    document.getElementById("summary").style.display = "none";
-    updateStats();
-    document.getElementById("problem").style.display = "block";
-    document.getElementById("answer").style.display = "inline-block";
-    document.querySelectorAll("button").forEach(btn => btn.style.display = "inline-block");
-    newProblem();
-    startTimer();
-  }
+  // Header
+  doc.setFillColor(0,102,204); doc.rect(0,0,210,25,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(16);
+  doc.text("Addition & Subtraction Assessment",105,15,{align:"center"});
 
-  function stopSession() {
-    clearInterval(timerInterval);
-    document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
-    document.getElementById("problem").style.display = "none";
-    document.getElementById("answer").style.display = "none";
-    document.getElementById("feedback").textContent = "";
+  doc.setFontSize(11); doc.setTextColor(0,0,0);
+  doc.text(`Date: ${dateStr}`,14,35);
+  doc.text(`Time: ${timeStr}`,14,42);
+  doc.text(`Total Time: ${timeElapsed} seconds`,14,49);
+  doc.text(`Total Questions: ${totalQuestions}`,14,56);
+  doc.text(`Score: ${percent}%`,14,63);
 
-    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
-
-    let summaryHTML = `<h2>Session Summary</h2>`;
-    summaryHTML += `<p><strong>Time Taken:</strong> ${timeElapsed}s</p>`;
-    summaryHTML += `<p><strong>Total Questions:</strong> ${totalQuestions}</p>`;
-    summaryHTML += `<p><strong>Score:</strong> ${percent}%</p><hr>`;
-    summaryHTML += `<h3>Answers:</h3><ul style="list-style:none;padding:0;">`;
-
-    questionHistory.forEach(q => {
-      if (q.correct) {
-        summaryHTML += `<li class="correct">${q.question}</li>`;
-      } else {
-        summaryHTML += `<li class="incorrect">${q.question} (Correct: ${q.correctAnswer})</li>`;
-      }
-    });
-
-    summaryHTML += `</ul><button id="reset" onclick="resetAll()">Play Again</button>`;
-    const summaryDiv = document.getElementById("summary");
-    summaryDiv.innerHTML = summaryHTML;
-    summaryDiv.style.display = "flex";
-  }
-
-  function startTimer() {
-    if (timerInterval) return;
-    timerInterval = setInterval(() => {
-      timeElapsed++;
-      document.getElementById("timer").textContent = `Time: ${timeElapsed}s`;
-    }, 1000);
-  }
-
-  document.getElementById("answer").addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
-      checkAnswer();
-    }
+  // Table
+  let y=75;
+  doc.setFillColor(0,102,204); doc.setTextColor(255,255,255); doc.rect(14,y-8,182,10,'F');
+  doc.text("Question",16,y); doc.text("Result",150,y); y+=5;
+  questionHistory.forEach((q,i)=>{
+    const bg=i%2===0?245:220;
+    doc.setFillColor(bg,bg,bg); doc.rect(14,y-4,182,8,'F');
+    doc.setTextColor(0,0,0); doc.text(q.question,16,y);
+    doc.setTextColor(q.correct?0:200,q.correct?150:0,0);
+    doc.text(q.correct?"Correct":"Incorrect (Ans: "+q.correctAnswer+")",150,y);
+    y+=8;
+    if(y>280){ doc.addPage(); y=20; }
   });
 
-  newProblem();
-  startTimer();
+  doc.save(`Addition_Subtraction_Report_${dateStr.replace(/\//g,'-')}.pdf`);
+}
+
+// Event listener for Enter key
+document.getElementById("answer").addEventListener("keyup",function(event){ if(event.key==="Enter"){ checkAnswer(); }});
+
+newProblem(); startTimer();
 </script>
 </body>
 </html>
