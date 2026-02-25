@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mixed Multiplication and Division</title>
+
+<!-- jsPDF + AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
 <style>
   body {
     font-family: "Poppins", sans-serif;
@@ -72,6 +77,7 @@
   <button id="reset" onclick="resetAll()">Reset</button>
 </div>
 <button id="stop" onclick="stopSession()">Stop</button>
+
 <div class="pdf-reminder">
   💡 Download the PDF and place it in the student’s folder for documentation.
 </div>
@@ -82,7 +88,6 @@
 <div id="timer">Time: 0s</div>
 <div id="summary"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 let num1, num2, correctAnswer, operation;
 let totalQuestions = 0;
@@ -135,7 +140,8 @@ function checkAnswer() {
   }
 
   questionHistory.push({
-    question: `${num1} ${operation} ${num2} = ${userAnswer}`,
+    problem: `${num1} ${operation} ${num2}`,
+    response: userAnswer,
     correctAnswer: correctAnswer,
     correct: isCorrect
   });
@@ -174,23 +180,6 @@ function stopSession() {
   document.getElementById("problem").style.display = "none";
   document.getElementById("answer").style.display = "none";
   document.getElementById("feedback").textContent = "";
-
-  const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
-  let summaryHTML = `<h2>Session Summary</h2>`;
-  summaryHTML += `<p><strong>Time Taken:</strong> ${timeElapsed}s</p>`;
-  summaryHTML += `<p><strong>Total Questions:</strong> ${totalQuestions}</p>`;
-  summaryHTML += `<p><strong>Score:</strong> ${percent}%</p><hr>`;
-  summaryHTML += `<h3>Answers:</h3><ul style="list-style:none;padding:0;">`;
-
-  questionHistory.forEach(q => {
-    if (q.correct) summaryHTML += `<li class="correct">${q.question}</li>`;
-    else summaryHTML += `<li class="incorrect">${q.question} (Correct: ${q.correctAnswer})</li>`;
-  });
-
-  summaryHTML += `</ul><button id="reset" onclick="resetAll()">Play Again</button>`;
-  const summaryDiv = document.getElementById("summary");
-  summaryDiv.innerHTML = summaryHTML;
-  summaryDiv.style.display = "flex";
 }
 
 function startTimer() {
@@ -201,45 +190,58 @@ function startTimer() {
   }, 1000);
 }
 
-document.getElementById("answer").addEventListener("keyup", function(event) {
-  if (event.key === "Enter") checkAnswer();
-});
-
-// ---------- PDF Download Function with confirmation ----------
+// --------- PROFESSIONAL COLORFUL PDF ---------
 function downloadPDF() {
-  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  const proceed = confirm("Don't forget to put the PDF in the correct student's folder and record the results");
   if (!proceed) return;
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
   const now = new Date();
-  const dateStr = now.toLocaleDateString();
-  const timeStr = now.toLocaleTimeString();
 
+  // Header bar
+  doc.setFillColor(33,150,243);
+  doc.rect(0,0,210,25,"F");
+  doc.setTextColor(255,255,255);
   doc.setFontSize(16);
-  doc.setTextColor(255, 87, 34); 
-  doc.text("Goal Check Assessment Report", 20, 20);
+  doc.text("Mixed Multiplication & Division Assessment",105,15,null,null,"center");
 
+  doc.setTextColor(0,0,0);
   doc.setFontSize(12);
-  doc.setTextColor(0, 0, 0);
-  doc.text(`Assessment: Mixed Multiplication & Division`, 20, 35);
-  doc.text(`Score: ${percent}%`, 20, 45);
-  doc.text(`Time Taken: ${timeElapsed} seconds`, 20, 55);
-  doc.text(`Questions Attempted: ${totalQuestions}`, 20, 65);
-  doc.text(`Date: ${dateStr}`, 20, 75);
-  doc.text(`Time: ${timeStr}`, 20, 85);
+  doc.text(`Date: ${now.toLocaleDateString()}`,14,35);
+  doc.text(`Time: ${now.toLocaleTimeString()}`,14,42);
+  doc.text(`Total Time: ${timeElapsed} seconds`,14,49);
+  doc.text(`Score: ${percent}%`,14,56);
+  doc.text(`Questions Attempted: ${totalQuestions}`,14,63);
 
-  let y = 100;
-  questionHistory.forEach((q, i) => {
-    const mark = q.correct ? "✅" : "❌";
-    doc.text(`${i + 1}. ${q.question} ${mark}`, 20, y);
-    y += 10;
-    if (y > 280) { doc.addPage(); y = 20; }
+  const tableData = questionHistory.map(q => [
+    q.problem,
+    q.response,
+    q.correct ? "Correct" : "Incorrect"
+  ]);
+
+  doc.autoTable({
+    startY: 75,
+    head: [["Problem","Student Answer","Result"]],
+    body: tableData,
+    alternateRowStyles: { fillColor: [240,240,240] },
+    didParseCell: function(data) {
+      if (data.column.index === 2 && data.cell.raw === "Correct") {
+        data.cell.styles.textColor = [0,150,0];
+      }
+      if (data.column.index === 2 && data.cell.raw === "Incorrect") {
+        data.cell.styles.textColor = [200,0,0];
+      }
+    }
   });
 
-  doc.save(`GoalCheck_${dateStr.replace(/\//g,'-')}_${timeStr.replace(/:/g,'-')}.pdf`);
+  doc.save(`Assessment_${now.toLocaleDateString().replace(/\//g,'-')}.pdf`);
 }
+
+document.getElementById("answer").addEventListener("keyup", function(event) {
+  if (event.key === "Enter") checkAnswer();
+});
 
 newProblem();
 startTimer();
