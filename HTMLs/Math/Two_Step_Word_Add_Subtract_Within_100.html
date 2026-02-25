@@ -40,6 +40,7 @@
   #submitBtn { background-color: #4CAF50; color: white; }
   #resetBtn { background-color: #ff4d4d; color: white; }
   #stopBtn { background-color: #007bff; color: white; display: block; margin: 10px auto; }
+  #pdfBtn { background-color: #ff9800; color: white; display: none; }
   #feedback { font-size: 1.2em; margin-top: 10px; }
   #score { position: absolute; top: 10px; right: 20px; font-weight: bold; }
   #timer { position: absolute; bottom: 10px; left: 20px; font-weight: bold; }
@@ -64,15 +65,17 @@
   <br />
   <button id="submitBtn">Submit</button>
   <button id="resetBtn">Reset</button>
+  <button id="stopBtn">Stop</button>
+  <button id="pdfBtn">Download PDF</button>
   <div id="feedback"></div>
   <div id="timer">Time: 0s</div>
   <div id="attempts">Attempts: 0</div>
-  <button id="stopBtn">Stop</button>
   <div id="summary"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const names = ["Liam", "Emma", "Noah", "Olivia", "Ava", "Mia", "Ethan", "Sophia", "Lucas", "Isabella"];
-const items = ["apples", "pencils", "marbles", "books", "candies", "balls", "stickers", "toys", "blocks", "coins"];
+const names = ["Liam","Emma","Noah","Olivia","Ava","Mia","Ethan","Sophia","Lucas","Isabella"];
+const items = ["apples","pencils","marbles","books","candies","balls","stickers","toys","blocks","coins"];
 
 let correct = 0;
 let attempts = 0;
@@ -87,147 +90,135 @@ function startTimer() {
     document.getElementById("timer").textContent = "Time: " + time + "s";
   }, 1000);
 }
+function stopTimer() { clearInterval(timerInterval); }
 
-function stopTimer() {
-  clearInterval(timerInterval);
-}
-
-/* ------------------------------
-   CREATE 2-STEP WORD PROBLEMS
---------------------------------*/
-
+/* ----------------- PROBLEMS ------------------ */
 function generateTwoStepAddition() {
-  const name = names[Math.floor(Math.random() * names.length)];
-  const item = items[Math.floor(Math.random() * items.length)];
-
-  const n1 = Math.floor(Math.random() * 30) + 10;
-  const n2 = Math.floor(Math.random() * 30) + 5;
-  const n3 = Math.floor(Math.random() * 30) + 5;
-
-  const answer = n1 + n2 + n3;
-
-  const question =
-    `${name} had ${n1} ${item}. Then ${name} got ${n2} more ${item}. After that, ${name} received ${n3} more ${item}. ` +
-    `How many ${item} does ${name} have now?`;
-
-  return { question, answer };
+  const name = names[Math.floor(Math.random()*names.length)];
+  const item = items[Math.floor(Math.random()*items.length)];
+  const n1=Math.floor(Math.random()*30)+10;
+  const n2=Math.floor(Math.random()*30)+5;
+  const n3=Math.floor(Math.random()*30)+5;
+  const answer=n1+n2+n3;
+  const question=`${name} had ${n1} ${item}. Then ${name} got ${n2} more ${item}. After that, ${name} received ${n3} more ${item}. How many ${item} does ${name} have now?`;
+  return {question,answer};
 }
-
 function generateTwoStepSubtraction() {
-  const name = names[Math.floor(Math.random() * names.length)];
-  const item = items[Math.floor(Math.random() * items.length)];
-
-  const n1 = Math.floor(Math.random() * 40) + 60;
-  const n2 = Math.floor(Math.random() * 30) + 5;
-  const n3 = Math.floor(Math.random() * 30) + 5;
-
-  const answer = n1 - n2 - n3;
-
-  const question =
-    `${name} had ${n1} ${item}. ${name} used ${n2} ${item}. Later, ${name} gave away ${n3} ${item}. ` +
-    `How many ${item} does ${name} have left?`;
-
-  return { question, answer };
+  const name = names[Math.floor(Math.random()*names.length)];
+  const item = items[Math.floor(Math.random()*items.length)];
+  const n1=Math.floor(Math.random()*40)+60;
+  const n2=Math.floor(Math.random()*30)+5;
+  const n3=Math.floor(Math.random()*30)+5;
+  const answer=n1-n2-n3;
+  const question=`${name} had ${n1} ${item}. ${name} used ${n2} ${item}. Later, ${name} gave away ${n3} ${item}. How many ${item} does ${name} have left?`;
+  return {question,answer};
 }
-
-function randomTwoStepProblem() {
-  return Math.random() < 0.5 ? generateTwoStepAddition() : generateTwoStepSubtraction();
-}
-
-/* ------------------------------ */
+function randomTwoStepProblem(){ return Math.random()<0.5?generateTwoStepAddition():generateTwoStepSubtraction(); }
+/* -------------------------------------------- */
 
 function newProblem() {
   currentProblem = randomTwoStepProblem();
-  document.getElementById("problem").textContent = currentProblem.question;
-  document.getElementById("answer").value = "";
-  document.getElementById("feedback").textContent = "";
+  document.getElementById("problem").textContent=currentProblem.question;
+  document.getElementById("answer").value="";
+  document.getElementById("feedback").textContent="";
   document.getElementById("answer").focus();
 }
 
 function updateScore() {
-  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
-  document.getElementById("score").textContent = `Score: ${percent}%`;
-  document.getElementById("attempts").textContent = `Attempts: ${attempts}`;
+  const percent = attempts===0?0:Math.round((correct/attempts)*100);
+  document.getElementById("score").textContent=`Score: ${percent}%`;
+  document.getElementById("attempts").textContent=`Attempts: ${attempts}`;
 }
 
 function submitAnswer() {
-  const userAnswer = parseInt(document.getElementById("answer").value);
-  if (isNaN(userAnswer)) return;
-
+  const userAnswer=parseInt(document.getElementById("answer").value);
+  if(isNaN(userAnswer))return;
   attempts++;
-
-  const isCorrect = userAnswer === currentProblem.answer;
-  if (isCorrect) correct++;
-
-  // Save full record
-  questions.push({
-    question: currentProblem.question,
-    answer: currentProblem.answer,
-    student: userAnswer,
-    correct: isCorrect
-  });
-
-  // Feedback
-  if (isCorrect) {
-    document.getElementById("feedback").textContent = "Correct!";
-    document.getElementById("feedback").style.color = "green";
-  } else {
-    document.getElementById("feedback").textContent =
-      `Incorrect. The correct answer was ${currentProblem.answer}.`;
-    document.getElementById("feedback").style.color = "red";
-  }
-
+  const isCorrect=userAnswer===currentProblem.answer;
+  if(isCorrect) correct++;
+  questions.push({question:currentProblem.question,answer:currentProblem.answer,student:userAnswer,correct:isCorrect});
+  if(isCorrect){ document.getElementById("feedback").textContent="Correct!"; document.getElementById("feedback").style.color="green"; }
+  else{ document.getElementById("feedback").textContent=`Incorrect. The correct answer was ${currentProblem.answer}.`; document.getElementById("feedback").style.color="red"; }
   updateScore();
-  setTimeout(newProblem, 1200);
+  setTimeout(newProblem,1200);
 }
 
 function resetAll() {
   stopTimer();
-  correct = 0;
-  attempts = 0;
-  time = 0;
-  questions = [];
-  document.getElementById("score").textContent = "Score: 0%";
-  document.getElementById("timer").textContent = "Time: 0s";
-  document.getElementById("attempts").textContent = "Attempts: 0";
-  document.getElementById("summary").style.display = "none";
+  correct=0; attempts=0; time=0; questions=[];
+  document.getElementById("score").textContent="Score: 0%";
+  document.getElementById("timer").textContent="Time: 0s";
+  document.getElementById("attempts").textContent="Attempts: 0";
+  document.getElementById("summary").style.display="none";
+  document.getElementById("pdfBtn").style.display="none";
   startTimer();
   newProblem();
 }
 
 function stopAll() {
   stopTimer();
-  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
-
-  let summaryHTML = `<h2>Results</h2>`;
-  summaryHTML += `<p><strong>Time:</strong> ${time}s<br><strong>Attempts:</strong> ${attempts}<br><strong>Score:</strong> ${percent}%</p>`;
-  summaryHTML += "<ul>";
-
-  questions.forEach((q) => {
-    summaryHTML += `
-      <li class="${q.correct ? 'correct' : 'incorrect'}">
-        ${q.question}<br>
-        <strong>Your answer:</strong> ${q.student}<br>
-        <strong>Correct answer:</strong> ${q.answer}  
-        ${q.correct ? '✔' : '✖'}
-      </li><br>
-    `;
+  const percent=attempts===0?0:Math.round((correct/attempts)*100);
+  let summaryHTML=`<h2>Results</h2><p><strong>Time:</strong> ${time}s<br><strong>Attempts:</strong> ${attempts}<br><strong>Score:</strong> ${percent}%</p><ul>`;
+  questions.forEach(q=>{
+    summaryHTML+=`<li class="${q.correct?'correct':'incorrect'}">${q.question}<br><strong>Your answer:</strong> ${q.student}<br><strong>Correct answer:</strong> ${q.answer} ${q.correct?'✔':'✖'}</li><br>`;
   });
-
-  summaryHTML += "</ul>";
-  document.getElementById("summary").innerHTML = summaryHTML;
-  document.getElementById("summary").style.display = "block";
+  summaryHTML+="</ul>";
+  document.getElementById("summary").innerHTML=summaryHTML;
+  document.getElementById("summary").style.display="block";
+  document.getElementById("pdfBtn").style.display="inline-block";
 }
 
-document.getElementById("submitBtn").addEventListener("click", submitAnswer);
-document.getElementById("resetBtn").addEventListener("click", resetAll);
-document.getElementById("stopBtn").addEventListener("click", stopAll);
-document.getElementById("answer").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") submitAnswer();
-});
+/* -------- PDF Download -------- */
+function downloadPDF(){
+  if(!confirm("Don't forget to put the PDF in the correct student's folder and record the results")) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const now = new Date();
+  const dateStr=now.toLocaleDateString();
+  const timeStr=now.toLocaleTimeString();
+  const percent = attempts===0?0:Math.round((correct/attempts)*100);
 
-startTimer();
-newProblem();
+  // Header
+  doc.setFillColor(0,102,204); doc.rect(0,0,210,25,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(16);
+  doc.text("2-Step Word Problem Assessment",105,15,{align:"center"});
+
+  // Info
+  doc.setTextColor(0,0,0); doc.setFontSize(11);
+  doc.text(`Date: ${dateStr}`,14,35);
+  doc.text(`Time: ${timeStr}`,14,42);
+  doc.text(`Total Time: ${time} seconds`,14,49);
+  doc.text(`Attempts: ${attempts}`,14,56);
+  doc.text(`Score: ${percent}%`,14,63);
+
+  // Table Header
+  let y=75;
+  doc.setFillColor(220,220,220); doc.rect(14,y,182,8,'F');
+  doc.setTextColor(0,0,0); doc.text("Question",16,y+6);
+  doc.text("Result",170,y+6);
+  y+=10;
+
+  // Table Rows
+  questions.forEach((q,i)=>{
+    if(i%2===0){ doc.setFillColor(245,245,245); doc.rect(14,y-6,182,8,'F'); }
+    doc.setTextColor(0,0,0); doc.text(doc.splitTextToSize(q.question,150),16,y);
+    doc.setTextColor(q.correct?0:200,q.correct?150:0,0);
+    doc.text(q.correct?"Correct":"Incorrect",170,y);
+    y+=8;
+    if(y>280){ doc.addPage(); y=20; }
+  });
+
+  doc.save(`2StepWordProblem_Report_${dateStr.replace(/\//g,'-')}.pdf`);
+}
+
+/* ---------- EVENT LISTENERS ---------- */
+document.getElementById("submitBtn").addEventListener("click",submitAnswer);
+document.getElementById("resetBtn").addEventListener("click",resetAll);
+document.getElementById("stopBtn").addEventListener("click",stopAll);
+document.getElementById("pdfBtn").addEventListener("click",downloadPDF);
+document.getElementById("answer").addEventListener("keydown",(e)=>{if(e.key==="Enter") submitAnswer();});
+
+startTimer(); newProblem();
 </script>
 </body>
 </html>
