@@ -70,6 +70,7 @@
   <button id="stopBtn">Stop</button>
   <div id="summary"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const names = ["Liam", "Emma", "Noah", "Olivia", "Ava", "Mia", "Ethan", "Sophia", "Lucas", "Isabella"];
 const items = ["apples", "pencils", "marbles", "books", "candies", "balls", "stickers", "toys", "blocks", "coins"];
@@ -157,9 +158,25 @@ function resetAll() {
   document.getElementById("timer").textContent = "Time: 0s";
   document.getElementById("attempts").textContent = "Attempts: 0";
   document.getElementById("summary").style.display = "none";
+  document.getElementById("pdfBtn").style.display = "none";
   startTimer();
   newProblem();
 }
+
+// ---------- PDF Button ----------
+const pdfBtn = document.createElement('button');
+pdfBtn.textContent = "Download PDF";
+pdfBtn.style.backgroundColor = "#ff9800";
+pdfBtn.style.color = "white";
+pdfBtn.style.fontSize = "1.2em";
+pdfBtn.style.padding = "10px 20px";
+pdfBtn.style.border = "none";
+pdfBtn.style.borderRadius = "12px";
+pdfBtn.style.cursor = "pointer";
+pdfBtn.style.display = "none"; // hidden until stop
+pdfBtn.id = "pdfBtn";
+document.body.insertBefore(pdfBtn, document.getElementById("summary"));
+pdfBtn.addEventListener("click", downloadPDF);
 
 function stopAll() {
   stopTimer();
@@ -173,6 +190,58 @@ function stopAll() {
   summaryHTML += "</ul>";
   document.getElementById("summary").innerHTML = summaryHTML;
   document.getElementById("summary").style.display = "block";
+
+  // show PDF button
+  pdfBtn.style.display = "inline-block";
+}
+
+function downloadPDF() {
+  const proceed = confirm("Don't forget to put the PDF in the correct student's folder and record the results.");
+  if (!proceed) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString();
+  const timeStr = now.toLocaleTimeString();
+  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
+
+  // Header
+  doc.setFillColor(0,102,204);
+  doc.rect(0,0,210,25,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(16);
+  doc.text("Word Problem Assessment Report",105,15,{align:"center"});
+
+  // Info
+  doc.setTextColor(0,0,0);
+  doc.setFontSize(11);
+  doc.text(`Date: ${dateStr}`, 14, 35);
+  doc.text(`Time: ${timeStr}`, 14, 42);
+  doc.text(`Total Time: ${time} seconds`, 14, 49);
+  doc.text(`Attempts: ${attempts}`, 14, 56);
+  doc.text(`Score: ${percent}%`, 14, 63);
+
+  // Table header
+  let y = 75;
+  doc.setFillColor(220,220,220);
+  doc.rect(14,y,182,8,'F');
+  doc.text("Question", 16, y+6);
+  doc.text("Result", 170, y+6);
+  y+=10;
+
+  // Table rows
+  questions.forEach((q,i)=>{
+    if(i%2===0){ doc.setFillColor(245,245,245); doc.rect(14,y-6,182,8,'F'); }
+    doc.setTextColor(0,0,0);
+    doc.text(doc.splitTextToSize(q.question,150),16,y);
+    doc.setTextColor(q.correct?0:200,q.correct?150:0,0);
+    doc.text(q.correct?"Correct":"Incorrect",170,y);
+    y+=8;
+    if(y>280){ doc.addPage(); y=20; }
+  });
+
+  doc.save(`WordProblem_Report_${dateStr.replace(/\//g,'-')}.pdf`);
 }
 
 document.getElementById("submitBtn").addEventListener("click", submitAnswer);
