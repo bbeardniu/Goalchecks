@@ -40,7 +40,7 @@
   #submitBtn { background-color: #4CAF50; color: white; }
   #resetBtn { background-color: #ff4d4d; color: white; }
   #stopBtn { background-color: #007bff; color: white; display: block; margin: 10px auto; }
-  .pdf-button { background-color: #ff9800; color: white; }
+  .pdf-button { background-color: #ff9800; color: white; display:none; }
   .pdf-button:hover { background-color: #fb8c00; }
   #feedback { font-size: 1.2em; margin-top: 10px; }
   #score { position: absolute; top: 10px; right: 20px; font-weight: bold; }
@@ -66,11 +66,12 @@
 <br />
 <button id="submitBtn">Submit</button>
 <button id="resetBtn">Reset</button>
-<button class="pdf-button" onclick="downloadPDF()">Download PDF</button>
+<button id="stopBtn">Stop</button>
+<button id="pdfBtn" class="pdf-button" onclick="downloadPDF()">Download PDF</button>
+
 <div id="feedback"></div>
 <div id="timer">Time: 0s</div>
 <div id="attempts">Attempts: 0</div>
-<button id="stopBtn">Stop</button>
 <div id="summary"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -97,9 +98,8 @@ function randomWordProblem() {
   const type = Math.random() < 0.5 ? "add" : "subtract";
   const name1 = names[Math.floor(Math.random() * names.length)];
   const item = items[Math.floor(Math.random() * items.length)];
-  
   let num1, num2, questionText, answer;
-  
+
   if (type === "add") {
     num1 = Math.floor(Math.random() * 50) + 1;
     num2 = Math.floor(Math.random() * (100 - num1)) + 1;
@@ -156,58 +156,76 @@ function resetAll() {
   document.getElementById("timer").textContent = "Time: 0s";
   document.getElementById("attempts").textContent = "Attempts: 0";
   document.getElementById("summary").style.display = "none";
+  document.getElementById("pdfBtn").style.display = "none";
   startTimer();
   newProblem();
 }
 
 function stopAll() {
   stopTimer();
+  document.getElementById("pdfBtn").style.display = "inline-block";
+
   const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
   let summaryHTML = `<h2>Results</h2>`;
   summaryHTML += `<p><strong>Time:</strong> ${time}s<br><strong>Attempts:</strong> ${attempts}<br><strong>Score:</strong> ${percent}%</p>`;
   summaryHTML += "<ul>";
-  questions.forEach((q,i)=>{
-    summaryHTML += `<li class="${q.correct?'correct':'incorrect'}">${q.question} — ${q.correct?'✔':'✖'} (Answer: ${q.answer})</li>`;
+  questions.forEach((q)=>{
+    summaryHTML += `<li class="${q.correct?'correct':'incorrect'}">${q.question}</li>`;
   });
   summaryHTML += "</ul>";
   document.getElementById("summary").innerHTML = summaryHTML;
   document.getElementById("summary").style.display = "block";
 }
 
-// ---------- PDF Download ----------
 function downloadPDF() {
-  const proceed = confirm("⚠️ Make sure you place this PDF in the correct student folder. Click OK to continue.");
+  const proceed = confirm("Don't forget to put the PDF in the correct student's folder and record the results.");
   if (!proceed) return;
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
   const now = new Date();
   const dateStr = now.toLocaleDateString();
   const timeStr = now.toLocaleTimeString();
+  const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
 
+  // Header Bar
+  doc.setFillColor(0,102,204);
+  doc.rect(0,0,210,25,'F');
+  doc.setTextColor(255,255,255);
   doc.setFontSize(16);
-  doc.setTextColor(255, 87, 34);
-  doc.text("Goal Check Assessment Report", 20, 20);
+  doc.text("Word Problem Assessment Report", 105, 15, {align:"center"});
 
-  doc.setFontSize(12);
   doc.setTextColor(0,0,0);
-  doc.text(`Assessment: Word Problems`, 20, 35);
-  doc.text(`Score: ${percent}%`, 20, 45);
-  doc.text(`Time Taken: ${time} seconds`, 20, 55);
-  doc.text(`Questions Attempted: ${attempts}`, 20, 65);
-  doc.text(`Date: ${dateStr}`, 20, 75);
-  doc.text(`Time: ${timeStr}`, 20, 85);
+  doc.setFontSize(11);
+  doc.text(`Date: ${dateStr}`, 14, 35);
+  doc.text(`Time: ${timeStr}`, 14, 42);
+  doc.text(`Total Time: ${time} seconds`, 14, 49);
+  doc.text(`Attempts: ${attempts}`, 14, 56);
+  doc.text(`Score: ${percent}%`, 14, 63);
 
-  let y = 100;
+  let y = 75;
+
+  // Table Header
+  doc.setFillColor(220,220,220);
+  doc.rect(14,y,182,8,'F');
+  doc.text("Question", 16, y+6);
+  doc.text("Result", 170, y+6);
+  y+=10;
+
   questions.forEach((q,i)=>{
-    const mark = q.correct ? "✅":"❌";
-    doc.text(`${i+1}. ${q.question} ${mark} (Answer: ${q.answer})`, 20, y);
-    y += 10;
+    if(i%2===0){
+      doc.setFillColor(245,245,245);
+      doc.rect(14,y-6,182,8,'F');
+    }
+    doc.setTextColor(0,0,0);
+    doc.text(doc.splitTextToSize(q.question,150),16,y);
+    doc.setTextColor(q.correct?0:200, q.correct?150:0, 0);
+    doc.text(q.correct?"Correct":"Incorrect",170,y);
+    y+=8;
     if(y>280){ doc.addPage(); y=20; }
   });
 
-  doc.save(`GoalCheck_${dateStr.replace(/\//g,'-')}_${timeStr.replace(/:/g,'-')}.pdf`);
+  doc.save(`WordProblem_Report_${dateStr.replace(/\//g,'-')}.pdf`);
 }
 
 document.getElementById("submitBtn").addEventListener("click", submitAnswer);
