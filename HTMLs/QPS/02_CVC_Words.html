@@ -50,7 +50,7 @@
   #stopButton { background-color: #2563eb; }
   #pdfButton { background-color: #f59e0b; display:none; }
 
-  #summary { display: none; margin-top: 30px; text-align: center; }
+  #summary { display: none; margin-top: 20px; text-align: center; }
   .correct { color: green; font-weight: bold; }
   .incorrect { color: red; font-weight: bold; }
 
@@ -104,7 +104,7 @@ function shuffle(array) {
   return array;
 }
 
-const cvcWords = [ "cat","dog","hat","pig","sun","cup","bed","pen","top","bug",
+const cvcWords = ["cat","dog","hat","pig","sun","cup","bed","pen","top","bug",
 "jam","net","kit","box","man","rug","fox","bat","lid","mop",
 "fin","lip","pan","pot","jet","nap","hen","mud","tag","sit",
 "cap","mat","log","ram","dot","fan","web","cup","bus","pet",
@@ -166,12 +166,22 @@ function stopPractice() {
     <p><strong>Correct:</strong> ${correctWords.length}</p>
     <p><strong>Incorrect:</strong> ${incorrectWords.length}</p>
     <p><strong>Score:</strong> ${percent}%</p>
+    <hr>
+    <h3>Word Breakdown</h3>
+    <div>
+      ${correctWords.map(w => `<span class="correct">${w}</span>`).join(", ")}
+    </div>
+    <br>
+    <div>
+      ${incorrectWords.map(w => `<span class="incorrect">${w}</span>`).join(", ")}
+    </div>
   `;
+
   summaryDiv.style.display = "block";
   pdfButton.style.display = "inline-block";
 }
 
-// ---------------- PDF FUNCTION ----------------
+/* ---------- PDF FUNCTION (unchanged logic) ---------- */
 pdfButton.addEventListener("click", function() {
 
   const proceed = confirm("Don't forget to put the PDF in the correct student's folder and record the results");
@@ -185,7 +195,6 @@ pdfButton.addEventListener("click", function() {
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
   const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
 
-  // Header
   doc.setFillColor(37,99,235);
   doc.rect(0,0,210,25,"F");
   doc.setTextColor(255,255,255);
@@ -201,7 +210,6 @@ pdfButton.addEventListener("click", function() {
 
   let y = 70;
 
-  // Table Header
   doc.setFillColor(220,220,220);
   doc.rect(14,y-6,182,8,"F");
   doc.text("Word",20,y);
@@ -236,7 +244,6 @@ pdfButton.addEventListener("click", function() {
 
   doc.save(`CVC_Report_${now.toLocaleDateString().replace(/\//g,"-")}.pdf`);
 });
-// ------------------------------------------------
 
 function resetPractice() {
   stopTimer();
