@@ -26,11 +26,10 @@
     margin: 20px;
   }
 
-  input {
+  select {
     font-size: 1.5rem;
-    text-align: center;
-    width: 120px;
     padding: 5px;
+    margin: 5px;
   }
 
   button {
@@ -72,6 +71,9 @@
     border-radius: 20px;
     padding: 20px;
   }
+
+  .correct { color: green; }
+  .incorrect { color: red; }
 </style>
 </head>
 
@@ -80,9 +82,12 @@
 <div id="score">Score: 0%</div>
 <h1>Read the Clock</h1>
 
-<canvas id="clockCanvas" width="200" height="200"></canvas>
+<canvas id="clockCanvas" width="400" height="400"></canvas>
 
-<input type="text" id="answer" placeholder="HH:MM" />
+<div>
+  <select id="hourSelect"></select> :
+  <select id="minuteSelect"></select>
+</div>
 
 <div>
   <button onclick="checkAnswer()">Check</button>
@@ -112,70 +117,114 @@ let history = [];
 const canvas = document.getElementById("clockCanvas");
 const ctx = canvas.getContext("2d");
 
-function drawClock(hour, minute) {
-  ctx.clearRect(0,0,200,200);
+// ===== POPULATE DROPDOWNS =====
+function populateDropdowns() {
+  const hourSelect = document.getElementById("hourSelect");
+  const minuteSelect = document.getElementById("minuteSelect");
 
-  // clock face
+  hourSelect.innerHTML = "";
+  minuteSelect.innerHTML = "";
+
+  for (let h = 1; h <= 12; h++) {
+    let opt = document.createElement("option");
+    opt.value = h;
+    opt.textContent = h;
+    hourSelect.appendChild(opt);
+  }
+
+  for (let m = 0; m < 60; m++) {
+    let opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m.toString().padStart(2, "0");
+    minuteSelect.appendChild(opt);
+  }
+}
+
+// ===== DRAW CLOCK =====
+function drawClock(hour, minute) {
+  ctx.clearRect(0,0,400,400);
+
+  const centerX = 200;
+  const centerY = 200;
+
   ctx.beginPath();
-  ctx.arc(100,100,90,0,2*Math.PI);
+  ctx.arc(centerX, centerY, 180, 0, 2*Math.PI);
   ctx.fillStyle = "white";
   ctx.fill();
   ctx.stroke();
 
-  // numbers
-  ctx.font = "16px Arial";
+  for (let i = 0; i < 60; i++) {
+    let angle = i * Math.PI / 30;
+
+    let outerX = centerX + Math.sin(angle) * 170;
+    let outerY = centerY - Math.cos(angle) * 170;
+
+    let innerRadius = (i % 5 === 0) ? 140 : 155;
+
+    let innerX = centerX + Math.sin(angle) * innerRadius;
+    let innerY = centerY - Math.cos(angle) * innerRadius;
+
+    ctx.beginPath();
+    ctx.lineWidth = (i % 5 === 0) ? 4 : 1.5;
+    ctx.moveTo(innerX, innerY);
+    ctx.lineTo(outerX, outerY);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "black";
+  ctx.font = "bold 32px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  for(let num=1; num<=12; num++){
-    let angle = num * Math.PI/6;
-    let x = 100 + Math.sin(angle) * 70;
-    let y = 100 - Math.cos(angle) * 70;
+  for (let num = 1; num <= 12; num++) {
+    let angle = num * Math.PI / 6;
+    let x = centerX + Math.sin(angle) * 135;
+    let y = centerY - Math.cos(angle) * 135;
     ctx.fillText(num, x, y);
   }
 
-  // hands
-  let hourAngle = (hour%12)*Math.PI/6 + minute*Math.PI/(6*60);
-  let minAngle = minute*Math.PI/30;
+  let hourAngle = (hour % 12) * Math.PI / 6 + minute * Math.PI / 360;
+  let minAngle = minute * Math.PI / 30;
 
-  drawHand(hourAngle, 50, 6);
-  drawHand(minAngle, 70, 3);
+  drawHand(hourAngle, 90, 8);
+  drawHand(minAngle, 140, 4);
 }
 
 function drawHand(angle, length, width){
   ctx.beginPath();
   ctx.lineWidth = width;
-  ctx.moveTo(100,100);
+  ctx.moveTo(200,200);
   ctx.lineTo(
-    100 + Math.sin(angle)*length,
-    100 - Math.cos(angle)*length
+    200 + Math.sin(angle)*length,
+    200 - Math.cos(angle)*length
   );
   ctx.stroke();
 }
 
+// ===== NEW PROBLEM =====
 function newProblem() {
   answered = false;
   document.getElementById("feedback").textContent = "";
-  document.getElementById("answer").value = "";
 
   let hour = Math.floor(Math.random()*12) + 1;
-  let minute = Math.floor(Math.random()/0.2)*5; // multiples of 5
+  let minute = Math.floor(Math.random()*12) * 5;
 
-  correctTime = `${hour}:${minute.toString().padStart(2,'0')}`;
+  correctTime = `${hour}:${minute}`;
 
   drawClock(hour, minute);
 }
 
+// ===== CHECK ANSWER =====
 function checkAnswer(){
   if(answered) return;
 
-  const user = document.getElementById("answer").value.trim();
-
-  if(!user) return;
+  const h = document.getElementById("hourSelect").value;
+  const m = document.getElementById("minuteSelect").value;
 
   totalQuestions++;
   answered = true;
 
+  let user = `${h}:${m}`;
   let correct = user === correctTime;
 
   if(correct){
@@ -188,7 +237,6 @@ function checkAnswer(){
   }
 
   history.push({
-    question: "Clock",
     student: user,
     correctAnswer: correctTime,
     correct: correct
@@ -198,12 +246,14 @@ function checkAnswer(){
   setTimeout(newProblem, 1000);
 }
 
+// ===== STATS =====
 function updateStats(){
   let percent = totalQuestions===0?0:Math.round(correctAnswers/totalQuestions*100);
   document.getElementById("score").textContent = `Score: ${percent}%`;
   document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
 }
 
+// ===== RESET =====
 function resetAll(){
   totalQuestions=0;
   correctAnswers=0;
@@ -218,6 +268,7 @@ function resetAll(){
   startTimer();
 }
 
+// ===== STOP =====
 function stopSession(){
   clearInterval(timerInterval);
 
@@ -228,7 +279,9 @@ function stopSession(){
   <p>Score: ${percent}%</p><hr>`;
 
   history.forEach(q=>{
-    html += `<p>${q.student} ${q.correct ? "✔" : `(Correct: ${q.correctAnswer})`}</p>`;
+    html += `<p class="${q.correct ? 'correct' : 'incorrect'}">
+      ${q.student} ${q.correct ? "✔" : `(Correct: ${q.correctAnswer})`}
+    </p>`;
   });
 
   html += `<button onclick="resetAll()">Play Again</button>`;
@@ -238,6 +291,7 @@ function stopSession(){
   document.getElementById("pdfBtn").style.display="inline-block";
 }
 
+// ===== TIMER =====
 function startTimer(){
   if(timerInterval) return;
   timerInterval = setInterval(()=>{
@@ -246,6 +300,7 @@ function startTimer(){
   },1000);
 }
 
+// ===== PDF =====
 function downloadPDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -261,10 +316,8 @@ function downloadPDF(){
   doc.save("clock_report.pdf");
 }
 
-document.getElementById("answer").addEventListener("keyup", e=>{
-  if(e.key==="Enter") checkAnswer();
-});
-
+// INIT
+populateDropdowns();
 newProblem();
 startTimer();
 </script>
