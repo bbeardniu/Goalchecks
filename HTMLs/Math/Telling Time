@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analog Clock Time Assessment</title>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #a0e3ff, #fff0a5);
+    margin: 0;
+  }
+
+  h1 { margin-bottom: 10px; }
+
+  canvas {
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    margin: 20px;
+  }
+
+  input {
+    font-size: 1.5rem;
+    text-align: center;
+    width: 120px;
+    padding: 5px;
+  }
+
+  button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 10px;
+    margin: 10px;
+    cursor: pointer;
+  }
+
+  #reset { background-color: #f44336; }
+  #stop { background-color: #2196f3; }
+  #pdfBtn { background-color: #ff9800; display:none; }
+
+  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 10px; }
+
+  #score, #attempts, #timer {
+    position: absolute;
+    font-size: 1.1rem;
+    background-color: #ffffff99;
+    padding: 6px 10px;
+    border-radius: 10px;
+  }
+
+  #score { top: 15px; right: 25px; }
+  #attempts { bottom: 15px; right: 25px; }
+  #timer { bottom: 15px; left: 25px; }
+
+  #summary {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    background-color: #ffffffcc;
+    border-radius: 20px;
+    padding: 20px;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="score">Score: 0%</div>
+<h1>Read the Clock</h1>
+
+<canvas id="clockCanvas" width="200" height="200"></canvas>
+
+<input type="text" id="answer" placeholder="HH:MM" />
+
+<div>
+  <button onclick="checkAnswer()">Check</button>
+  <button onclick="newProblem()">Next</button>
+  <button id="reset" onclick="resetAll()">Reset</button>
+</div>
+
+<button id="stop" onclick="stopSession()">Stop</button>
+<button id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
+
+<div id="feedback"></div>
+<div id="attempts">Attempts: 0</div>
+<div id="timer">Time: 0s</div>
+<div id="summary"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+let correctTime = "";
+let totalQuestions = 0;
+let correctAnswers = 0;
+let answered = false;
+let timeElapsed = 0;
+let timerInterval = null;
+let history = [];
+
+const canvas = document.getElementById("clockCanvas");
+const ctx = canvas.getContext("2d");
+
+function drawClock(hour, minute) {
+  ctx.clearRect(0,0,200,200);
+
+  // clock face
+  ctx.beginPath();
+  ctx.arc(100,100,90,0,2*Math.PI);
+  ctx.fillStyle = "white";
+  ctx.fill();
+  ctx.stroke();
+
+  // numbers
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  for(let num=1; num<=12; num++){
+    let angle = num * Math.PI/6;
+    let x = 100 + Math.sin(angle) * 70;
+    let y = 100 - Math.cos(angle) * 70;
+    ctx.fillText(num, x, y);
+  }
+
+  // hands
+  let hourAngle = (hour%12)*Math.PI/6 + minute*Math.PI/(6*60);
+  let minAngle = minute*Math.PI/30;
+
+  drawHand(hourAngle, 50, 6);
+  drawHand(minAngle, 70, 3);
+}
+
+function drawHand(angle, length, width){
+  ctx.beginPath();
+  ctx.lineWidth = width;
+  ctx.moveTo(100,100);
+  ctx.lineTo(
+    100 + Math.sin(angle)*length,
+    100 - Math.cos(angle)*length
+  );
+  ctx.stroke();
+}
+
+function newProblem() {
+  answered = false;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("answer").value = "";
+
+  let hour = Math.floor(Math.random()*12) + 1;
+  let minute = Math.floor(Math.random()/0.2)*5; // multiples of 5
+
+  correctTime = `${hour}:${minute.toString().padStart(2,'0')}`;
+
+  drawClock(hour, minute);
+}
+
+function checkAnswer(){
+  if(answered) return;
+
+  const user = document.getElementById("answer").value.trim();
+
+  if(!user) return;
+
+  totalQuestions++;
+  answered = true;
+
+  let correct = user === correctTime;
+
+  if(correct){
+    correctAnswers++;
+    document.getElementById("feedback").textContent = "✅ Correct!";
+    document.getElementById("feedback").style.color = "green";
+  } else {
+    document.getElementById("feedback").textContent = `❌ It was ${correctTime}`;
+    document.getElementById("feedback").style.color = "red";
+  }
+
+  history.push({
+    question: "Clock",
+    student: user,
+    correctAnswer: correctTime,
+    correct: correct
+  });
+
+  updateStats();
+  setTimeout(newProblem, 1000);
+}
+
+function updateStats(){
+  let percent = totalQuestions===0?0:Math.round(correctAnswers/totalQuestions*100);
+  document.getElementById("score").textContent = `Score: ${percent}%`;
+  document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
+}
+
+function resetAll(){
+  totalQuestions=0;
+  correctAnswers=0;
+  timeElapsed=0;
+  history=[];
+  clearInterval(timerInterval);
+  timerInterval=null;
+  document.getElementById("summary").style.display="none";
+  document.getElementById("pdfBtn").style.display="none";
+  updateStats();
+  newProblem();
+  startTimer();
+}
+
+function stopSession(){
+  clearInterval(timerInterval);
+
+  let percent = totalQuestions===0?0:Math.round(correctAnswers/totalQuestions*100);
+
+  let html = `<h2>Summary</h2>
+  <p>Time: ${timeElapsed}s</p>
+  <p>Score: ${percent}%</p><hr>`;
+
+  history.forEach(q=>{
+    html += `<p>${q.student} ${q.correct ? "✔" : `(Correct: ${q.correctAnswer})`}</p>`;
+  });
+
+  html += `<button onclick="resetAll()">Play Again</button>`;
+
+  document.getElementById("summary").innerHTML = html;
+  document.getElementById("summary").style.display="flex";
+  document.getElementById("pdfBtn").style.display="inline-block";
+}
+
+function startTimer(){
+  if(timerInterval) return;
+  timerInterval = setInterval(()=>{
+    timeElapsed++;
+    document.getElementById("timer").textContent = `Time: ${timeElapsed}s`;
+  },1000);
+}
+
+function downloadPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let y=20;
+
+  doc.text("Clock Assessment Report",10,10);
+
+  history.forEach(q=>{
+    doc.text(`${q.student} - ${q.correct ? "Correct" : "Incorrect ("+q.correctAnswer+")"}`,10,y);
+    y+=8;
+  });
+
+  doc.save("clock_report.pdf");
+}
+
+document.getElementById("answer").addEventListener("keyup", e=>{
+  if(e.key==="Enter") checkAnswer();
+});
+
+newProblem();
+startTimer();
+</script>
+
+</body>
+</html>
