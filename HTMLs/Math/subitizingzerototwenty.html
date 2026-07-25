@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subitizing Assessment (0-20)</title>
+
+<!-- PDF Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #a0e3ff, #fff0a5);
+    margin: 0;
+    padding: 20px 0;
+    transition: all 0.4s ease;
+  }
+  h1 { margin-bottom: 10px; }
+
+  #problemContainer {
+    width: 460px;
+    height: 320px;
+    margin: 15px auto;
+    border: 4px solid #444;
+    border-radius: 15px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  #dotBoard { display: none; width: 460px; height: 320px; }
+  #message {
+    position: absolute;
+    font-size: 40px;
+    font-weight: bold;
+    color: #1565c0;
+  }
+  .black { background: black !important; }
+  .black #message { color: white; }
+
+  input {
+    font-size: 1.5rem;
+    text-align: center;
+    width: 80px;
+    padding: 5px;
+  }
+
+  button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 10px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  button:hover { background-color: #45a049; }
+
+  #reset { background-color: #f44336; }
+  #reset:hover { background-color: #d73833; }
+
+  #stop { background-color: #2196f3; }
+  #stop:hover { background-color: #1a7bd6; }
+
+  #feedback { font-size: 1.3rem; font-weight: bold; margin-top: 10px; min-height: 1.6rem; }
+
+  #score, #attempts, #timer {
+    position: absolute;
+    font-size: 1.1rem;
+    background-color: #ffffff99;
+    padding: 6px 10px;
+    border-radius: 10px;
+  }
+
+  #score { top: 15px; right: 25px; }
+  #attempts { bottom: 15px; right: 25px; }
+  #timer { bottom: 15px; left: 25px; }
+
+  #summary {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    background-color: #ffffffcc;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .correct { color: green; font-weight: bold; }
+  .incorrect { color: red; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div id="score">Score: 0%</div>
+<h1>Subitizing Assessment (0-20)</h1>
+
+<div id="problemContainer">
+  <div id="message"></div>
+  <svg id="dotBoard" viewBox="0 0 460 320"></svg>
+</div>
+
+<input type="number" id="answer" placeholder="?" />
+
+<div>
+  <button onclick="submitAnswer()">Submit</button>
+  <button id="reset" onclick="resetAll()">Reset</button>
+</div>
+
+<button id="stop" onclick="stopSession()">Stop</button>
+
+<div id="feedback"></div>
+<div id="attempts">Attempts: 0</div>
+<div id="timer">Time: 0s</div>
+
+<div id="summary"></div>
+
+<script>
+  const { jsPDF } = window.jspdf;
+
+  let ans = 0;
+  let totalQuestions = 0;
+  let correctAnswers = 0;
+  let timeElapsed = 0;
+  let timerInterval = null;
+  let questionHistory = [];
+  let answered = false;
+
+  function startTimer() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      timeElapsed++;
+      document.getElementById("timer").textContent = `Time: ${timeElapsed}s`;
+    }, 1000);
+  }
+
+  function draw(n) {
+    const dotBoard = document.getElementById("dotBoard");
+    dotBoard.innerHTML = "";
+    if (n === 0) return;
+    const W = 460, H = 320, margin = 30;
+    let minDist = 38;
+    let pts = [];
+    let attempts = 0;
+    const maxAttempts = 6000;
+    while (pts.length < n && attempts < maxAttempts) {
+      let x = margin + Math.random() * (W - margin * 2);
+      let y = margin + Math.random() * (H - margin * 2);
+      if (pts.every(p => Math.hypot(x - p.x, y - p.y) > minDist)) pts.push({ x, y });
+      attempts++;
+      if (attempts % 400 === 0 && pts.length < n) minDist *= 0.85;
+    }
+    pts.forEach(p => {
+      let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", p.x);
+      c.setAttribute("cy", p.y);
+      c.setAttribute("r", 11);
+      c.setAttribute("fill", "#222");
+      dotBoard.appendChild(c);
+    });
+  }
+
+  function newProblem() {
+    ans = Math.floor(Math.random() * 21);
+    answered = false;
+    document.getElementById("answer").value = "";
+    document.getElementById("feedback").textContent = "";
+    const problemContainer = document.getElementById("problemContainer");
+    const message = document.getElementById("message");
+    const dotBoard = document.getElementById("dotBoard");
+
+    problemContainer.classList.remove("black");
+    message.textContent = "Get Ready...";
+    dotBoard.style.display = "none";
+
+    setTimeout(() => {
+      message.textContent = "";
+      dotBoard.style.display = "block";
+      draw(ans);
+      setTimeout(() => {
+        dotBoard.innerHTML = "";
+        dotBoard.style.display = "none";
+        problemContainer.classList.add("black");
+        message.textContent = "?";
+        document.getElementById("answer").focus();
+      }, 2000);
+    }, 1000);
+  }
+
+  function submitAnswer() {
+    if (answered) return;
+    const userAnswer = parseInt(document.getElementById("answer").value);
+    if (isNaN(userAnswer)) return;
+    answered = true;
+    totalQuestions++;
+    let isCorrect = false;
+
+    if (userAnswer === ans) {
+      correctAnswers++;
+      isCorrect = true;
+      document.getElementById("feedback").textContent = "✅ Correct!";
+      document.getElementById("feedback").style.color = "green";
+    } else {
+      document.getElementById("feedback").textContent = `❌ Nope, it's ${ans}`;
+      document.getElementById("feedback").style.color = "red";
+    }
+
+    questionHistory.push({
+      problem: `${ans} dots`,
+      response: userAnswer,
+      correctAnswer: ans,
+      correct: isCorrect
+    });
+
+    updateStats();
+    setTimeout(newProblem, 1000);
+  }
+
+  function updateStats() {
+    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
+    document.getElementById("score").textContent = `Score: ${percent}%`;
+    document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
+  }
+
+  function resetAll() {
+    totalQuestions = 0;
+    correctAnswers = 0;
+    timeElapsed = 0;
+    questionHistory = [];
+    clearInterval(timerInterval);
+    timerInterval = null;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("timer").textContent = "Time: 0s";
+    document.getElementById("summary").style.display = "none";
+    updateStats();
+    document.getElementById("problemContainer").style.display = "flex";
+    document.getElementById("answer").style.display = "inline-block";
+    document.querySelectorAll("button").forEach(btn => btn.style.display = "inline-block");
+    newProblem();
+    startTimer();
+  }
+
+  function stopSession() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
+    document.getElementById("problemContainer").style.display = "none";
+    document.getElementById("answer").style.display = "none";
+    document.getElementById("feedback").textContent = "";
+
+    const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
+
+    let summaryHTML = `<h2>Session Summary</h2>`;
+    summaryHTML += `<p><strong>Time Taken:</strong> ${timeElapsed}s</p>`;
+    summaryHTML += `<p><strong>Total Questions:</strong> ${totalQuestions}</p>`;
+    summaryHTML += `<p><strong>Score:</strong> ${percent}%</p><hr>`;
+    summaryHTML += `<button onclick="generatePDF(${percent})" style="background:#8e44ad;">Download PDF</button>`;
+    summaryHTML += `<h3>Answers:</h3><ul style="list-style:none;padding:0;">`;
+
+    questionHistory.forEach(q => {
+      if (q.correct) {
+        summaryHTML += `<li class="correct">${q.problem} = ${q.response}</li>`;
+      } else {
+        summaryHTML += `<li class="incorrect">${q.problem} = ${q.response} (Correct: ${q.correctAnswer})</li>`;
+      }
+    });
+
+    summaryHTML += `</ul><button id="reset" onclick="resetAll()">Play Again</button>`;
+    const summaryDiv = document.getElementById("summary");
+    summaryDiv.innerHTML = summaryHTML;
+    summaryDiv.style.display = "flex";
+  }
+
+  function generatePDF(percent) {
+
+    const confirmDownload = confirm(
+      "Don't forget to put the PDF in the correct student's folder and record the results"
+    );
+    if (!confirmDownload) return;
+
+    const doc = new jsPDF();
+    const now = new Date();
+
+    doc.setFillColor(33, 150, 243);
+    doc.rect(0, 0, 210, 25, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.text("Subitizing Assessment Results (0-20)", 105, 15, null, null, "center");
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.text(`Date: ${now.toLocaleDateString()}`, 14, 35);
+    doc.text(`Time: ${now.toLocaleTimeString()}`, 14, 42);
+    doc.text(`Total Time: ${timeElapsed} seconds`, 14, 49);
+    doc.text(`Score: ${percent}%`, 14, 56);
+
+    const tableData = questionHistory.map(q => [
+      q.problem,
+      q.response,
+      q.correct ? "Correct" : "Incorrect"
+    ]);
+
+    doc.autoTable({
+      startY: 65,
+      head: [["Dots Shown", "Student Answer", "Result"]],
+      body: tableData,
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      didParseCell: function (data) {
+        if (data.column.index === 2 && data.cell.raw === "Correct") {
+          data.cell.styles.textColor = [0, 150, 0];
+        }
+        if (data.column.index === 2 && data.cell.raw === "Incorrect") {
+          data.cell.styles.textColor = [200, 0, 0];
+        }
+      }
+    });
+
+    doc.save("Subitizing_Assessment_0-20_Results.pdf");
+  }
+
+  document.getElementById("answer").addEventListener("keyup", function (event) {
+    if (event.key === "Enter") submitAnswer();
+  });
+
+  newProblem();
+  startTimer();
+</script>
+
+</body>
+</html>
