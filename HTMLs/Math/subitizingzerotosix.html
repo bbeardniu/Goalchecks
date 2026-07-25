@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Subitizing Assessment</title>
+<style>
+body{font-family:Arial;text-align:center;background:#eef7ff}
+#problemContainer{width:340px;height:240px;margin:20px auto;border:4px solid #444;border-radius:15px;background:white;display:flex;justify-content:center;align-items:center;position:relative}
+#dotBoard{display:none;width:340px;height:240px}
+#message{position:absolute;font-size:40px;font-weight:bold;color:#1565c0}
+.black{background:black!important}.black #message{color:white}
+button,input{font-size:20px;margin:8px}
+</style></head><body>
+<h1>Subitizing Assessment</h1>
+<div id='score'>Score:0%</div>
+<div id='problemContainer'><div id='message'></div><svg id='dotBoard' viewBox='0 0 340 240'></svg></div>
+<input id='answer' type='number'><br>
+<button onclick='submitAnswer()'>Submit</button>
+<button onclick='resetAll()'>Reset</button>
+<div id='feedback'></div><div id='timer'>Time:0s</div><div id='attempts'>Attempts:0</div>
+<script>
+let ans=0,corr=0,att=0,t=0,intv;
+function start(){intv=setInterval(()=>{t++;timer.innerText='Time:'+t+'s';},1000);next();}
+function draw(n){dotBoard.innerHTML='';if(n==0)return;let pts=[];while(pts.length<n){let x=30+Math.random()*280,y=30+Math.random()*180;if(pts.every(p=>Math.hypot(x-p.x,y-p.y)>45))pts.push({x,y});}
+pts.forEach(p=>{let c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',13);c.setAttribute('fill','#222');dotBoard.appendChild(c);});}
+function next(){ans=Math.floor(Math.random()*7);answer.value='';feedback.innerText='';problemContainer.classList.remove('black');message.innerText='Get Ready...';dotBoard.style.display='none';
+setTimeout(()=>{message.innerText='';dotBoard.style.display='block';draw(ans);setTimeout(()=>{dotBoard.innerHTML='';dotBoard.style.display='none';problemContainer.classList.add('black');message.innerText='?';answer.focus();},2000);},1000);}
+function submitAnswer(){let v=parseInt(answer.value);if(isNaN(v))return;att++;if(v===ans){corr++;feedback.style.color='green';feedback.innerText='Correct!';}else{feedback.style.color='red';feedback.innerText='Correct answer: '+ans;}
+score.innerText='Score:'+Math.round(corr/att*100)+'%';attempts.innerText='Attempts:'+att;setTimeout(next,1000);}
+function resetAll(){clearInterval(intv);corr=att=t=0;score.innerText='Score:0%';attempts.innerText='Attempts:0';timer.innerText='Time:0s';start();}
+answer.addEventListener('keydown',e=>{if(e.key==='Enter')submitAnswer();});
+start();
+</script></body></html>
