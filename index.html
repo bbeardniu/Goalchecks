@@ -1,293 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BBeard Site</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 40px;
-    color: #2c3e50;
-    font-family: 'Comic Sans MS', 'Chalkboard SE', Arial, sans-serif;
-}
-
-/* TWO COLUMN LAYOUT */
-.container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
-}
-
-/* CARD STYLE */
-details {
-    background: white;
-    border-radius: 14px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    padding: 15px 20px;
-    transition: transform 0.2s ease;
-}
-
-details:hover {
-    transform: translateY(-4px);
-}
-
-/* Summary styling */
-summary {
-    list-style: none;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
-    color: #34495e;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-summary::-webkit-details-marker {
-    display: none;
-}
-
-/* Arrow */
-summary::after {
-    content: "▼";
-    font-size: 14px;
-    transition: transform 0.3s ease;
-}
-
-details[open] summary::after {
-    transform: rotate(180deg);
-}
-
-/* List styling */
-ul {
-    list-style: none;
-    padding-left: 10px;
-    margin-top: 12px;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(-5px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-ul li {
-    padding: 6px 0;
-}
-
-a {
-    text-decoration: none;
-    color: #1e88e5;
-    font-weight: bold;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Audio styling */
-audio {
-    width: 100%;
-    margin-top: 5px;
-}
-</style>
-
-<script>
-function checkSubPIN() {
-    const pin = document.getElementById("subPinInput").value;
-    const correctPin = "367";
-
-    if (pin === correctPin) {
-        document.getElementById("subLink").style.display = "block";
-        document.getElementById("subError").innerText = "";
-    } else {
-        document.getElementById("subError").innerText = "Incorrect PIN";
-        document.getElementById("subLink").style.display = "none";
-        document.getElementById("subPinInput").value = "";
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    const input = document.getElementById("subPinInput");
-    if (input) {
-        input.addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                checkSubPIN();
-            }
-        });
-    }
-});
-</script>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Beard's Classroom — goal checks, practice, and classroom tools.">
+  <title>Beard's Classroom</title>
+  <style>
+    :root{--navy:#1e4767;--blue:#2878a9;--sky:#d8f0ff;--paper:#fffdf7;--gold:#f8c95b;--coral:#f59b8c;--mint:#c9e9d6;--ink:#26394b;--muted:#607285;--line:#d5e3ea;--shadow:0 7px 0 rgba(30,71,103,.13),0 16px 30px rgba(30,71,103,.09)}
+    *{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:"Avenir Next",Avenir,ui-rounded,"Segoe UI",sans-serif;background:#f3fbff;background-image:radial-gradient(#d7e9f4 1px,transparent 1px);background-size:19px 19px}.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#d8f3ff 0%,#fdf7e9 56%,#f8e9db 100%);border-bottom:7px solid #fff;padding:3.25rem 1.25rem 2.6rem}.hero::before,.hero::after{content:"";position:absolute;border-radius:999px;opacity:.65}.hero::before{width:11rem;height:11rem;background:var(--gold);top:-6rem;left:-2rem}.hero::after{width:9rem;height:9rem;background:var(--coral);right:-3rem;bottom:-4rem}.hero-inner{position:relative;z-index:1;max-width:1120px;margin:auto;display:grid;grid-template-columns:1fr auto;gap:1.25rem;align-items:center}.brand-kicker{margin:0 0 .4rem;color:#446782;letter-spacing:.11em;font-size:.76rem;font-weight:900;text-transform:uppercase}.brand{margin:0;font-family:"Comic Sans MS","Chalkboard SE",ui-rounded,sans-serif;color:var(--navy);line-height:.95;font-size:clamp(3rem,8vw,6.4rem);letter-spacing:-.06em;text-shadow:3px 3px 0 #fff,6px 6px 0 rgba(40,120,169,.12)}.subtitle{max-width:650px;font-size:1.15rem;line-height:1.58;color:#36556d;margin:1rem 0 0}.hero-badge{width:178px;min-height:178px;padding:1rem;border:7px solid #fff;background:#2878a9;border-radius:50%;color:#fff;text-align:center;box-shadow:0 8px 0 rgba(30,71,103,.12);display:flex;flex-direction:column;justify-content:center;transform:rotate(4deg)}.hero-badge strong{font-family:"Comic Sans MS","Chalkboard SE",sans-serif;font-size:1.4rem;line-height:1.05}.hero-badge span{font-size:.82rem;line-height:1.35;margin-top:.45rem}.bitmoji{display:none;width:130px;position:absolute;right:1.5rem;bottom:-.75rem;z-index:2;filter:drop-shadow(0 6px 0 rgba(30,71,103,.15))}.bitmoji.show{display:block}.content{max-width:1120px;margin:auto;padding:1.75rem 1.25rem 4rem}.welcome{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin:.35rem 0 1.2rem}.welcome h2{margin:0;font-family:"Comic Sans MS","Chalkboard SE",ui-rounded,sans-serif;font-size:clamp(1.7rem,4vw,2.5rem);color:var(--navy)}.welcome p{margin:.25rem 0 0;color:var(--muted);line-height:1.5}.search-panel{background:var(--paper);padding:1rem;border:2px solid #fff;border-radius:18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:.75rem;margin-bottom:1.35rem}.search-panel label{font-weight:800;color:var(--navy);white-space:nowrap}.search-panel input{width:100%;font:inherit;color:var(--ink);padding:.85rem 1rem;border:2px solid var(--line);border-radius:11px;background:#fff}.search-panel input:focus{outline:3px solid #9edcff;border-color:var(--blue)}.search-result{font-size:.9rem;color:var(--muted);white-space:nowrap}.directory{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}.folder{border:2px solid #fff;border-radius:18px;background:var(--paper);overflow:hidden;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}.folder:nth-child(4n+1) summary{background:#d8f0ff}.folder:nth-child(4n+2) summary{background:#fce7c0}.folder:nth-child(4n+3) summary{background:#d9f0df}.folder:nth-child(4n) summary{background:#f9dce1}.folder:hover{transform:translateY(-3px);box-shadow:0 10px 0 rgba(30,71,103,.12),0 19px 34px rgba(30,71,103,.1)}summary{cursor:pointer;list-style:none;padding:1.05rem 1.1rem;display:flex;gap:.65rem;align-items:center;color:var(--navy);font-family:"Comic Sans MS","Chalkboard SE",ui-rounded,sans-serif;font-size:1.24rem;font-weight:800}summary::-webkit-details-marker{display:none}summary::after{content:"⌄";font-family:Arial,sans-serif;margin-left:auto;font-size:1.55rem;transition:transform .18s ease}details[open] summary::after{transform:rotate(180deg)}.folder-list{list-style:none;padding:.55rem 1rem .9rem;margin:0}.folder-list li{border-bottom:1px dashed var(--line)}.folder-list li:last-child{border-bottom:0}.folder-list a{display:flex;align-items:center;gap:.55rem;text-decoration:none;color:#265f8a;font-size:.98rem;font-weight:750;line-height:1.25;padding:.68rem .35rem;border-radius:8px}.folder-list a:hover,.folder-list a:focus{background:#eaf7ff;color:#153e5d;outline:none;text-decoration:underline}.folder-list a::before{content:"›";font-size:1.55rem;line-height:.75;color:#e2906f}.folder-list .music a::before{content:"♫";font-size:1.05rem;color:#8a63a4}.sub-card{margin-top:1.3rem;background:#fff7d7;border:2px solid #fff;border-radius:18px;box-shadow:var(--shadow);padding:1rem 1.1rem}.sub-card h2{font-family:"Comic Sans MS","Chalkboard SE",sans-serif;color:var(--navy);margin:0;font-size:1.2rem}.sub-card p{margin:.35rem 0 .75rem;color:#536d7e;font-size:.94rem}.pin-row{display:flex;gap:.5rem;flex-wrap:wrap}.pin-row input{padding:.65rem .75rem;border:2px solid #e8ce82;border-radius:8px;font:inherit}.pin-row button{padding:.65rem .9rem;border:0;border-radius:8px;background:#2878a9;color:#fff;font:inherit;font-weight:800;cursor:pointer}.sub-link{display:none;margin:.75rem 0 0;color:#245d8a;font-weight:800}.pin-message{color:#ad3d3d;font-size:.9rem;margin:.4rem 0 0;min-height:1.2em}footer{background:var(--navy);color:#d9f3ff;text-align:center;padding:1.25rem;font-size:.9rem}@media(max-width:690px){.hero{padding:2.4rem 1rem 2.2rem}.hero-inner{grid-template-columns:1fr}.hero-badge{width:112px;min-height:112px;position:absolute;right:0;bottom:-1rem;border-width:5px}.hero-badge strong{font-size:1rem}.hero-badge span{font-size:.66rem}.subtitle{padding-right:4rem;font-size:1rem}.welcome{display:block}.search-panel{align-items:stretch;flex-wrap:wrap}.search-panel label{padding:.2rem}.search-result{padding:.1rem}.bitmoji{width:96px;right:.25rem}.directory{grid-template-columns:1fr}}@media print{.search-panel,.sub-card,footer{display:none}.hero{padding:1rem}.folder{box-shadow:none;break-inside:avoid}details{display:block}.folder-list{display:block!important}.folder-list li[hidden],.folder[hidden]{display:none}body{background:white}}
+    .folder-list .music{padding:.65rem .35rem}.folder-list .music span{display:block;font-weight:750;color:#265f8a;margin-bottom:.35rem}.folder-list .music::before{content:"♫";float:left;color:#8a63a4;margin-right:.45rem;font-size:1.05rem}.folder-list audio{display:block;width:100%;height:30px}
+  </style>
 </head>
-
 <body>
-
-<h1>Beard Classroom Goal Checks Index</h1>
-
-<div class="container">
-
-<!-- MATH ADD / SUB -->
-<details>
-<summary>Math Addition and Subtraction</summary>
-<ul>
-<li><a href="HTMLs/Math/2digit_addition_and_subtraction_no_regrouping.html">2-Digit Addition & Subtraction (No Regrouping)</a></li>
-<li><a href="HTMLs/Math/addition_and_subtraction_within_20.html">Addition & Subtraction Within 20</a></li>
-<li><a href="HTMLs/Math/addition_and_subtraction_within_100.html">Addition & Subtraction Within 100</a></li>
-<li><a href="HTMLs/Math/Addition_Within20_Assessment.html">Addition Within 20</a></li>
-<li><a href="HTMLs/Math/Addition_Within100_Assessment.html">Addition Within 100</a></li>
-<li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">One Step Word Problems Within 20</a></li>
-<li><a href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_100.html">One Step Word Problems Within 100</a></li>
-<li><a href="HTMLs/Math/Two_Step_Word_Add_Subtract_Within_100.html">Two Step Word Problems Within 100</a></li>
-</ul>
-</details>
-
-<!-- MATH MULT / DIV -->
-<details>
-<summary>Math Multiplication and Division</summary>
-<ul>
-<li><a href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">Single Digit Multiplication / Division</a></li>
-<li><a href="HTMLs/Math/multiplication_singledigit.html">Multiplication Single Digit</a></li>  
-<li><a href="HTMLs/Math/Telling Time.html">Telling Time</a></li>
-<li><a href="HTMLs/Math/subitizingzerotosix.html">Subitizing 0-6</a></li>
-<li><a href="HTMLs/Math/subitizingzerototen.html">Subitizing 0-10</a></li>
-<li><a href="HTMLs/Math/subitizingzerototwenty.html">Subitizing 0-20</a></li>
-</ul>
-</details>
-
-<!-- MATH SONGS -->
-<details>
-<summary>Math Songs</summary>
-<ul>
-
-<li>
-Count by 10s Song
-<audio controls>
-    <source src="HTMLs/Songs/Count by 10s song.mp3" type="audio/mpeg">
-</audio>
-</li>
-
-<li>
-Count by 5s Song
-<audio controls>
-    <source src="HTMLs/Songs/Count by 5s Song.mp3" type="audio/mpeg">
-</audio>
-</li>
-
-<li>
-Count by 2s Song
-<audio controls>
-    <source src="HTMLs/Songs/count by 2s Song.mp3" type="audio/mpeg">
-</audio>
-</li>
-
-<li>
-Count by 4s Song
-<audio controls>
-    <source src="HTMLs/Songs/Count by 4s.mp3" type="audio/mpeg">
-</audio>
-</li>
-    
-</ul>
-</details>
-
-<!-- QPS -->
-<details>
-<summary>QPS</summary>
-<ul>
-<li><a href="HTMLs/QPS/01_Letter_names_sounds_Random.html">Letter Names & Sounds</a></li>
-<li><a href="HTMLs/QPS/02_CVC_Words.html">CVC Words</a></li>
-<li><a href="HTMLs/QPS/03_Diagraphs.html">Diagraphs</a></li>
-<li><a href="HTMLs/QPS/04_Blends.html">Blends</a></li>
-<li><a href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">VCE Wordlist</a></li>
-<li><a href="HTMLs/QPS/07_R_Controlled_Assessment.html">R Controlled</a></li>
-<li><a href="HTMLs/QPS/08_Other_Vowel_Patterns.html">Other Vowel Patterns</a></li>
-<li><a href="HTMLs/QPS/09_Multisyllable_Words.html">Multisyllable Words</a></li>
-</ul>
-</details>
-
-<!-- READING COMP -->
-<details>
-<summary>Reading Comprehension</summary>
-<ul>
-<li><a href="HTMLs/Reading Comp/Fact_Opinion.html">Fact and Opinion</a></li>
-<li><a href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">Inferencing & Predictions</a></li>
-<li><a href="HTMLs/Reading Comp/Similes.html">Similes</a></li>
-<li><a href="HTMLs/Reading Comp/Cause and Effect.html">Cause and Effect</a></li>
-<li><a href="HTMLs/Reading Comp/Past Present Future Tenses.html">Past, Present & Future Tenses</a></li>
-</ul>
-</details>
-
-<!-- READING FLUENCY -->
-<details>
-<summary>Reading Fluency</summary>
-<ul>
-<li><a href="HTMLs/Reading Fluency/Fry_Words_First_100">Fry Words First 100</a></li>
-<li><a href="HTMLs/Reading Fluency/Fluency Passages.html">Fluency Passages</a></li>
-</ul>
-</details>
-
-<!-- WRITING -->
-<details>
-<summary>Writing</summary>
-<ul>
-<li><a href="HTMLs/Writing/Nouns_and_Verbs.html">Nouns and Verbs</a></li>
-<li><a href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">Nouns, Verbs, Adjectives, Adverbs</a></li>
-<li><a href="HTMLs/Writing/Writing Sentence Fill.html">Writing Sentence Fill</a></li>
-</ul>
-</details>
-
-<!-- CLASSROOM TOOLS -->
-<details>
-<summary>Classroom Tools</summary>
-<ul>
-<li><a href="HTMLs/Thermometer.html">Reading Thermometers</a></li>
-<li><a href="HTMLs/Sea Reading.html">Sea Reading</a></li>
-<li><a href="HTMLs/Classroom Tools/Gumball.html">Smile Collector</a></li>
-<li><a href="HTMLs/Classroom Tools/Wheel.html">Wheel</a></li>
-</ul>
-</details>
-
-<!-- SUBSTITUTE (LAST FOLDER) -->
-<details>
-<summary>Substitute</summary>
-
-<div style="margin-top:12px;">
-<p>Enter PIN to access substitute plans:</p>
-
-<input type="password" id="subPinInput" placeholder="Enter PIN"
-       style="padding:6px; border-radius:6px; border:1px solid #ccc; margin-right:8px;">
-
-<button onclick="checkSubPIN()"
-        style="background:#1e88e5; color:white; border:none; padding:6px 10px; border-radius:6px; font-weight:bold; cursor:pointer;">
-Access
-</button>
-
-<div id="subError" style="color:red; margin-top:8px;"></div>
-
-<div id="subLink" style="display:none; margin-top:12px;">
-<ul>
-<li>
-<a href="https://drive.google.com/drive/folders/1S1wLofNBiFnALzMI0rdM2_VcVdN8irKh?usp=sharing" target="_blank">
-Daily Substitute Plans (Google Drive)
-</a>
-</li>
-</ul>
-</div>
-
-</div>
-</details>
-
-</div>
-
+  <header class="hero"><div class="hero-inner"><div><p class="brand-kicker">Goal checks • practice • classroom tools</p><h1 class="brand">Beard's<br>Classroom</h1><p class="subtitle">A welcoming learning space for building skills, checking progress, and celebrating every bit of growth.</p></div><div class="hero-badge" aria-label="Classroom motto"><strong>Learn.<br>Grow.<br>Shine.</strong><span>One goal at a time!</span></div></div><img id="bitmoji" class="bitmoji" src="assets/bitmoji.png" alt="Mr. Beard"></header>
+  <main class="content"><div class="welcome"><div><h2>Find your next goal check</h2><p>Choose a subject below to open its activity list.</p></div></div><div class="search-panel"><label for="search">Search</label><input id="search" type="search" placeholder="Try “subitizing,” “vowel,” or “fluency”" autocomplete="off"><span class="search-result" id="search-result" aria-live="polite"></span></div>
+    <section class="directory" id="directory" aria-label="Classroom activities">
+      <details class="folder"><summary>➕ Math: Add &amp; Subtract</summary><ul class="folder-list"><li><a data-activity href="HTMLs/Math/2digit_addition_and_subtraction_no_regrouping.html">2-Digit Addition &amp; Subtraction (No Regrouping)</a></li><li><a data-activity href="HTMLs/Math/addition_and_subtraction_within_20.html">Addition &amp; Subtraction Within 20</a></li><li><a data-activity href="HTMLs/Math/addition_and_subtraction_within_100.html">Addition &amp; Subtraction Within 100</a></li><li><a data-activity href="HTMLs/Math/Addition_Within20_Assessment.html.html">Addition Within 20</a></li><li><a data-activity href="HTMLs/Math/Addition_Within100_Assessment.html">Addition Within 100</a></li><li><a data-activity href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_20.html">One-Step Word Problems Within 20</a></li><li><a data-activity href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_100.html">One-Step Word Problems Within 100</a></li><li><a data-activity href="HTMLs/Math/One_Step_Word_Add_Subtract_Within_1000.html">One-Step Word Problems Within 1000</a></li><li><a data-activity href="HTMLs/Math/Two_Step_Word_Add_Subtract_Within_100.html">Two-Step Word Problems Within 100</a></li></ul></details>
+      <details class="folder"><summary>✖️ Math: Other Skills</summary><ul class="folder-list"><li><a data-activity href="HTMLs/Math/Multiplication_and_Division_Single_Digits.html">Single-Digit Multiplication &amp; Division</a></li><li><a data-activity href="HTMLs/Math/multiplication_singledigit.html">Multiplication Facts</a></li><li><a data-activity href="HTMLs/Math/Telling Time.html">Telling Time</a></li><li><a data-activity href="HTMLs/Math/subitizingzerotosix.html">Subitizing 0–6</a></li><li><a data-activity href="HTMLs/Math/subitizingzerototen.html">Subitizing 0–10</a></li><li><a data-activity href="HTMLs/Math/subitizingzerototwenty.html">Subitizing 0–20</a></li></ul></details>
+      <details class="folder"><summary>🔤 Phonics &amp; Word Reading</summary><ul class="folder-list"><li><a data-activity href="HTMLs/QPS/01_Letter_names_sounds_Random.html">Letter Names &amp; Sounds</a></li><li><a data-activity href="HTMLs/QPS/02_CVC_Words.html">CVC Words</a></li><li><a data-activity href="HTMLs/QPS/03_Diagraphs.html">Digraphs</a></li><li><a data-activity href="HTMLs/QPS/04_Blends.html">Blends</a></li><li><a data-activity href="HTMLs/QPS/05_VCE_Wordlist_assessment.html">VCe Word List</a></li><li><a data-activity href="HTMLs/QPS/07_R_Controlled_Assessment.html">R-Controlled Vowels</a></li><li><a data-activity href="HTMLs/QPS/08_Other_Vowel_Patterns.html">Other Vowel Patterns</a></li><li><a data-activity href="HTMLs/QPS/09_Multisyllable_Words.html">Multisyllable Words</a></li></ul></details>
+      <details class="folder"><summary>📖 Reading Comprehension</summary><ul class="folder-list"><li><a data-activity href="HTMLs/Reading Comp/Fact_Opinion.html">Fact &amp; Opinion</a></li><li><a data-activity href="HTMLs/Reading Comp/Inferencing_and_Predictions.html">Inferencing &amp; Predictions</a></li><li><a data-activity href="HTMLs/Reading Comp/Similes.html">Similes</a></li><li><a data-activity href="HTMLs/Reading Comp/Cause and Effect.html">Cause &amp; Effect</a></li><li><a data-activity href="HTMLs/Reading Comp/Past Present Future Tenses.html">Past, Present &amp; Future Tenses</a></li></ul></details>
+      <details class="folder"><summary>📚 Reading Fluency</summary><ul class="folder-list"><li><a data-activity href="HTMLs/Reading Fluency/Fry_Words_First_100.html">Fry Words: First 100</a></li><li><a data-activity href="HTMLs/Reading Fluency/Fluency Passages.html">Fluency Passages</a></li></ul></details>
+      <details class="folder"><summary>✏️ Writing &amp; Vocabulary</summary><ul class="folder-list"><li><a data-activity href="HTMLs/Writing/Nouns_and_Verbs.html">Nouns &amp; Verbs</a></li><li><a data-activity href="HTMLs/Writing/Nouns_Verbs_Adjectives_and_Adverbs.html">Nouns, Verbs, Adjectives &amp; Adverbs</a></li><li><a data-activity href="HTMLs/Writing/Writing Sentence Fill.html">Writing Sentence Fill</a></li><li><a data-activity href="HTMLs/Vocabulary/2nd_Grade_Lesson_11.html">Vocabulary: 2nd Grade Lesson 11</a></li></ul></details>
+      <details class="folder"><summary>🎲 Classroom Tools</summary><ul class="folder-list"><li><a data-activity href="HTMLs/Thermometer.html">Reading Thermometers</a></li><li><a data-activity href="HTMLs/Sea Reading.html">Sea Reading</a></li><li><a data-activity href="HTMLs/Classroom Tools/Gumball.html">Smile Collector</a></li><li><a data-activity href="HTMLs/Classroom Tools/Wheel.html">Classroom Wheel</a></li><li><a data-activity href="HTMLs/Fry_Words_First_100_Game.html">Fry Word Challenge</a></li></ul></details>
+      <details class="folder"><summary>🎵 Math Songs</summary><ul class="folder-list"><li class="music"><span>Count by 10s</span><audio controls preload="none"><source src="HTMLs/Songs/Count by 10s song.mp3" type="audio/mpeg"></audio></li><li class="music"><span>Count by 5s</span><audio controls preload="none"><source src="HTMLs/Songs/Count by 5s Song.mp3" type="audio/mpeg"></audio></li><li class="music"><span>Count by 2s</span><audio controls preload="none"><source src="HTMLs/Songs/count by 2s Song.mp3" type="audio/mpeg"></audio></li><li class="music"><span>Count by 4s</span><audio controls preload="none"><source src="HTMLs/Songs/Count by 4s.mp3" type="audio/mpeg"></audio></li></ul></details>
+    </section>
+    <section class="sub-card"><h2>Substitute Plans</h2><p>Enter the classroom access code to open the shared substitute-plan folder.</p><div class="pin-row"><input id="sub-pin" type="password" inputmode="numeric" autocomplete="off" aria-label="Classroom access code" placeholder="Access code"><button type="button" id="sub-button">Open plans</button></div><p class="pin-message" id="pin-message" aria-live="polite"></p><a class="sub-link" id="sub-link" href="https://drive.google.com/drive/folders/1S1wLofNBiFnALzMI0rdM2_VcVdN8irKh?usp=sharing" target="_blank" rel="noopener">Open Daily Substitute Plans ↗</a></section>
+  </main><footer>Beard's Classroom • Learn, grow, and shine.</footer>
+  <script>
+    const launch='HTMLs/Activity_Launcher.html?activity=';document.querySelectorAll('[data-activity]').forEach(a=>{a.href=launch+encodeURIComponent(a.getAttribute('href'))});
+    const search=document.querySelector('#search'),result=document.querySelector('#search-result'),folders=[...document.querySelectorAll('.folder')];function runSearch(){const q=search.value.trim().toLowerCase();let matches=0;folders.forEach(folder=>{const categoryMatch=folder.querySelector('summary').textContent.toLowerCase().includes(q);let found=false;folder.querySelectorAll('li').forEach(li=>{const show=!q||categoryMatch||li.textContent.toLowerCase().includes(q);li.hidden=!show;if(show)found=true;if(show&&q)matches++});folder.hidden=!found;if(q&&found)folder.open=true});result.textContent=q?`${matches} match${matches===1?'':'es'}`:''}search.addEventListener('input',runSearch);
+    const pin=document.querySelector('#sub-pin'),message=document.querySelector('#pin-message'),subLink=document.querySelector('#sub-link');function openPlans(){if(pin.value==='367'){subLink.style.display='inline-block';message.textContent='';}else{subLink.style.display='none';message.textContent='That code did not match. Please try again.';pin.value='';pin.focus();}}document.querySelector('#sub-button').addEventListener('click',openPlans);pin.addEventListener('keydown',e=>{if(e.key==='Enter')openPlans()});
+    fetch('assets/bitmoji.png',{method:'HEAD'}).then(r=>{if(r.ok)document.querySelector('#bitmoji').classList.add('show')}).catch(()=>{});
+  </script>
 </body>
 </html>
