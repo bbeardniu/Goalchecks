@@ -252,11 +252,28 @@ function highlightWord(span) {
     if(!currentStudent) return;
     const selectedColor = colorSelect.value;
     const index = parseInt(span.dataset.index);
+    const previousColor = currentStudent.highlights[index];
+
+    if(previousColor === selectedColor){
+        delete currentStudent.highlights[index];
+        span.style.backgroundColor = '';
+        span.style.color = '';
+        const wordsRead = currentStudent.highlights.lastIndexOf(selectedColor) + 1;
+        currentStudent[selectedColor] = wordsRead;
+        updateCounter(wordsRead);
+        updateDayBoxes();
+        return;
+    }
+
+    if(previousColor){
+        delete currentStudent.highlights[index];
+        currentStudent[previousColor] = currentStudent.highlights.lastIndexOf(previousColor) + 1;
+    }
+
     span.style.backgroundColor = selectedColor;
     span.style.color = 'white';
-
     currentStudent.highlights[index] = selectedColor;
-    const wordsRead = index + 1;
+    const wordsRead = currentStudent.highlights.lastIndexOf(selectedColor) + 1;
     currentStudent[selectedColor] = wordsRead;
     updateCounter(wordsRead);
     updateDayBoxes();

@@ -2,103 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BBeard Fluency Passages</title>
+<title>Beard's Reading Fluency Passages</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 20px;
-    color: #333;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 40px;
-    color: #2c3e50;
-    font-family: 'Comic Sans MS', 'Chalkboard SE', Arial, sans-serif;
-}
-
-/* TWO COLUMN LAYOUT */
-.container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 25px;
-}
-
-/* CARD STYLE */
-details {
-    background: white;
-    border-radius: 14px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    padding: 15px 20px;
-    transition: transform 0.2s ease;
-}
-
-details:hover {
-    transform: translateY(-4px);
-}
-
-/* Summary styling */
-summary {
-    list-style: none;
-    cursor: pointer;
-    font-size: 22px;
-    font-weight: bold;
-    color: #34495e;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-summary::-webkit-details-marker {
-    display: none;
-}
-
-/* Arrow */
-summary::after {
-    content: "▼";
-    font-size: 14px;
-    transition: transform 0.3s ease;
-}
-
-details[open] summary::after {
-    transform: rotate(180deg);
-}
-
-/* Passage list */
-ul {
-    list-style: none;
-    padding-left: 10px;
-    margin-top: 12px;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(-5px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-ul li {
-    padding: 6px 0;
-}
-
-a {
-    text-decoration: none;
-    color: #1e88e5;
-    font-weight: bold;
-}
-
-a:hover {
-    text-decoration: underline;
-}
+:root{--navy:#1e4767;--blue:#2878a9;--cream:#fffdf7;--gold:#f6ce69;--mint:#dff4e8;--line:#d4e4ec}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(135deg,#e7f6ff 0%,#fff8e5 100%);color:#26394b;font-family:"Avenir Next",Avenir,"Segoe UI",sans-serif}
+.fluency-hub{width:min(1040px,100%);margin:0 auto;padding:1.5rem}
+.fluency-hero{position:relative;overflow:hidden;background:#315d59;border:12px solid #b9804d;border-radius:12px;box-shadow:0 9px 0 rgba(104,68,38,.2),inset 0 0 30px rgba(0,0,0,.18);padding:2rem 1.5rem;text-align:center;color:#fffdf4}
+.fluency-hero::after{content:"✦";position:absolute;right:1.25rem;top:.45rem;color:var(--gold);font-size:2.1rem;transform:rotate(12deg)}
+.eyebrow{margin:0 0 .5rem;color:#dff4e8;font-size:.75rem;font-weight:900;letter-spacing:.12em}
+h1{margin:0;font-family:"Comic Sans MS","Chalkboard SE",ui-rounded,sans-serif;font-size:clamp(2rem,5vw,3.25rem);line-height:1.05;text-shadow:2px 2px 0 rgba(0,0,0,.17)}
+.fluency-hero h1{color:#fffdf4!important}
+.fluency-hero p:last-child{max-width:630px;margin:1rem auto 0;line-height:1.5;color:#effcf4}
+.instructions{margin:1.6rem auto 1.1rem;text-align:center;font-weight:700;color:#47667e}
+.container{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.15rem}
+details{background:rgba(255,255,255,.95);border:2px solid #fff;border-radius:16px;box-shadow:0 7px 18px rgba(30,71,103,.12);padding:1rem 1.15rem;transition:transform .18s ease,box-shadow .18s ease}
+details:hover{transform:translateY(-3px);box-shadow:0 11px 24px rgba(30,71,103,.16)}
+summary{list-style:none;cursor:pointer;color:var(--navy);font-family:"Comic Sans MS","Chalkboard SE",ui-rounded,sans-serif;font-size:1.5rem;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";display:grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%;background:#e5f4fb;color:var(--blue);font-family:Arial,sans-serif;font-size:1.35rem;line-height:1;transition:transform .2s ease,background .2s ease}
+details[open] summary::after{content:"–";background:var(--mint);color:#237f4e}
+ul{list-style:none;margin:1rem 0 .15rem;padding:0;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+li{margin:.38rem 0}
+a{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.6rem .7rem;border-radius:9px;color:#1d6495;font-weight:800;text-decoration:none;transition:background .15s ease,transform .15s ease}
+a::after{content:"→";color:#78a8c4;font-size:1.1rem}
+a:hover,a:focus{background:#eef8fd;transform:translateX(3px);outline:none}
+@media(max-width:680px){.fluency-hub{padding:1rem}.fluency-hero{border-width:8px;padding:1.6rem 1rem}.container{grid-template-columns:1fr}summary{font-size:1.35rem}}
 </style>
 </head>
 
 <body>
 
-<h1>Reading Fluency Passages</h1>
+<main class="fluency-hub">
+<section class="fluency-hero">
+    <p class="eyebrow">BEARD'S CLASSROOM • READING TOOLS</p>
+    <h1>Reading Fluency Passages</h1>
+    <p>Choose a grade level, select a passage, and record a one-minute read with confidence.</p>
+</section>
+
+<p class="instructions">Choose a grade level to open its passage collection.</p>
 
 <div class="container">
 
@@ -151,6 +95,7 @@ a:hover {
 </details>
 
 </div>
+</main>
 
 </body>
 </html>
