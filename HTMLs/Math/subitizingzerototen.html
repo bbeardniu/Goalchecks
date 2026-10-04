@@ -177,6 +177,7 @@
     document.getElementById("answer").value = "";
     document.getElementById("feedback").textContent = "";
     const problemContainer = document.getElementById("problemContainer");
+    problemContainer.dataset.beardProblem = `Dot pattern: ${ans} ${ans === 1 ? "dot" : "dots"}`;
     const message = document.getElementById("message");
     const dotBoard = document.getElementById("dotBoard");
 

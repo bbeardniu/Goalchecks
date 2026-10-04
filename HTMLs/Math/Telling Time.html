@@ -210,6 +210,7 @@ function newProblem() {
   let minute = Math.floor(Math.random()*12) * 5;
 
   correctTime = `${hour}:${minute}`;
+  canvas.dataset.beardProblem = `Read the clock: ${hour}:${String(minute).padStart(2, "0")}`;
 
   drawClock(hour, minute);
 }
