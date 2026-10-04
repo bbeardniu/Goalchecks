@@ -179,6 +179,7 @@ function stopPractice() {
   const total = correctWords.length + incorrectWords.length;
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
   const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+  const printPresentation = window.__beardMixedLetterformsUsed ? "Mixed letterforms (a/g forms)" : "Standard print";
 
   summaryDiv.innerHTML = `
     <h2>Results</h2>
@@ -228,8 +229,9 @@ pdfButton.addEventListener("click", function() {
   doc.text(`Time: ${now.toLocaleTimeString()}`,14,42);
   doc.text(`Duration: ${elapsed}s`,14,49);
   doc.text(`Score: ${percent}%`,14,56);
+  doc.text(`Print: ${printPresentation}`,14,63);
 
-  let y = 70;
+  let y = 77;
 
   doc.setFillColor(220,220,220);
   doc.rect(14,y-6,182,8,"F");
