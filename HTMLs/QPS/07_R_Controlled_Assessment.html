@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>R-Controlled Word Practice</title>
+<title>R-Controlled Vowels — Phonics Goal Check</title>
 <style>
   :root{
     --bg1:#93c5fd;
@@ -148,14 +148,14 @@
 </head>
 <body>
   <div class="wrap" id="mainWrap">
-    <h1>R-Controlled Word Practice</h1>
+    <h1>R-Controlled Vowels Goal Check</h1>
     <div id="word" aria-live="polite"></div>
     <div class="controls">
       <button class="btn-red" id="resetBtn">Reset</button>
       <button class="btn-blue" id="stopBtn">Stop</button>
     </div>
     <div id="feedback" aria-live="polite"></div>
-    <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect.</div>
+    <div class="hint">One continuous, randomized bank of 150 r-controlled words. Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
   </div>
 
   <div id="summary" aria-live="polite"></div>
@@ -169,12 +169,28 @@
 <script>
 (function(){
   const rControlledWords = [
-    "car","star","jar","bar","far","farm","yard","card","hard","part",
-    "her","fern","term","bird","girl","stir","shirt","third","first","chirp",
-    "corn","born","horn","short","storm","north","fort","torch","horse","pork",
-    "turn","burn","hurt","curl","fur","purse","blur","burst","church","nurse",
+    // ar
+    "car","bar","jar","far","star","farm","yard","card","hard","part",
     "cart","smart","shark","start","dark","park","march","chart","harp","barn",
-    "term","herd","fern","perch","sir","bird","dirt","shirt","third","whirl"
+    "bark","charm","scarf","sharp","spark","art","arm","arch","mark","yarn",
+    // er
+    "her","fern","term","germ","herd","perch","verb","jerk","stern","perk",
+    "nerd","serf","herb","clerk","swerve","serve","merge","verse","nerve",
+    "berm","berth","terse","verge","pert","served","jerked","perched","merged","perked",
+    "termed",
+    // ir
+    "bird","girl","stir","shirt","third","first","chirp","dirt","skirt","firm",
+    "fir","sir","whirl","twirl","swirl","squirm","squirt","flirt","thirst","birth",
+    "birch","girth","shirk","smirk","quirk","mirth","gird","stirred","chirped","whirred",
+    // or
+    "corn","born","horn","short","storm","north","fort","torch","horse","pork",
+    "fork","porch","sport","sort","torn","form","snort","thorn","scorch",
+    "for","more","cord","lord","dorm","norm","morn","worn","stork","cork","forth",
+    // ur
+    "turn","burn","hurt","curl","fur","purse","blur","burst","church","nurse",
+    "surf","turf","curb","curve","churn","slurp","spur","spurt",
+    "burp","curse","purr","curd","hurl","blurt","lurch","spurn","burned","turned",
+    "curled","hurled"
   ];
 
   let pool = shuffle([...rControlledWords]);

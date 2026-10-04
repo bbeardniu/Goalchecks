@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>QPS — Final Section (Multisyllabic Words)</title>
+<title>Multisyllable Words — Phonics Goal Check</title>
 <style>
   :root{
     --bg1:#fde68a;
@@ -73,8 +73,8 @@
 </style>
 </head>
 <body>
-<div class="wrap" role="application" aria-label="QPS Final Section Multisyllabic Words">
-  <h1>QPS — Final Section</h1>
+<div class="wrap" role="application" aria-label="Multisyllable words goal check">
+  <h1>Multisyllable Words Goal Check</h1>
   <div id="word" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
 
   <div class="controls">
@@ -83,25 +83,49 @@
   </div>
 
   <div id="feedback" aria-live="polite"></div>
-  <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect. 100 multisyllabic words randomized.</div>
+  <div class="hint">One continuous, randomized bank of 240 multisyllable words. Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
   <div id="summary" aria-live="polite"></div>
 </div>
 <div id="timer">Time: 0s</div>
 
 <script>
 (function(){
-  const words = [
-    "rainbow","sunlight","playful","basketball","snowman","birthday","football","sunflower","blueberry","flashlight",
-    "fireplace","mailbox","daydream","handshake","homework","paintbrush","backpack","toothbrush","moonlight","butterfly",
-    "starlight","grandfather","grandmother","playground","classroom","daytime","headband","sandcastle","windmill","cupcake",
-    "storybook","newspaper","treehouse","birthdaycake","raincoat","teacup","seashore","footprint","birthdayparty","lifeboat",
-    "footballer","moonbeam","sunshine","flashcard","sweatshirt","blackboard","cheesecake","snowflake","rainstorm","footballgame",
-    "backyard","daylight","nighttime","headphones","bedtime","playmate","greenhouse","teaspoon","cupboard","teaspoonful",
-    "trainstation","schoolwork","snowball","handstand","toothpaste","seashell","bookshelf","playpen","rainwater","moonlighted",
-    "earthquake","hairbrush","sunflowerseed","snowplow","teacupboard","firetruck","basketballer","staircase","bedspread","cupcakebox",
-    "playgrounder","classmate","lightning","footstool","raincoatbox","newlywed","doorstep","headmaster","basketweaver","sunroof",
-    "backpacker","daydreamer","nightlight","sunbathe","firefighter","handwriting","toothfairy","bookseller","classleader","playhouse"
+  // A broad, non-repeating practice bank gives students fresh examples while
+  // keeping this as one simple multisyllable-word goal check.
+  const twoSyllableWords = [
+    "acorn","actor","after","airport","almost","always","anchor","angel","apple","apron",
+    "artist","attic","autumn","baby","bacon","basket","bathtub","beacon","before","begin",
+    "blanket","border","borrow","bottom","brother","bubble","bucket","butter","button","cabin",
+    "camel","candle","candy","captain","carpet","carrot","castle","ceiling","center","circle",
+    "classroom","closet","cloudy","color","comet","cookie","corner","cousin","cracker","crayon",
+    "curtain","daylight","dentist","dinner","dollar","donkey","doctor","dragon","drawing","driver",
+    "eagle","early","elbow","empty","engine","every","fabric","farmer","feather","feeling",
+    "flower","folder","follow","forest","fountain","friendly","future","garden","gentle","giraffe",
+    "glasses","golden","goodbye","grandma","guitar","haircut","handle","happy","harbor","harvest",
+    "helmet","helpful","homework","honey","hotel","houseboat","hungry","hundred","island","jacket"
   ];
+
+  const threeSyllableWords = [
+    "animal","apartment","banana","bicycle","blueberry","calendar","camera","carnival","celery","cinnamon",
+    "coconut","colorful","computer","customer","decorate","difficult","dinosaur","document","elephant","energy",
+    "exercise","family","favorite","festival","furniture","gasoline","gorilla","hamburger","holiday","hospital",
+    "important","industry","instrument","kangaroo","ladybug","lemonade","library","limited","magazine","manager",
+    "medicine","melody","memory","microwave","monitor","musical","mystery","newspaper","octopus","opposite",
+    "ornament","orchestra","paragraph","passenger","pelican","photograph","pineapple","potato","president","principal",
+    "property","pyramid","remember","restaurant","relative","regular","reporter","satellite","scientist","September",
+    "serious","skeleton","solution","spaghetti","strawberry","submarine","telephone","tomorrow","umbrella","vacation"
+  ];
+
+  const fourPlusSyllableWords = [
+    "ability","alligator","anniversary","avocado","cafeteria","calculator","celebration","certificate","community","comparison",
+    "communication","competition","conservation","conversation","creativity","curiosity","decoration","democracy","determination","dictionary",
+    "electricity","elementary","emergency","entertainment","especially","evaporation","examination","explanation","geography","graduation",
+    "helicopter","historical","imagination","information","invitation","laboratory","mathematics","mechanical","medication","multiplication",
+    "necessary","observation","operation","organization","particular","population","preparation","presentation","pronunciation","publication",
+    "qualification","recreation","refrigerator","responsibility","scientific","situation","temperature","transportation","university","vocabulary"
+  ];
+
+  const words = [...twoSyllableWords, ...threeSyllableWords, ...fourPlusSyllableWords];
 
   let pool = shuffle([...words]);
   const wordEl = document.getElementById('word');

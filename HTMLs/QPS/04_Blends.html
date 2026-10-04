@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>QPS — Blends (Initial & Final)</title>
+<title>Blends — Phonics Goal Check</title>
 <style>
   :root{
     --bg1:#bbf7d0;
@@ -93,8 +93,8 @@
 </style>
 </head>
 <body>
-<div class="wrap" role="application" aria-label="QPS Blends Practice">
-  <h1>QPS — Blends (Initial & Final)</h1>
+<div class="wrap" role="application" aria-label="Blends goal check">
+  <h1>Blends Goal Check</h1>
   <div id="word" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
 
   <div class="controls">
@@ -103,7 +103,7 @@
   </div>
 
   <div id="feedback" aria-live="polite"></div>
-  <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect. 100 blend words randomized.</div>
+  <div class="hint">One continuous, randomized bank of 258 blend words. Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
   <div id="summary" aria-live="polite"></div>
 </div>
 
@@ -118,17 +118,38 @@
 <script>
 (function(){
   const words = [
-    "black","blink","blast","blend","blush","block","blue","blimp","blank","blast",
-    "flag","flip","flat","flap","flame","flash","float","flick","flop","flower",
-    "glad","glass","glue","globe","glow","clam","clap","clip","clock","clown",
-    "crab","crib","crack","crop","crash","drip","drop","drum","drink","dress",
-    "frog","fresh","frost","from","frill","grass","grip","grab","grin","grow",
-    "plan","plant","plug","plum","plus","plate","play","please","plot","plane",
-    "slide","slip","slap","slam","sled","slime","slow","slug","slid","slant",
-    "snack","snip","snap","snow","snail","smile","smell","small","smart","smash",
-    "spill","spin","spot","spoon","splash","spring","stand","step","stop","stamp",
-    "trip","trap","track","truck","tree","trick","trim","train","trash","twin",
-    "mask","nest","hand","sand","wind","milk","help","tent","desk","jump"
+    // Initial two-consonant blends
+    "black","bland","blank","blast","blend","blimp","blink","bliss","block","blush",
+    "clam","clap","clamp","clank","class","clump","clock","clip","click","cliff",
+    "flag","flap","flat","fled","flex","flick","flip","flock","flop","flint",
+    "glad","glass","glen","glib","glint","glob","gloss","glum",
+    "plan","plank","plant","plop","plot","plum","plug","pluck","plump","plod",
+    "slab","slack","slam","slap","slant","sled","slim","slip","slop","slug",
+    "brag","bran","brass","brand","brisk","brim","brick","brunt",
+    "crab","crack","cram","cramp","crank","crop","crib","crisp","crimp","crust",
+    "drab","drag","dram","dress","drip","drift","drill","drop","drum","drug",
+    "frank","fret","frill","frisk","frog","from","front","frump",
+    "grab","grand","grass","grant","grin","grip","grid","grim","grub","grunt",
+    "pram","prank","press","prep","prick","prim","print","prop",
+    "tram","trap","track","tramp","trek","trick","trim","trip","truck","trunk",
+    "skiff","skill","skid","skim","skin","skip","skit","skimp","skunk","skull",
+    "smack","small","smart","smell","smelt","smock","smug","smut",
+    "snack","snag","snap","sniff","snip","snob","snub","snug",
+    "span","spat","spank","spell","speck","spin","spit","spill","spot","spun",
+    "stab","stack","stamp","stand","step","stick","still","stop","stump","stuck",
+    "swab","swag","swam","swan","swamp","swap","swift","swim","swish","swum",
+    "twang","twig","twin","twill","twist","twirl",
+
+    // Initial three-consonant blends
+    "splat","split","splint","sprig","spring","strap","strip","strum","scrap","scrub",
+
+    // Final consonant blends
+    "band","bend","bond","fond","hand","land","mend","sand","send","tend","pond","fund",
+    "ant","bent","dent","hint","hunt","lint","mint","pant","tent","vent",
+    "camp","damp","jump","lamp","limp","lump","pump","rump","bump","dump",
+    "best","cast","fast","fist","list","lost","mast","nest","rest","rust",
+    "held","weld","milk","silk","belt","felt","melt","tilt","help","yelp","gulp","pulp",
+    "kept","left","lift","soft","gift","ask","desk","mask","task","wasp"
   ];
 
   let pool = shuffle([...words]);

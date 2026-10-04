@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>VCe Word Practice</title>
+<title>VCe Words — Phonics Goal Check</title>
 <style>
   :root{
     --bg1:#93c5fd;
@@ -149,14 +149,14 @@
 </head>
 <body>
   <div class="wrap" id="mainWrap">
-    <h1>VCe Word Practice</h1>
+    <h1>VCe Words Goal Check</h1>
     <div id="word" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
     <div class="controls">
       <button class="btn-red" id="resetBtn">Reset</button>
       <button class="btn-blue" id="stopBtn">Stop</button>
     </div>
     <div id="feedback" aria-live="polite"></div>
-    <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect.</div>
+    <div class="hint">One continuous, randomized bank of 197 VCe words. Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
   </div>
 
   <div id="summary" aria-live="polite"></div>
@@ -171,16 +171,34 @@
 <script>
 (function(){
   const vceWords = [
-"cake","make","bake","take","lake","wake","fake","shake","sake","rake",
-"like","hike","bike","kite","site","bite","time","lime","ride","side",
-"hide","tide","wide","pride","slide","glide","guide","home","cone","stone",
-"bone","tone","phone","alone","clone","throne","zone","cube","tube","lube",
-"rube","fume","mute","flute","brute","cute","use","hope","rope","cope",
-"dope","nope","slope","trope","mope","scope","pope","gate","late","date",
-"mate","rate","sate","crate","plate","state","skate","gave","wave","save",
-"brave","cave","pave","crave","behave","grave","shave","five","dive","hive",
-"live","jive","strive","drive","thrive","nose","rose","pose","close","chose",
-"those","froze","hose","prose","joke","poke","tube","use","cute","mule"
+    // Long a (a_e)
+    "babe","bake","bale","bane","base","cage","cake","came","cane","cape",
+    "case","cave","dale","dame","date","daze","fade","fame","fate","game",
+    "gale","gate","gave","gape","gaze","hale","hate","haze","jade","kale",
+    "lade","lake","lame","lane","late","lave","mace","made","male","mane",
+    "mate","maze","name","nape","pace","page","pale","pane","pate","pave",
+    "race","rage","rake","rate","rave","safe","sake","sale","same","sane",
+    "save","tale","tame","tape","vase","wade","wage","wake","wale","wane",
+    "wave",
+    // Long i (i_e)
+    "bide","bike","bile","bite","cite","dice","dime","dine","dive","fife",
+    "file","fine","five","gibe","hide","hike","hive","jibe","jive","kite",
+    "life","like","line","mice","mile","mime","mine","mite","nice","nine",
+    "pike","pile","pine","pipe","ride","ripe","rise","side","sine","site",
+    "size","tide","tile","time","tine","vile","vine","wide","wife","wile",
+    "wine","wipe","wise",
+    // Long o (o_e)
+    "bode","bone","code","coke","cole","cone","cope","cote","cove","dole",
+    "dome","dope","dose","dote","home","hope","hose","joke","lobe","lode",
+    "lone","lope","mode","mole","mote","node","nose","note","pole","pope",
+    "pose","robe","rode","rope","sole","tome","tone","tope","vole","vote",
+    "woke","wove","yoke","zone",
+    // Long u (u_e)
+    "cube","cute","dude","duke","dune","dupe","fume","fuse","huge","juke",
+    "jute","luge","lute","mule","muse","mute","puce","rude","rule","rune",
+    "ruse","tube","tune","use","yule",
+    // Long e (e_e)
+    "cede","gene","meme","mete"
   ];
 
   let pool = shuffle([...vceWords]);

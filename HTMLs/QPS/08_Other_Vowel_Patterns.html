@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Other Vowel Patterns Practice</title>
+<title>Other Vowel Patterns — Phonics Goal Check</title>
 <style>
   :root{
     --bg1:#fde68a;
@@ -148,14 +148,14 @@
 </head>
 <body>
   <div class="wrap" id="mainWrap">
-    <h1>Other Vowel Patterns Practice</h1>
+    <h1>Other Vowel Patterns Goal Check</h1>
     <div id="word" aria-live="polite"></div>
     <div class="controls">
       <button class="btn-red" id="resetBtn">Reset</button>
       <button class="btn-blue" id="stopBtn">Stop</button>
     </div>
     <div id="feedback" aria-live="polite"></div>
-    <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect.</div>
+    <div class="hint">One continuous, randomized bank of 120 vowel-pattern words. Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
   </div>
 
   <div id="summary" aria-live="polite"></div>
@@ -170,11 +170,20 @@
 (function(){
   const vowelPatternWords = [
     // oi/oy
-    "boil","coil","soil","foil","join","coin","point","voice","boy","toy","joy","enjoy","ahoy","annoy","destroy",
+    "boil","coil","soil","foil","join","coin","point","voice","moist","noise",
+    "choice","avoid","poison","appoint","toilet","oil","spoil","broil","joint","hoist",
+    "boy","toy","joy","enjoy","ahoy","annoy","destroy","employ","cowboy","royal",
+    "loyal","voyage","oyster","soy","coy","joyful","toybox","boyhood","employer","royalty",
     // ou/ow
-    "out","ouch","house","mouse","found","sound","cloud","shout","round","brown","crowd","down","town","clown","frown",
+    "out","ouch","house","mouse","found","sound","cloud","shout","round","ground",
+    "pound","proud","loud","count","mouth","couch","south","scout","sprout","around",
+    "brown","crowd","down","town","clown","frown","cow","how","now","wow",
+    "plow","gown","crown","owl","growl","flower","power","shower","tower","towel",
     // aw/au
-    "saw","law","paw","draw","straw","claw","jaw","flaw","hawk","yawn","haul","fault","pause","cause","applaud"
+    "saw","law","paw","draw","straw","claw","jaw","flaw","hawk","yawn",
+    "dawn","lawn","fawn","crawl","brawl","squawk","thaw","awful","shawl","drawl",
+    "haul","fault","pause","cause","applaud","author","August","laundry","launch","haunt",
+    "taunt","sausage","autumn","auction","astronaut","sauce","caught","taught","vault","fraud"
   ];
 
   let pool = shuffle([...vowelPatternWords]);

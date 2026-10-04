@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>QPS — Digraphs (sh, th, ch, wh, ph)</title>
+<title>Digraphs — Phonics Goal Check</title>
 <style>
   :root{
     --bg1:#a5f3fc;
@@ -92,8 +92,8 @@
 </style>
 </head>
 <body>
-<div class="wrap" role="application" aria-label="QPS Digraphs Practice">
-  <h1>QPS — Digraphs (sh, th, ch, wh, ph)</h1>
+<div class="wrap" role="application" aria-label="Digraphs goal check">
+  <h1>Digraphs Goal Check</h1>
   <div id="word" aria-live="polite">Press 1 (correct), 2 (incorrect), or 3 (stop)</div>
 
   <div class="controls">
@@ -102,7 +102,7 @@
   </div>
 
   <div id="feedback" aria-live="polite"></div>
-  <div class="hint">Type <strong>1</strong> for correct, <strong>2</strong> for incorrect, <strong>3</strong> to stop.</div>
+  <div class="hint">One continuous, randomized bank of 230 digraph words. Type <strong>1</strong> for correct, <strong>2</strong> for incorrect, and <strong>3</strong> to stop.</div>
   <div id="summary" aria-live="polite"></div>
 </div>
 
@@ -116,15 +116,39 @@
 <script>
 (function(){
   const words = [
-    "ship","shop","fish","dish","brush","shut","shine","shell","cash","wish",
-    "math","bath","path","cloth","moth","teeth","earth","both","tooth","with",
-    "chop","chip","chin","chat","chew","bench","lunch","peach","beach","coach",
-    "whale","wheel","when","which","white","whip","whisk","whisker","whale","why",
-    "phone","photo","graph","elephant","trophy","alphabet","sphere","dolphin","phrase","phonics",
-    "shadow","sheep","shirt","sharp","shoe","shark","shock","short","shine","shelf",
-    "think","thick","thin","thorn","thank","thump","three","throat","thumb","thirst",
-    "chicken","cheese","cherry","chase","chair","cheek","chalk","chain","chore","choice",
-    "whistle","whirl","whisper","wheelbarrow","whippoorwill","whiskers","whispering","whistleblower","whipped","whimsical"
+    // sh
+    "ship","shop","shed","shell","shut","sham","shag","shack","shock","short",
+    "shift","shin","shun","shush","shrub","shark","sharp","shirt","shore","shape",
+    "shade","shame","sheep","shelf","shiny","shadow","shower","shovel","shiver","shatter",
+    "ash","bash","cash","dash","dish","fish","hash","hush","lash","mash",
+    "rash","rush","wish","wash","brush","flash","crash","smash","splash","trash",
+    "flush","finish","polish","radish","vanish","punish",
+
+    // ch (the /ch/ sound)
+    "chat","chin","chip","chop","chest","check","chick","chuck","chug","chap",
+    "chant","chain","chase","chart","charm","cheese","cheap","choice","cheek","chalk",
+    "chair","cherry","chicken","child","chimp","chunk","chime","chomp","cheer","cheat",
+    "such","much","rich","inch","lunch","bunch","bench","pinch","punch","match",
+    "catch","patch","hatch","batch","fetch","ditch","witch","notch","watch","touch",
+    "peach","beach","coach","porch","ranch","crunch","branch","stitch","sketch","clutch",
+
+    // th (voiced and unvoiced)
+    "than","that","then","them","this","thin","thick","thud","thump","thorn",
+    "thank","think","theft","thing","throb","three","throat","thumb","thirst","thunder",
+    "thimble","thicket","thrush","thaw","thief","thread","thrill","thrift","throne","thirsty",
+    "bath","math","path","moth","cloth","both","tooth","teeth","with","width",
+    "depth","tenth","fifth","sixth","fourth","north","south","earth","birth","worth",
+    "health","wealth","smooth","truth","breath","broth","faith","mouth","month","filth",
+    "smith","sloth","wrath","death","girth","growth","length",
+
+    // wh
+    "what","when","where","which","while","white","whisk","whiff","whim","whiz",
+    "whack","wham","whip","wheel","wheat","whale","why","whine","whir","whirl",
+    "wharf","whimper","whisper","whistle","whisker","whittle","whiny",
+
+    // ph (the /f/ sound)
+    "phone","photo","phonics","graph","alphabet","elephant","dolphin","trophy","phrase","sphere",
+    "orphan","nephew","phantom","pheasant","phoneme","prophet","phlox","hyphen","pamphlet","paragraph"
   ];
 
   let pool = shuffle([...words]);
