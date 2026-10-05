@@ -10,6 +10,8 @@
   <style>
     :root{--navy:#1e4767;--blue:#2878a9;--cream:#fffdf7}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#eef8fd;font-family:"Avenir Next",Avenir,"Segoe UI",sans-serif;color:#273b4c}.launcher-header{height:64px;display:flex;align-items:center;gap:1rem;padding:.7rem 1rem;background:var(--navy);color:#fff;box-shadow:0 3px 10px rgba(15,49,77,.22);position:relative;z-index:2}.home-link{color:#fff;text-decoration:none;font-weight:800;padding:.5rem .7rem;border:1px solid rgba(255,255,255,.45);border-radius:8px;white-space:nowrap}.home-link:hover,.home-link:focus{background:rgba(255,255,255,.15);outline:none}.activity-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:"Comic Sans MS","Chalkboard SE",sans-serif;font-size:1.1rem}.direct-link{margin-left:auto;color:#d8f3ff;font-size:.85rem;white-space:nowrap}.frame{display:block;border:0;width:100%;height:calc(100vh - 64px);background:#eff9ff}.error{max-width:600px;margin:4rem auto;background:#fff;padding:2rem;border-radius:18px;box-shadow:0 8px 24px rgba(30,71,103,.12);line-height:1.5}.error a{color:#1d6495;font-weight:800}@media(max-width:600px){.launcher-header{gap:.55rem;padding:.6rem}.activity-name{font-size:.9rem}.direct-link{display:none}.frame{height:calc(100vh - 58px)}}
     .home-link,.activity-name,.direct-link,.error h1,.error a{font-family:"Schoolbell","Comic Sans MS","Chalkboard SE",cursive;font-weight:400;letter-spacing:.01em}.activity-name{font-size:1.2rem}.home-link{font-size:1.08rem}.direct-link{font-size:.98rem}
+    @media(max-width:600px){.frame{height:calc(100vh - 64px)}}
+    @supports (height:100dvh){body{min-height:100dvh}.frame{height:calc(100dvh - 64px)}}
   </style>
 </head>
 <body>
@@ -28,6 +30,7 @@
       const isFluency=Boolean(doc.querySelector('#passage .word,#passage')&&doc.querySelector('#colorSelect')&&doc.querySelector('#studentSelect'));
       const isFluencyHub=/\/Reading Fluency\/Fluency Passages\.html$/i.test(decodeURIComponent(new URL(sourceUrl).pathname));
       const supportsLetterformPractice=doesSupportLetterformPractice(sourceUrl,isFluency,isFluencyHub);
+      if(doc.querySelector('.teacher-buttons'))doc.body.classList.add('beard-has-touch-controls');
       addShellStyles(doc,isFluency,isFluencyHub);
       if(supportsLetterformPractice)addLetterformFont(doc);
       if(isFluencyHub){wireInternalLinks(doc,frame,sourceUrl);return}
@@ -60,6 +63,10 @@
         body{min-height:100%!important;background:transparent!important}
         /* Empty native feedback slots should not look like a blank stripe. */
         #feedback:empty,#result:empty{min-height:0!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+        .teacher-btn.correct{background:var(--beard-green)!important}.teacher-btn.incorrect{background:var(--beard-red)!important}
+        .teacher-buttons.is-hidden{display:none!important}
+        /* A stable bottom dock keeps touch scoring controls above phone browser UI. */
+        @media (max-width:820px) and (pointer:coarse){body.beard-has-touch-controls{box-sizing:border-box!important;padding-bottom:calc(98px + env(safe-area-inset-bottom,0px))!important}.teacher-buttons{position:fixed!important;left:0!important;right:0!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;width:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.7rem!important;padding:0 .75rem!important;z-index:9997!important;pointer-events:none!important}.teacher-buttons .teacher-btn{pointer-events:auto!important;min-width:0!important;min-height:60px!important;margin:0!important;padding:.75rem .35rem!important;font-size:clamp(1rem,4.8vw,1.15rem)!important;line-height:1.15!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}}
       `;doc.head.append(style);
     }
 
