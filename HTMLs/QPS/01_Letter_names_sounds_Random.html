@@ -99,14 +99,16 @@
     box-shadow:0 8px 24px rgba(2,6,23,0.12);
     width:90vw;
     max-width:900px;
-    min-height:80vh;
+    min-height:0;
+    max-height:calc(100vh - 40px);
     padding:40px;
     text-align:center;
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    overflow:hidden;
+    overflow:auto;
+    justify-content:flex-start !important;
   }
 
   #summary h2 {
