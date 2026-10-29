@@ -108,7 +108,7 @@
   <section class="assessment-workspace" id="workArea" aria-label="Sentence ordering activity">
     <p class="instructions">Tap the cut-out words in the order that makes a complete sentence. Tap a word in <strong>My sentence</strong> to put it back. When every word is in place, choose <strong>Check order</strong>.</p>
     <div class="progress-row">
-      <p id="progress">Sentence 1 of 100</p>
+      <p id="progress">Sentence 1 of 200</p>
       <p class="task-tip">One sentence at a time</p>
     </div>
 
@@ -238,8 +238,109 @@
   "A raccoon washed its snack.",
   "The sunrise painted pink clouds.",
   "A rabbit hopped through grass.",
-  "The classroom displayed student artwork."
+  "The classroom displayed student artwork.",
+  "The owl watched a quiet meadow.",
+  "A camel crossed the sandy desert.",
+  "The gardener picked purple tulips.",
+  "Six frogs jumped over logs.",
+  "The puppy carried a blue leash.",
+  "A robin sang before sunrise.",
+  "The kitten climbed a short fence.",
+  "The farmer loaded fresh hay.",
+  "A turtle rested beneath shade.",
+  "The baker rolled soft dough.",
+  "Two puppies chased fluttering ribbons.",
+  "The sailor spotted distant islands.",
+  "A deer drank cool water.",
+  "The teacher arranged colored pencils.",
+  "The skier raced down snowy hills.",
+  "The frog caught a tiny bug.",
+  "A chef stirred spicy soup.",
+  "The rabbit explored tall grass.",
+  "The duck splashed in puddles.",
+  "A spider climbed the window.",
+  "The clown juggled bright balls.",
+  "The pilot studied cloudy maps.",
+  "The fox sniffed fallen leaves.",
+  "A carpenter built sturdy shelves.",
+  "The musician packed shiny cymbals.",
+  "A zebra ran across plains.",
+  "The doctor listened carefully.",
+  "A penguin waddled toward water.",
+  "The puppy sniffed muddy boots.",
+  "A knight carried one shield.",
+  "The baker decorated chocolate cakes.",
+  "A bee visited orange flowers.",
+  "Moonlight covered a quiet lake.",
+  "The train reached a station.",
+  "A seal balanced one ball.",
+  "The artist sketched smiling faces.",
+  "A whale swam near shore.",
+  "The farmer repaired a gate.",
+  "A parrot copied funny sounds.",
+  "The bus passed tall buildings.",
+  "A dragon chased silver clouds.",
+  "A cashier closed the register.",
+  "The puppy licked cold snow.",
+  "A ranger mapped forest trails.",
+  "The painter chose bright colors.",
+  "The cat napped beside pillows.",
+  "A detective found hidden clues.",
+  "The storm soaked empty streets.",
+  "A squirrel climbed slippery bark.",
+  "The baker kneaded warm dough.",
+  "A pirate raised striped sails.",
+  "The nurse checked sore ankles.",
+  "The teacher rang a bell.",
+  "A rabbit chewed leafy greens.",
+  "The gardener planted tall sunflowers.",
+  "A boat floated past docks.",
+  "The drummer carried brass cymbals.",
+  "A penguin wore one scarf.",
+  "The scientist tested salty water.",
+  "The firefighter drove a truck.",
+  "The eagle circled above cliffs.",
+  "A boy tossed smooth pebbles.",
+  "The librarian opened a window.",
+  "A bird built one nest.",
+  "The coach praised brave players.",
+  "A horse trotted through fields.",
+  "The dentist fixed a tooth.",
+  "A family packed picnic baskets.",
+  "The wind pushed gray clouds.",
+  "A goat climbed steep rocks.",
+  "The baker sold cinnamon rolls.",
+  "A puppy chased bubbles.",
+  "The frog hid under stones.",
+  "A carpenter measured narrow boards.",
+  "The astronaut packed a helmet.",
+  "A dolphin leaped above waves.",
+  "The crowd waved tiny flags.",
+  "A mouse carried cheese.",
+  "The teacher praised careful writers.",
+  "A tractor pulled heavy wagons.",
+  "The cat watched raindrops.",
+  "A bell rang across campus.",
+  "The artist framed a portrait.",
+  "A sailor tied strong knots.",
+  "The fox listened near bushes.",
+  "A puppy found striped socks.",
+  "The farmer fed hungry goats.",
+  "The child hugged a blanket.",
+  "The store sold red balloons.",
+  "A truck carried wooden crates.",
+  "The baker served fruit pies.",
+  "A butterfly drank flower nectar.",
+  "The doctor washed clean hands.",
+  "A puppy guarded the porch.",
+  "The river splashed over stones.",
+  "The knight rode a horse.",
+  "The chef served lemon rice.",
+  "A parrot watched green trees.",
+  "The sun warmed chilly sand.",
+  "The child opened a present."
 ];
+  const expectedSentenceCount=200;
   const bankEl=document.getElementById('wordBank');
   const stripEl=document.getElementById('sentenceStrip');
   const progressEl=document.getElementById('progress');
@@ -282,13 +383,13 @@
 
   function validateBank(){
     const uniqueSentences=new Set(sentenceBank);
-    const validLength=sentenceBank.length===100&&uniqueSentences.size===100;
+    const validLength=sentenceBank.length===expectedSentenceCount&&uniqueSentences.size===expectedSentenceCount;
     const validWords=sentenceBank.every(sentence=>{
       const words=sentence.replace(/[.?!]$/,'').toLowerCase().split(/\s+/);
       return words.length>=4&&words.length<=10&&new Set(words).size===words.length;
     });
     if(!validLength||!validWords){
-      throw new Error('The sentence bank must contain 100 unique sentences with unique words.');
+      throw new Error('The sentence bank must contain '+expectedSentenceCount+' unique sentences with unique words.');
     }
   }
 
@@ -377,7 +478,7 @@
       bankWords=[];
       placedWords=[];
       itemSolved=false;
-      setFeedback('You used all 100 sentences. Stop the assessment to view the report, or reset to begin again.','good');
+      setFeedback('You used all '+sentenceBank.length+' sentences. Stop the assessment to view the report, or reset to begin again.','good');
       render();
       return;
     }

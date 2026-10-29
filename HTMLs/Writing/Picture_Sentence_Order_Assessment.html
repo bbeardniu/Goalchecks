@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Picture Sentence Order Assessment</title>
+<style>
+  :root{--ink:#26394b;--navy:#1e4767;--blue:#2878a9;--cream:#fffdf7;--line:#cfe2ed;--green:#237f4e;--red:#bd4141;--gold:#e7b840;--purple:#76569b}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{padding:1.25rem;background:linear-gradient(135deg,#e8f6ff,#fff9e9);color:var(--ink);font-family:"Avenir Next",Avenir,"Segoe UI",sans-serif}
+  .assessment-shell{width:min(960px,calc(100% - 1.5rem));margin:0 auto 2rem;background:rgba(255,253,247,.96);border:3px solid #fff;border-radius:24px;padding:clamp(1rem,3vw,2rem);box-shadow:0 12px 32px rgba(30,71,103,.16)}
+  .heading{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:center;padding-bottom:1rem;border-bottom:2px dashed #c8dfe9}
+  .heading-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:#e8f7ed;border:2px solid #a9d7b5;font-size:2rem;transform:rotate(-3deg)}
+  .eyebrow{margin:0 0 .2rem;color:#537187;font-size:.78rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+  h1{margin:0;color:var(--navy);font-family:"Comic Sans MS","Chalkboard SE",cursive;font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.04}
+  .instructions{margin:1rem 0 0;line-height:1.5;font-size:1.04rem}
+  .picture-card{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:1rem;margin:1rem 0;padding:clamp(.8rem,2.5vw,1.2rem);border:3px solid #f0d98b;border-radius:18px;background:linear-gradient(135deg,#fff8d9,#fffdf7);box-shadow:0 4px 0 rgba(190,148,53,.12)}
+  .picture-icon{min-width:clamp(110px,27vw,190px);min-height:clamp(98px,22vw,150px);display:grid;place-items:center;border-radius:15px;background:#fff;border:2px solid #f7e5a9;font-size:clamp(3.2rem,10vw,6rem);line-height:1;letter-spacing:.08em}
+  .picture-copy p{margin:.15rem 0;color:#47667e;line-height:1.4}
+  .picture-copy strong{display:block;color:var(--navy);font-size:1.1rem}
+  .progress-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:1.1rem 0 .65rem}
+  #progress{margin:0;color:var(--navy);font-weight:900}
+  .task-tip{margin:0;padding:.45rem .7rem;border-radius:999px;background:#edf7fb;color:#47667e;font-size:.92rem;font-weight:750}
+  .build-card{margin-top:.8rem;padding:clamp(.8rem,2.4vw,1.3rem);border:2px solid var(--line);border-radius:18px;background:#f6fbfe}
+  .area-label{display:flex;align-items:center;gap:.55rem;margin:0 0 .55rem;color:var(--navy);font-weight:900;font-size:1.05rem}
+  .area-label span{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:var(--navy);color:#fff;font-size:.84rem}
+  .sentence-strip,.word-bank{display:flex;align-items:flex-start;align-content:flex-start;flex-wrap:wrap;gap:.7rem;min-height:82px;padding:1rem;border-radius:14px}
+  .sentence-strip{border:3px dashed #86b7d0;background:#fffefb;box-shadow:inset 0 0 0 3px rgba(255,255,255,.65)}
+  .sentence-strip.is-correct{border-color:#64b782;background:#f0fbf4}
+  .sentence-strip.is-incorrect{border-color:#dc7770;background:#fff6f4}
+  .word-bank{border:2px dashed #bed6e4;background:#eaf6fb;margin-top:.65rem}
+  .empty-note{align-self:center;width:100%;margin:auto;color:#617c8f;font-weight:700;text-align:center;line-height:1.4}
+  .word-tile{appearance:none;min-height:50px;display:inline-flex;align-items:center;justify-content:center;padding:.64rem .92rem!important;border:2px dashed #5f8398!important;border-radius:7px!important;background:#fffdf3!important;color:#26394b!important;font:800 clamp(1.08rem,4.2vw,1.3rem)/1.15 "Avenir Next",Avenir,"Segoe UI",sans-serif;box-shadow:2px 3px 0 rgba(53,101,127,.18)!important;cursor:pointer;touch-action:manipulation;transition:transform .12s ease,box-shadow .12s ease,background .12s ease}
+  .word-tile:nth-child(3n+1){transform:rotate(-1.2deg)}
+  .word-tile:nth-child(3n+2){transform:rotate(.9deg)}
+  .word-tile:nth-child(3n){transform:rotate(-.35deg)}
+  .word-tile:hover,.word-tile:focus-visible{background:#fff5c7!important;box-shadow:3px 4px 0 rgba(53,101,127,.2)!important;transform:translateY(-2px) rotate(0);outline:3px solid #9bd7f4!important;outline-offset:2px}
+  .word-tile:active{transform:translateY(1px) rotate(0);box-shadow:1px 1px 0 rgba(53,101,127,.16)!important}
+  .word-tile.placed{border-style:solid!important;border-color:#8d73b6!important;background:#faf5ff!important;color:#473263!important}
+  .controls{display:flex;align-items:center;justify-content:center;gap:.65rem;flex-wrap:wrap;margin-top:1.1rem}
+  .controls button,.report-actions button{min-height:46px;padding:.68rem 1rem;border:0;border-radius:10px;background:var(--blue);color:#fff;font:850 1rem/1.1 "Avenir Next",Avenir,"Segoe UI",sans-serif;box-shadow:0 3px 0 rgba(20,73,111,.18);cursor:pointer;touch-action:manipulation}
+  .controls button:hover,.controls button:focus-visible,.report-actions button:hover,.report-actions button:focus-visible{filter:brightness(.94);transform:translateY(-1px);outline:3px solid #a7def8;outline-offset:2px}
+  .controls button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .controls .secondary{background:#5b7b90!important}
+  .controls .check{background:var(--green)!important}
+  .controls .next{background:var(--purple)!important}
+  .controls .danger{background:#c85b56!important}
+  .controls .reset,.report-actions .reset{background:#b6842c!important}
+  #feedback{min-height:2.6rem;margin:1rem 0 0;padding:.68rem .85rem;border-radius:10px;background:rgba(255,255,255,.8);font-size:1.08rem;font-weight:850;text-align:center}
+  #feedback.good{color:var(--green)}
+  #feedback.bad{color:var(--red)}
+  #feedback.neutral{color:var(--navy)}
+  #direct-timer{margin:1rem 0 0;text-align:center;color:#47667e;font-weight:800}
+  #summary{display:none;margin-top:1.25rem;padding:clamp(1rem,2.8vw,1.5rem);border:2px solid var(--line);border-radius:18px;background:#fff}
+  #summary h2{margin:0;color:var(--navy);font-family:"Comic Sans MS","Chalkboard SE",cursive;font-size:1.65rem}
+  .report-score{margin:.6rem 0 1rem;color:var(--navy);font-size:1.07rem;font-weight:850}
+  .report-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem;margin:1rem 0}
+  .report-grid div{padding:.72rem;border-radius:10px;background:#edf7fb}
+  .report-grid b{display:block;color:#47667e;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase}
+  .report-grid span{display:block;margin-top:.18rem;color:var(--navy);font-size:1.15rem;font-weight:900}
+  .report-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  .report-table{width:100%;min-width:790px;border-collapse:collapse;font-size:.91rem}
+  .report-table th,.report-table td{padding:.65rem;text-align:left;vertical-align:top;border-bottom:1px solid #dbeaf1;line-height:1.35}
+  .report-table th{background:#f4fbff;color:#47667e;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase}
+  .report-table tr:last-child td{border-bottom:0}
+  .result-good{color:var(--green);font-weight:900}
+  .result-bad{color:var(--red);font-weight:900}
+  .report-actions{display:flex;justify-content:flex-end;gap:.65rem;margin-top:1rem}
+  [hidden]{display:none!important}
+  @media(max-width:620px){
+    body{padding:.7rem}
+    .assessment-shell{padding:1rem;border-radius:18px}
+    .heading,.picture-card{grid-template-columns:1fr;text-align:center}
+    .heading-icon{margin:auto}
+    .picture-icon{margin:auto;width:min(100%,220px)}
+    .sentence-strip,.word-bank{min-height:105px;padding:.75rem;gap:.55rem}
+    .word-tile{min-height:52px;padding:.65rem .78rem!important}
+    .controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .controls button{width:100%;min-width:0}
+    .controls .check,.controls .next{grid-column:1/-1}
+    .report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media print{body{padding:0;background:#fff}.assessment-shell{width:100%;box-shadow:none;border:0}.assessment-workspace,.report-actions,#direct-timer{display:none!important}}
+</style>
+</head>
+<body>
+<main class="assessment-shell" aria-labelledby="activity-title">
+  <header class="heading">
+    <div class="heading-icon" aria-hidden="true">🧩</div>
+    <div>
+      <p class="eyebrow">Beginning writing goal check</p>
+      <h1 id="activity-title">Picture Sentence Order</h1>
+    </div>
+  </header>
+
+  <section class="assessment-workspace" id="workArea" aria-label="Picture sentence ordering activity">
+    <p class="instructions">Look at the picture, then tap the short word cards in the order that makes its sentence. Tap a word in <strong>My sentence</strong> to put it back.</p>
+    <section class="picture-card" aria-label="Picture clue">
+      <div id="pictureIcon" class="picture-icon" role="img" aria-label="Picture clue"></div>
+      <div class="picture-copy"><strong>Picture clue</strong><p>Use the picture to help you build the sentence.</p></div>
+    </section>
+    <div class="progress-row">
+      <p id="progress">Sentence 1 of 100</p>
+      <p class="task-tip">Short sentences with picture clues</p>
+    </div>
+
+    <section class="build-card">
+      <p class="area-label"><span>1</span> My sentence</p>
+      <div id="sentenceStrip" class="sentence-strip" aria-label="Words placed in the student's sentence"></div>
+      <p class="area-label"><span>2</span> Word bank</p>
+      <div id="wordBank" class="word-bank" aria-label="Words waiting to be placed"></div>
+    </section>
+
+    <div class="controls" aria-label="Assessment controls">
+      <button type="button" id="clearBtn" class="secondary">Clear sentence</button>
+      <button type="button" id="mixBtn" class="secondary">Mix all words</button>
+      <button type="button" id="checkBtn" class="check">Check order</button>
+      <button type="button" id="nextBtn" class="next" hidden disabled>Next sentence</button>
+      <button type="button" id="stopBtn" class="danger">Stop assessment</button>
+      <button type="button" id="resetBtn" class="reset">Reset check</button>
+    </div>
+  </section>
+
+  <input id="answer" type="hidden" value="">
+  <p id="feedback" class="neutral" aria-live="polite"></p>
+  <p id="direct-timer" aria-live="polite"></p>
+  <section id="summary" data-beard-hide-auto-history aria-live="polite"></section>
+</main>
+
+<script>
+(function(){
+  const beginnerPictureBank = [
+  {
+    "sentence": "The dog runs.",
+    "picture": "🐶🏃",
+    "alt": "A dog running."
+  },
+  {
+    "sentence": "The cat sleeps.",
+    "picture": "🐱💤",
+    "alt": "A cat sleeping."
+  },
+  {
+    "sentence": "The bird flies.",
+    "picture": "🐦☁️",
+    "alt": "A bird flying."
+  },
+  {
+    "sentence": "The fish swims.",
+    "picture": "🐟🌊",
+    "alt": "A fish swimming."
+  },
+  {
+    "sentence": "The frog jumps.",
+    "picture": "🐸↗️",
+    "alt": "A frog jumping."
+  },
+  {
+    "sentence": "The cow eats.",
+    "picture": "🐄🌿",
+    "alt": "A cow eating grass."
+  },
+  {
+    "sentence": "The pig rolls.",
+    "picture": "🐷🌀",
+    "alt": "A pig rolling."
+  },
+  {
+    "sentence": "The duck quacks.",
+    "picture": "🦆🔊",
+    "alt": "A duck quacking."
+  },
+  {
+    "sentence": "The horse trots.",
+    "picture": "🐴🏃",
+    "alt": "A horse trotting."
+  },
+  {
+    "sentence": "The sheep rests.",
+    "picture": "🐑😴",
+    "alt": "A sheep resting."
+  },
+  {
+    "sentence": "A boy smiles.",
+    "picture": "👦😊",
+    "alt": "A smiling boy."
+  },
+  {
+    "sentence": "A girl waves.",
+    "picture": "👧👋",
+    "alt": "A girl waving."
+  },
+  {
+    "sentence": "The baby crawls.",
+    "picture": "👶➡️",
+    "alt": "A baby crawling."
+  },
+  {
+    "sentence": "Mom cooks soup.",
+    "picture": "👩‍🍳🥣",
+    "alt": "A mother cooking soup."
+  },
+  {
+    "sentence": "Dad reads books.",
+    "picture": "👨📚",
+    "alt": "A father reading books."
+  },
+  {
+    "sentence": "The sun shines.",
+    "picture": "☀️✨",
+    "alt": "A shining sun."
+  },
+  {
+    "sentence": "The rain falls.",
+    "picture": "🌧️⬇️",
+    "alt": "Rain falling."
+  },
+  {
+    "sentence": "Snow covers grass.",
+    "picture": "❄️🌱",
+    "alt": "Snow covering grass."
+  },
+  {
+    "sentence": "The moon glows.",
+    "picture": "🌙✨",
+    "alt": "A glowing moon."
+  },
+  {
+    "sentence": "Stars twinkle tonight.",
+    "picture": "⭐✨🌙",
+    "alt": "Stars twinkling at night."
+  },
+  {
+    "sentence": "A kite rises.",
+    "picture": "🪁⬆️",
+    "alt": "A kite rising."
+  },
+  {
+    "sentence": "The bus stops.",
+    "picture": "🚌🛑",
+    "alt": "A bus stopping."
+  },
+  {
+    "sentence": "A car moves.",
+    "picture": "🚗💨",
+    "alt": "A moving car."
+  },
+  {
+    "sentence": "The train rolls.",
+    "picture": "🚆➡️",
+    "alt": "A train rolling."
+  },
+  {
+    "sentence": "A boat sails.",
+    "picture": "⛵🌊",
+    "alt": "A boat sailing."
+  },
+  {
+    "sentence": "A plane lands.",
+    "picture": "✈️🛬",
+    "alt": "A plane landing."
+  },
+  {
+    "sentence": "The bike turns.",
+    "picture": "🚲↪️",
+    "alt": "A bike turning."
+  },
+  {
+    "sentence": "A truck honks.",
+    "picture": "🚚📣",
+    "alt": "A truck honking."
+  },
+  {
+    "sentence": "The child paints.",
+    "picture": "🧒🎨",
+    "alt": "A child painting."
+  },
+  {
+    "sentence": "A girl dances.",
+    "picture": "👧💃",
+    "alt": "A girl dancing."
+  },
+  {
+    "sentence": "The boy kicks balls.",
+    "picture": "👦⚽",
+    "alt": "A boy kicking balls."
+  },
+  {
+    "sentence": "The girl sings.",
+    "picture": "👧🎤",
+    "alt": "A girl singing."
+  },
+  {
+    "sentence": "A baby laughs.",
+    "picture": "👶😂",
+    "alt": "A laughing baby."
+  },
+  {
+    "sentence": "The child claps.",
+    "picture": "🧒👏",
+    "alt": "A child clapping."
+  },
+  {
+    "sentence": "A teacher writes words.",
+    "picture": "👩‍🏫✏️",
+    "alt": "A teacher writing words."
+  },
+  {
+    "sentence": "A student listens.",
+    "picture": "🧑‍🎓👂",
+    "alt": "A student listening."
+  },
+  {
+    "sentence": "The baker stirs batter.",
+    "picture": "🧑‍🍳🥣",
+    "alt": "A baker stirring batter."
+  },
+  {
+    "sentence": "A chef chops carrots.",
+    "picture": "👨‍🍳🥕",
+    "alt": "A chef chopping carrots."
+  },
+  {
+    "sentence": "The nurse helps kids.",
+    "picture": "🧑‍⚕️🧒",
+    "alt": "A nurse helping children."
+  },
+  {
+    "sentence": "A doctor checks hearts.",
+    "picture": "🧑‍⚕️🩺",
+    "alt": "A doctor checking a heart."
+  },
+  {
+    "sentence": "The bee buzzes.",
+    "picture": "🐝〰️",
+    "alt": "A buzzing bee."
+  },
+  {
+    "sentence": "A butterfly lands.",
+    "picture": "🦋🌸",
+    "alt": "A butterfly landing on a flower."
+  },
+  {
+    "sentence": "An ant carries crumbs.",
+    "picture": "🐜🍞",
+    "alt": "An ant carrying crumbs."
+  },
+  {
+    "sentence": "A snail crawls.",
+    "picture": "🐌➡️",
+    "alt": "A snail crawling."
+  },
+  {
+    "sentence": "The turtle walks.",
+    "picture": "🐢🚶",
+    "alt": "A turtle walking."
+  },
+  {
+    "sentence": "A rabbit hops.",
+    "picture": "🐰↗️",
+    "alt": "A rabbit hopping."
+  },
+  {
+    "sentence": "The mouse hides.",
+    "picture": "🐭📦",
+    "alt": "A mouse hiding."
+  },
+  {
+    "sentence": "The fox runs.",
+    "picture": "🦊🏃",
+    "alt": "A fox running."
+  },
+  {
+    "sentence": "A bear climbs.",
+    "picture": "🐻🌳",
+    "alt": "A bear climbing a tree."
+  },
+  {
+    "sentence": "The lion roars.",
+    "picture": "🦁📣",
+    "alt": "A lion roaring."
+  },
+  {
+    "sentence": "The owl hoots.",
+    "picture": "🦉🌙",
+    "alt": "An owl hooting at night."
+  },
+  {
+    "sentence": "A monkey swings.",
+    "picture": "🐒🌿",
+    "alt": "A monkey swinging."
+  },
+  {
+    "sentence": "The panda chews.",
+    "picture": "🐼🎋",
+    "alt": "A panda chewing bamboo."
+  },
+  {
+    "sentence": "A zebra walks.",
+    "picture": "🦓🚶",
+    "alt": "A zebra walking."
+  },
+  {
+    "sentence": "The camel drinks.",
+    "picture": "🐪💧",
+    "alt": "A camel drinking."
+  },
+  {
+    "sentence": "A penguin slides.",
+    "picture": "🐧🧊",
+    "alt": "A penguin sliding on ice."
+  },
+  {
+    "sentence": "The seal claps.",
+    "picture": "🦭👏",
+    "alt": "A seal clapping."
+  },
+  {
+    "sentence": "A whale splashes.",
+    "picture": "🐋💦",
+    "alt": "A whale splashing."
+  },
+  {
+    "sentence": "The shark swims.",
+    "picture": "🦈🌊",
+    "alt": "A shark swimming."
+  },
+  {
+    "sentence": "A crab walks.",
+    "picture": "🦀➡️",
+    "alt": "A crab walking."
+  },
+  {
+    "sentence": "A child digs sand.",
+    "picture": "🧒🪣🏖️",
+    "alt": "A child digging sand."
+  },
+  {
+    "sentence": "A child builds towers.",
+    "picture": "🧒🧱",
+    "alt": "A child building towers."
+  },
+  {
+    "sentence": "The child opens gifts.",
+    "picture": "🧒🎁",
+    "alt": "A child opening gifts."
+  },
+  {
+    "sentence": "A child hugs teddy.",
+    "picture": "🧒🧸💛",
+    "alt": "A child hugging a teddy bear."
+  },
+  {
+    "sentence": "The girl pets a puppy.",
+    "picture": "👧🐶",
+    "alt": "A girl petting a puppy."
+  },
+  {
+    "sentence": "The boy feeds ducks.",
+    "picture": "👦🌽🦆",
+    "alt": "A boy feeding ducks."
+  },
+  {
+    "sentence": "A child blows bubbles.",
+    "picture": "🧒🫧",
+    "alt": "A child blowing bubbles."
+  },
+  {
+    "sentence": "The baby holds blocks.",
+    "picture": "👶🧱",
+    "alt": "A baby holding blocks."
+  },
+  {
+    "sentence": "The child stacks cups.",
+    "picture": "🧒🥤",
+    "alt": "A child stacking cups."
+  },
+  {
+    "sentence": "A girl skips rope.",
+    "picture": "👧🪢",
+    "alt": "A girl skipping rope."
+  },
+  {
+    "sentence": "A boy rolls dough.",
+    "picture": "👦🍞",
+    "alt": "A boy rolling dough."
+  },
+  {
+    "sentence": "The child colors stars.",
+    "picture": "🧒🖍️⭐",
+    "alt": "A child coloring stars."
+  },
+  {
+    "sentence": "A child washes hands.",
+    "picture": "🧒🧼",
+    "alt": "A child washing hands."
+  },
+  {
+    "sentence": "The boy drinks milk.",
+    "picture": "👦🥛",
+    "alt": "A boy drinking milk."
+  },
+  {
+    "sentence": "A girl eats grapes.",
+    "picture": "👧🍇",
+    "alt": "A girl eating grapes."
+  },
+  {
+    "sentence": "The baby naps quietly.",
+    "picture": "👶💤",
+    "alt": "A baby napping."
+  },
+  {
+    "sentence": "The child kicks one ball.",
+    "picture": "🧒⚽",
+    "alt": "A child kicking a ball."
+  },
+  {
+    "sentence": "A girl catches leaves.",
+    "picture": "👧🍂",
+    "alt": "A girl catching leaves."
+  },
+  {
+    "sentence": "A boy carries boxes.",
+    "picture": "👦📦",
+    "alt": "A boy carrying boxes."
+  },
+  {
+    "sentence": "The child pulls a sled.",
+    "picture": "🧒🛷",
+    "alt": "A child pulling a sled."
+  },
+  {
+    "sentence": "The boy opens a door.",
+    "picture": "👦🚪",
+    "alt": "A boy opening a door."
+  },
+  {
+    "sentence": "The child closes a box.",
+    "picture": "🧒📦",
+    "alt": "A child closing a box."
+  },
+  {
+    "sentence": "A girl wears boots.",
+    "picture": "👧🥾",
+    "alt": "A girl wearing boots."
+  },
+  {
+    "sentence": "A boy finds shells.",
+    "picture": "👦🐚",
+    "alt": "A boy finding shells."
+  },
+  {
+    "sentence": "The child sees a rainbow.",
+    "picture": "🧒🌈",
+    "alt": "A child seeing a rainbow."
+  },
+  {
+    "sentence": "The girl blows a horn.",
+    "picture": "👧🎺",
+    "alt": "A girl blowing a horn."
+  },
+  {
+    "sentence": "A boy uses crayons.",
+    "picture": "👦🖍️",
+    "alt": "A boy using crayons."
+  },
+  {
+    "sentence": "The child waters plants.",
+    "picture": "🧒💧🪴",
+    "alt": "A child watering plants."
+  },
+  {
+    "sentence": "A girl picks flowers.",
+    "picture": "👧🌸",
+    "alt": "A girl picking flowers."
+  },
+  {
+    "sentence": "A boy collects rocks.",
+    "picture": "👦🪨",
+    "alt": "A boy collecting rocks."
+  },
+  {
+    "sentence": "The child rides a scooter.",
+    "picture": "🧒🛴",
+    "alt": "A child riding a scooter."
+  },
+  {
+    "sentence": "The girl throws a ball.",
+    "picture": "👧⚾",
+    "alt": "A girl throwing a ball."
+  },
+  {
+    "sentence": "The boy fixes a toy.",
+    "picture": "👦🛠️🧸",
+    "alt": "A boy fixing a toy."
+  },
+  {
+    "sentence": "The child folds paper.",
+    "picture": "🧒📄",
+    "alt": "A child folding paper."
+  },
+  {
+    "sentence": "The girl hugs dolls.",
+    "picture": "👧🪆",
+    "alt": "A girl hugging dolls."
+  },
+  {
+    "sentence": "The boy sweeps floors.",
+    "picture": "👦🧹",
+    "alt": "A boy sweeping floors."
+  },
+  {
+    "sentence": "The child plants seeds.",
+    "picture": "🧒🌱",
+    "alt": "A child planting seeds."
+  },
+  {
+    "sentence": "A girl sees moonlight.",
+    "picture": "👧🌙",
+    "alt": "A girl seeing moonlight."
+  },
+  {
+    "sentence": "A boy spots stars.",
+    "picture": "👦⭐",
+    "alt": "A boy spotting stars."
+  },
+  {
+    "sentence": "The child reads stories.",
+    "picture": "🧒📖",
+    "alt": "A child reading stories."
+  }
+];
+  const bankEl=document.getElementById('wordBank');
+  const stripEl=document.getElementById('sentenceStrip');
+  const pictureIcon=document.getElementById('pictureIcon');
+  const progressEl=document.getElementById('progress');
+  const feedbackEl=document.getElementById('feedback');
+  const answerEl=document.getElementById('answer');
+  const workArea=document.getElementById('workArea');
+  const summaryEl=document.getElementById('summary');
+  const directTimer=document.getElementById('direct-timer');
+  const clearBtn=document.getElementById('clearBtn');
+  const mixBtn=document.getElementById('mixBtn');
+  const checkBtn=document.getElementById('checkBtn');
+  const nextBtn=document.getElementById('nextBtn');
+  const stopBtn=document.getElementById('stopBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  const isEmbedded=window.top!==window;
+  let remaining=[];
+  let currentItem=null;
+  let targetWords=[];
+  let bankWords=[];
+  let placedWords=[];
+  let attempts=0;
+  let correct=0;
+  let answerLog=[];
+  let runActive=true;
+  let itemSolved=false;
+  let startedAt=Date.now();
+  let responseStartedAt=startedAt;
+  let directTimerId=null;
+
+  function shuffle(items){
+    const next=items.slice();
+    for(let index=next.length-1;index>0;index--){
+      const swapIndex=Math.floor(Math.random()*(index+1));
+      const temporary=next[index];
+      next[index]=next[swapIndex];
+      next[swapIndex]=temporary;
+    }
+    return next;
+  }
+
+  function validateBank(){
+    const uniqueSentences=new Set(beginnerPictureBank.map(function(item){return item.sentence;}));
+    const validLength=beginnerPictureBank.length===100&&uniqueSentences.size===100;
+    const validItems=beginnerPictureBank.every(function(item){
+      const words=item.sentence.replace(/[.?!]$/,'').toLowerCase().split(/\s+/);
+      return item.picture&&item.alt&&/[.?!]$/.test(item.sentence)&&words.length>=3&&words.length<=5&&new Set(words).size===words.length;
+    });
+    if(!validLength||!validItems) throw new Error('The picture sentence bank must contain 100 unique, simple sentences.');
+  }
+
+  function elapsedSeconds(from){return Math.max(0,(Date.now()-from)/1000);}
+  function formatTime(totalSeconds){const seconds=Math.floor(totalSeconds);return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');}
+  function escapeHtml(value){return String(value).replace(/[&<>"']/g,function(character){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character];});}
+  function currentOrder(){return placedWords.map(function(word){return word.text;}).join(' ');}
+  function setFeedback(text,type){feedbackEl.textContent=text;feedbackEl.className=type||'neutral';}
+  function clearFeedback(){if(feedbackEl.textContent)setFeedback('','neutral');}
+
+  function makeTile(word,location){
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='word-tile'+(location==='sentence'?' placed':'');
+    button.textContent=word.text;
+    button.dataset.wordId=String(word.id);
+    button.setAttribute('aria-label',(location==='sentence'?'Return ':'Place ')+'“'+word.text+'” '+(location==='sentence'?'to the word bank':'in your sentence'));
+    button.disabled=!runActive||itemSolved;
+    button.addEventListener('click',function(){
+      if(!runActive||itemSolved)return;
+      if(location==='sentence')returnToBank(word.id);else placeWord(word.id);
+    });
+    return button;
+  }
+
+  function addEmptyNote(container,text){const note=document.createElement('p');note.className='empty-note';note.textContent=text;container.append(note);}
+
+  function render(){
+    bankEl.replaceChildren();
+    stripEl.replaceChildren();
+    if(placedWords.length)placedWords.forEach(function(word){stripEl.append(makeTile(word,'sentence'));});else addEmptyNote(stripEl,'Tap words below to build your sentence.');
+    if(bankWords.length)bankWords.forEach(function(word){bankEl.append(makeTile(word,'bank'));});
+    else if(itemSolved)addEmptyNote(bankEl,'Nice work! Choose Next sentence when you are ready.');
+    else addEmptyNote(bankEl,'Every word is in your sentence. Check the order!');
+    stripEl.classList.toggle('is-correct',itemSolved);
+    stripEl.classList.toggle('is-incorrect',feedbackEl.classList.contains('bad')&&!itemSolved);
+    answerEl.value=currentOrder();
+    const completed=beginnerPictureBank.length-remaining.length;
+    progressEl.textContent=currentItem?'Sentence '+completed+' of '+beginnerPictureBank.length:'All '+beginnerPictureBank.length+' sentences are complete!';
+    nextBtn.hidden=!itemSolved;
+    nextBtn.disabled=!itemSolved;
+    checkBtn.disabled=!runActive||itemSolved;
+    clearBtn.disabled=!runActive||itemSolved||placedWords.length===0;
+    mixBtn.disabled=!runActive||itemSolved;
+  }
+
+  function loadNextSentence(){
+    if(!remaining.length){
+      currentItem=null;targetWords=[];bankWords=[];placedWords=[];itemSolved=false;
+      pictureIcon.textContent='🏁';
+      pictureIcon.setAttribute('aria-label','All sentences are complete.');
+      setFeedback('You used all '+beginnerPictureBank.length+' sentences. Stop the assessment to view the report, or reset to begin again.','good');
+      render();return;
+    }
+    currentItem=remaining.pop();
+    targetWords=currentItem.sentence.split(' ');
+    bankWords=shuffle(targetWords.map(function(text,index){return {id:index,text:text};}));
+    placedWords=[];itemSolved=false;responseStartedAt=Date.now();
+    pictureIcon.textContent=currentItem.picture;
+    pictureIcon.setAttribute('aria-label',currentItem.alt);
+    clearFeedback();render();
+  }
+
+  function placeWord(id){const index=bankWords.findIndex(function(word){return word.id===id;});if(index<0)return;placedWords.push(bankWords.splice(index,1)[0]);clearFeedback();render();}
+  function returnToBank(id){const index=placedWords.findIndex(function(word){return word.id===id;});if(index<0)return;bankWords.push(placedWords.splice(index,1)[0]);clearFeedback();render();}
+  function clearSentence(){if(!runActive||itemSolved||!placedWords.length)return;bankWords=shuffle(bankWords.concat(placedWords));placedWords=[];clearFeedback();render();}
+  function mixAllWords(){if(!runActive||itemSolved)return;bankWords=shuffle(bankWords.concat(placedWords));placedWords=[];clearFeedback();render();}
+
+  function checkOrder(){
+    if(!runActive||itemSolved||!currentItem)return;
+    if(placedWords.length!==targetWords.length){setFeedback('Use every word before checking the order.','neutral');render();return;}
+    const answer=currentOrder();
+    answerEl.value=answer;
+    const isCorrect=answer===currentItem.sentence;
+    const seconds=elapsedSeconds(responseStartedAt);
+    attempts++;
+    if(isCorrect)correct++;
+    answerLog.push({picture:currentItem.alt,target:currentItem.sentence,answer:answer,correct:isCorrect,seconds:seconds});
+    responseStartedAt=Date.now();
+    if(isCorrect){itemSolved=true;setFeedback('Correct! The sentence is in the right order.','good');}
+    else setFeedback('Incorrect — rearrange the word tiles and try again.','bad');
+    render();
+  }
+
+  function renderReport(){
+    const score=attempts?Math.round(correct/attempts*100):0;
+    const errors=Math.max(0,attempts-correct);
+    const rows=answerLog.map(function(entry,index){
+      const result=entry.correct?'Correct':'Incorrect';
+      const resultClass=entry.correct?'result-good':'result-bad';
+      return '<tr><td>'+String(index+1)+'</td><td>'+escapeHtml(entry.picture)+'</td><td>'+escapeHtml(entry.target)+'</td><td>'+escapeHtml(entry.answer)+'</td><td class="'+resultClass+'">'+result+'</td><td>'+entry.seconds.toFixed(1)+' s</td></tr>';
+    }).join('');
+    const table=answerLog.length?'<div class="report-table-wrap"><table class="report-table"><thead><tr><th>Check</th><th>Picture clue</th><th>Correct sentence</th><th>Student order</th><th>Result</th><th>Seconds</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="empty-note">No sentence orders were checked during this session.</p>';
+    summaryEl.innerHTML='<h2>Picture Sentence Summary</h2><p class="report-score">Final score: '+score+'% &nbsp;•&nbsp; '+correct+' correct out of '+attempts+' checks</p><div class="report-grid"><div><b>Checks</b><span>'+attempts+'</span></div><div><b>Correct</b><span>'+correct+'</span></div><div><b>Incorrect</b><span>'+errors+'</span></div><div><b>Score</b><span>'+score+'%</span></div></div>'+table+'<div class="report-actions"><button type="button" id="reportResetBtn" class="reset">Reset check</button></div>';
+    summaryEl.style.display='block';
+    document.getElementById('reportResetBtn').addEventListener('click',resetAssessment);
+  }
+
+  function stopAssessment(){if(!runActive)return;runActive=false;clearInterval(directTimerId);if(feedbackEl.textContent)setFeedback('','neutral');workArea.hidden=true;renderReport();}
+  function resetAssessment(){clearInterval(directTimerId);attempts=0;correct=0;answerLog=[];runActive=true;startedAt=Date.now();responseStartedAt=startedAt;remaining=shuffle(beginnerPictureBank);summaryEl.style.display='none';summaryEl.replaceChildren();workArea.hidden=false;setFeedback('','neutral');loadNextSentence();startDirectTimer();}
+  function renderDirectTimer(){if(isEmbedded){directTimer.hidden=true;return;}directTimer.hidden=false;directTimer.textContent='Time: '+formatTime(elapsedSeconds(startedAt));}
+  function startDirectTimer(){renderDirectTimer();if(isEmbedded)return;clearInterval(directTimerId);directTimerId=setInterval(renderDirectTimer,250);}
+
+  clearBtn.addEventListener('click',clearSentence);
+  mixBtn.addEventListener('click',mixAllWords);
+  checkBtn.addEventListener('click',checkOrder);
+  nextBtn.addEventListener('click',function(){if(itemSolved)loadNextSentence();});
+  stopBtn.addEventListener('click',stopAssessment);
+  resetBtn.addEventListener('click',resetAssessment);
+  try{validateBank();resetAssessment();}catch(error){workArea.hidden=true;setFeedback('This activity needs a quick repair before it can start.','bad');console.error(error);}
+})();
+</script>
+</body>
+</html>
+
