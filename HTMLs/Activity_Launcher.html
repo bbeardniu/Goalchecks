@@ -32,6 +32,7 @@
       const supportsLetterformPractice=doesSupportLetterformPractice(sourceUrl,isFluency,isFluencyHub);
       if(doc.querySelector('.teacher-buttons'))doc.body.classList.add('beard-has-touch-controls');
       addShellStyles(doc,isFluency,isFluencyHub);
+      addCompactReportStyles(doc);
       if(supportsLetterformPractice)addLetterformFont(doc);
       if(isFluencyHub){wireInternalLinks(doc,frame,sourceUrl);return}
       const hud=makeHud(doc,isFluency,{supportsLetterformPractice});const clock=makeClock(doc,hud);
@@ -72,6 +73,28 @@
         /* A stable bottom dock keeps touch scoring controls above phone browser UI. */
         @media (max-width:820px) and (pointer:coarse){body.beard-has-touch-controls{box-sizing:border-box!important;padding-bottom:calc(98px + env(safe-area-inset-bottom,0px))!important}.teacher-buttons{position:fixed!important;left:0!important;right:0!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;width:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.7rem!important;padding:0 .75rem!important;z-index:9997!important;pointer-events:none!important}.teacher-buttons .teacher-btn{pointer-events:auto!important;min-width:0!important;min-height:60px!important;margin:0!important;padding:.75rem .35rem!important;font-size:clamp(1rem,4.8vw,1.15rem)!important;line-height:1.15!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important}}
       `;doc.head.append(style);
+    }
+
+    function addCompactReportStyles(doc){
+      if(doc.getElementById('beard-compact-report-style'))return;
+      const style=doc.createElement('style');
+      style.id='beard-compact-report-style';
+      style.textContent=`
+        .beard-compact-answer-history .beard-compact-timing-key{margin:-.1rem 0 .7rem;color:#47667e;font-size:.82rem;line-height:1.35}
+        .beard-compact-timing-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}
+        .beard-compact-timing-row{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.38rem;row-gap:.16rem;align-items:start;min-width:0;min-height:58px;padding:.5rem .55rem;border:1px solid #d7e7ef;border-radius:9px;background:#fff}
+        .beard-compact-timing-number{grid-row:1 / span 2;color:#7891a2;font-size:.78rem;font-weight:900;line-height:1.35}
+        .beard-compact-timing-prompt{min-width:0;color:#1e4767;font-size:.95rem;font-weight:900;line-height:1.25;overflow-wrap:anywhere}
+        .beard-compact-timing-detail{display:flex;align-items:center;justify-content:space-between;gap:.35rem;min-width:0;font-size:.76rem;line-height:1.2}
+        .beard-compact-timing-result{font-weight:900;white-space:nowrap}
+        .beard-compact-timing-time{color:#47667e;font-weight:800;white-space:nowrap}
+        .beard-compact-timing-result.good{color:var(--beard-green)}
+        .beard-compact-timing-result.bad{color:var(--beard-red)}
+        .beard-compact-timing-result.pending{color:#8a6421}
+        @media(max-width:930px){.beard-compact-timing-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        @media(max-width:620px){.beard-compact-timing-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:.42rem}.beard-compact-timing-row{min-height:56px;padding:.46rem}.beard-compact-timing-prompt{font-size:.9rem}.beard-compact-timing-detail{font-size:.73rem}}
+      `;
+      doc.head.append(style);
     }
 
       function makeHud(doc,isFluency,{supportsLetterformPractice=false}={}){
@@ -174,6 +197,37 @@
       function record(outcome,text){if(ended||usesNativeMathCounters||outcome===undefined)return;logAnswer(outcome);attempts++;if(outcome===false)errors++;render();toast(text||(outcome?'✓ Correct':'✗ Incorrect'),outcome?'good':'bad')}
       function reset(){runId++;ended=false;attempts=0;errors=0;unscored=false;nativeCorrect=0;answerHistory=[];letterformPractice.resetRun();clock.reset();clock.start({restart:true});questionStartedAt=clock.elapsedMilliseconds();render();toast('Fresh start','neutral')}
       function decorateSummary(){const summary=[...doc.querySelectorAll('#summary,#results,.summary')].find(el=>el&&el.textContent.trim()&&win.getComputedStyle(el).display!=='none');if(!summary)return;if(!summary.querySelector('.beard-summary-meta')){const meta=doc.createElement('p');meta.className='beard-summary-meta';const printPresentation=letterformPractice.summaryText();meta.innerHTML=`<strong>Date:</strong> ${new Date().toLocaleDateString()} &nbsp;•&nbsp; <strong>Total time:</strong> ${formatTime(clock.elapsed())}${printPresentation?` &nbsp;•&nbsp; <strong>Print:</strong> ${printPresentation}`:''}`;meta.style.cssText='margin:.8rem 0;padding:.65rem;border-radius:9px;background:#edf7fb;color:#1e4767;font-weight:800;';summary.prepend(meta)}if(summary.hasAttribute('data-beard-hide-auto-history')||!answerHistory.length||summary.querySelector('.beard-answer-history'))return;const showProblem=isMathAssessment,answerHeader=isPhonicsAssessment?'Word / letter shown':isFryWordAssessment?'Word shown':'Student answer',historyTitle=new Date().toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})+' • '+(unscored?'Score: Pending':'Score: '+percentage()+'%'),rows=answerHistory.map((item,index)=>{const label=item.outcome===true?'Correct':item.outcome===false?'Incorrect':'Teacher check',className=item.outcome===true?'good':item.outcome===false?'bad':'pending',problemCell=showProblem?`<td class="beard-problem">${escapeHtml(item.problem||'—')}</td>`:'';return `<tr><td>${index+1}</td>${problemCell}<td class="${className}">${escapeHtml(item.answer)}</td><td class="${className}">${label}</td><td>${item.seconds.toFixed(1)} s</td></tr>`}).join('');const history=doc.createElement('section');history.className=`beard-answer-history${showProblem?' beard-math-answer-history':''}`;const problemHeader=showProblem?'<th>Problem</th>':'';history.innerHTML=`<h3>${historyTitle}</h3><div class="beard-answer-history-scroll"><table><thead><tr><th>Attempt</th>${problemHeader}<th>${answerHeader}</th><th>Result</th><th>Seconds to answer</th></tr></thead><tbody>${rows}</tbody></table></div>`;summary.append(history)}
+      const standardDecorateSummary=decorateSummary;
+      decorateSummary=function(){
+        const compactTimingReport=isPhonicsAssessment||isFryWordAssessment;
+        if(!compactTimingReport){standardDecorateSummary();return}
+        const summary=[...doc.querySelectorAll('#summary,#results,.summary')].find(el=>el&&el.textContent.trim()&&win.getComputedStyle(el).display!=='none');
+        if(!summary)return;
+        if(!summary.querySelector('.beard-summary-meta')){
+          const meta=doc.createElement('p');
+          meta.className='beard-summary-meta';
+          const printPresentation=letterformPractice.summaryText();
+          meta.innerHTML='<strong>Date:</strong> '+new Date().toLocaleDateString()+' &nbsp;•&nbsp; <strong>Total time:</strong> '+formatTime(clock.elapsed())+(printPresentation?' &nbsp;•&nbsp; <strong>Print:</strong> '+printPresentation:'');
+          meta.style.cssText='margin:.8rem 0;padding:.65rem;border-radius:9px;background:#edf7fb;color:#1e4767;font-weight:800;';
+          summary.prepend(meta);
+        }
+        if(summary.hasAttribute('data-beard-hide-auto-history')||!answerHistory.length||summary.querySelector('.beard-answer-history'))return;
+        const historyTitle=new Date().toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})+' • '+(unscored?'Score: Pending':'Score: '+percentage()+'%');
+        const cards=answerHistory.map((item,index)=>{
+          const label=item.outcome===true?'Correct':item.outcome===false?'Incorrect':'Teacher check';
+          const symbol=item.outcome===true?'✓':item.outcome===false?'✗':'?';
+          const className=item.outcome===true?'good':item.outcome===false?'bad':'pending';
+          const seconds=item.seconds.toFixed(1);
+          const prompt=item.answer||'—';
+          const ariaLabel='Attempt '+(index+1)+': '+prompt+', '+label+', '+seconds+' seconds';
+          return '<article class="beard-compact-timing-row" aria-label="'+escapeHtml(ariaLabel)+'"><span class="beard-compact-timing-number">'+(index+1)+'.</span><strong class="beard-compact-timing-prompt">'+escapeHtml(prompt)+'</strong><span class="beard-compact-timing-detail"><span class="beard-compact-timing-result '+className+'">'+symbol+' '+label+'</span><span class="beard-compact-timing-time">'+seconds+' s</span></span></article>';
+        }).join('');
+        const history=doc.createElement('section');
+        history.className='beard-answer-history beard-compact-answer-history';
+        history.innerHTML='<h3>'+historyTitle+'</h3><p class="beard-compact-timing-key">Word or letter · ✓ Correct · ✗ Incorrect · seconds to answer</p><div class="beard-compact-timing-list">'+cards+'</div>';
+        summary.append(history);
+      };
+
       function parseOutcome(text){const value=(text||'').toLowerCase();if(/incorrect|wrong|nope|try again|not quite/.test(value))return false;if(/correct|great job|nice job|well done|you got it/.test(value))return true;return undefined}
       function syncNativeMath(){if(!usesNativeMathCounters)return;const attemptsMatch=(nativeAttemptsEl.textContent||'').match(/\d+/),scoreMatch=(nativeScoreEl.textContent||'').match(/\d+(?:\.\d+)?\s*%/);if(!attemptsMatch)return;const nextAttempts=Number(attemptsMatch[0]),nextCorrect=scoreMatch?Math.round(nextAttempts*Number(scoreMatch[0].replace('%','').trim())/100):0,previousAttempts=attempts;if(nextAttempts<previousAttempts){answerHistory=[];questionStartedAt=clock.elapsedMilliseconds()}else if(nextAttempts>previousAttempts){const added=nextAttempts-previousAttempts;if(added===1)logAnswer(nextCorrect>nativeCorrect);else for(let index=0;index<added;index++)logAnswer(null)}attempts=nextAttempts;nativeCorrect=nextCorrect;errors=Math.max(0,attempts-nextCorrect);unscored=false;render()}
       function inspectFeedback(currentRun){feedbackQueued=false;if(ended||currentRun!==runId||!feedbackTarget)return;const text=feedbackTarget.textContent.trim(),outcome=parseOutcome(text);if(outcome!==undefined)record(outcome,text)}
