@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Our School of Fish</title>
 
 <style>
@@ -11,6 +12,18 @@ body {
     background: linear-gradient(#7dd3fc, #0ea5e9);
     overflow-x: hidden;
 }
+
+* { box-sizing: border-box; }
+.sea-art {
+    display: inline-block;
+    width: var(--art-size, 80px);
+    height: var(--art-size, 80px);
+    background-image: url('../assets/illustrations/storybook-tools.webp');
+    background-size: 400% 400%;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}
+h1 .sea-art { --art-size: 64px; }
 
 h1 {
     text-align: center;
@@ -38,6 +51,8 @@ h1 {
     margin: 4px;
     border: 2px solid #38bdf8;
 }
+.controls input { max-width: 100px; }
+.controls label { display: inline-block; margin: 3px; }
 
 /* Ocean */
 .ocean {
@@ -71,16 +86,13 @@ h1 {
 /* Kelp */
 .kelp {
     position: absolute;
-    bottom: 60px;
-    width: 20px;
-    height: 400px; /* taller kelp */
-    background: linear-gradient(#22c55e, #15803d);
-    border-radius: 20px;
+    bottom: 100px;
+    --art-size: 150px;
     animation: sway 4s ease-in-out infinite;
 }
 
 .kelp::after {
-    content: "";
+    content: none;
     position: absolute;
     width: 60px; /* wider leaf */
     height: 120px; /* taller leaf */
@@ -102,7 +114,7 @@ h1 {
 /* Fish */
 .fish {
     position: absolute;
-    font-size: 40px;
+    --art-size: 76px;
 }
 
 /* Treasure */
@@ -110,7 +122,7 @@ h1 {
     position: absolute;
     right: 40px; /* moved slightly left */
     bottom: 160px; /* moved above sea floor */
-    font-size: 90px; /* bigger */
+    --art-size: 128px;
     transition: transform 0.5s;
 }
 
@@ -118,14 +130,14 @@ h1 {
     position: absolute;
     right: 35px;
     bottom: 250px; /* adjusted for taller treasure */
-    font-size: 40px;
+    --art-size: 52px;
     display: none;
 }
 
 /* Fireworks */
 .firework {
     position: absolute;
-    font-size: 40px;
+    --art-size: 35px;
     animation: pop 1s ease-out forwards;
 }
 
@@ -145,61 +157,73 @@ h1 {
     display: flex;
     justify-content: space-around; /* more space between icons */
     align-items: center;
-    font-size: 120px; /* double previous size */
     padding: 0 30px; /* more padding */
 }
+.seafloor .sea-art { --art-size: clamp(52px, 12vw, 118px); flex-shrink: 0; }
+@media(max-width:600px) {
+    h1 { font-size: 1.8rem; }
+    h1 .sea-art { --art-size: 44px; }
+    .controls { margin: 0 .5rem .7rem; padding: .65rem; }
+    .controls select, .controls input, .controls button { min-height: 44px; max-width: 100%; }
+    .ocean { width: calc(100% - 1rem); border-radius: 20px; }
+    .seafloor { padding: 0 .5rem; }
+    .treasure { right: 10px; --art-size: 100px; }
+    .gold { right: 15px; }
+    .kelp { --art-size: 105px; }
+}
+@media(prefers-reduced-motion:reduce) { .bubble,.kelp,.firework { animation: none; } }
 </style>
 </head>
 
 <body>
 
-<h1>🐠 Our School of Fish 🐠</h1>
+<h1><span class="sea-art" data-art="1" aria-hidden="true"></span> Our School of Fish <span class="sea-art" data-art="0" aria-hidden="true"></span></h1>
 
 <div class="controls">
-    Grade:
+    <label for="grade">Grade:</label>
     <select id="grade" onchange="updateFish()">
         <option value="2">2nd Grade</option>
         <option value="3">3rd Grade</option>
     </select>
 
-    Season:
+    <label for="season">Season:</label>
     <select id="season" onchange="updateFish()">
-        <option value="fall">🍁 Fall</option>
-        <option value="winter">❄️ Winter</option>
-        <option value="spring">🌸 Spring</option>
+        <option value="fall">Fall</option>
+        <option value="winter">Winter</option>
+        <option value="spring">Spring</option>
     </select>
 
-    Fish:
+    <label for="fishType">Sea creature:</label>
     <select id="fishType">
-        <option>🐟</option>
-        <option>🐠</option>
-        <option>🐡</option>
-        <option>🦈</option>
-        <option>🐬</option>
-        <option>🦑</option>
-        <option>🦀</option>
-        <option>🐙</option>
-        <option>🦐</option>
-        <option>🪸</option>
+        <option value="fish">Blue fish</option>
+        <option value="tropical">Tropical fish</option>
+        <option value="pufferfish">Pufferfish</option>
+        <option value="shark">Shark</option>
+        <option value="dolphin">Dolphin</option>
+        <option value="squid">Squid</option>
+        <option value="crab">Crab</option>
+        <option value="octopus">Octopus</option>
+        <option value="shrimp">Shrimp</option>
+        <option value="coral">Coral</option>
     </select>
 
-    Score:
+    <label for="score">Score:</label>
     <input type="number" id="score" min="0">
 
-    <button onclick="addFish()">➕ Add Fish</button>
-    <button onclick="resetOcean()">🔄 Reset</button>
+    <button onclick="addFish()">Add Fish</button>
+    <button onclick="resetOcean()">Reset</button>
 </div>
 
 <div class="ocean" id="ocean">
-    <div class="kelp k25"></div>
-    <div class="kelp k50"></div>
-    <div class="kelp k75"></div>
+    <div class="kelp k25 sea-art" data-art="9" aria-hidden="true"></div>
+    <div class="kelp k50 sea-art" data-art="9" aria-hidden="true"></div>
+    <div class="kelp k75 sea-art" data-art="9" aria-hidden="true"></div>
 
-    <div class="treasure" id="treasure">🧰</div>
-    <div class="gold" id="gold">🪙🪙🪙</div>
+    <div class="treasure sea-art" id="treasure" data-art="10" role="img" aria-label="A closed treasure chest"></div>
+    <div class="gold sea-art" id="gold" data-art="15" aria-hidden="true"></div>
 
-    <div class="seafloor">
-        🐚   🏰   ⭐   🪨   🪼   🪸   🐚
+    <div class="seafloor" aria-hidden="true">
+        <span class="sea-art" data-art="12"></span><span class="sea-art" data-art="13"></span><span class="sea-art" data-art="15"></span><span class="sea-art" data-art="9"></span><span class="sea-art" data-art="12"></span>
     </div>
 </div>
 
@@ -211,7 +235,16 @@ const benchmarks = {
 
 const ocean = document.getElementById("ocean");
 const gold = document.getElementById("gold");
+const grade = document.getElementById("grade");
+const season = document.getElementById("season");
+const fishType = document.getElementById("fishType");
+const creatureArt = {fish:0,tropical:1,pufferfish:2,shark:3,dolphin:4,squid:5,crab:6,octopus:7,shrimp:8,coral:9};
 let fishList = [];
+
+function setArt(element, index) {
+    element.style.backgroundPosition = (index % 4 / 3 * 100) + '% ' + (Math.floor(index / 4) / 3 * 100) + '%';
+}
+document.querySelectorAll('[data-art]').forEach(element => setArt(element, Number(element.dataset.art)));
 
 // Create bubbles
 for (let i = 0; i < 30; i++) {
@@ -231,8 +264,10 @@ function addFish() {
     if (!score) return;
 
     const fish = document.createElement("div");
-    fish.className = "fish";
-    fish.textContent = fishType.value;
+    fish.className = "fish sea-art";
+    setArt(fish, creatureArt[fishType.value]);
+    fish.setAttribute('role', 'img');
+    fish.setAttribute('aria-label', fishType.selectedOptions[0].textContent + ', reading score ' + score);
     const lane = 70 + fishList.length * 45;
     fish.style.top = lane + "px";
     fish.style.left = "10px";
@@ -244,7 +279,7 @@ function addFish() {
 
 function swimFish(fish, score, lane) {
     const percent = Math.min(score / goal(), 1);
-    const maxX = ocean.clientWidth - 140;
+    const maxX = Math.max(0, ocean.clientWidth - 100);
 
     let start = performance.now();
     let duration = 1500;
@@ -265,12 +300,14 @@ function swimFish(fish, score, lane) {
 function celebrate(fish) {
     gold.style.display = "block";
     const treasure = document.getElementById("treasure");
-    treasure.textContent = "🪙"; // chest opens
+    setArt(treasure, 11);
+    treasure.setAttribute('aria-label', 'An open treasure chest full of gold');
 
     for (let i = 0; i < 5; i++) {
         const f = document.createElement("div");
-        f.className = "firework";
-        f.textContent = "✨";
+        f.className = "firework sea-art";
+        setArt(f, 15);
+        f.setAttribute('aria-hidden', 'true');
         f.style.left = fish.offsetLeft + (Math.random()*40-20) + "px";
         f.style.top = fish.offsetTop + (Math.random()*20-10) + "px";
         ocean.appendChild(f);
@@ -286,7 +323,9 @@ function resetOcean() {
     fishList.forEach(f => f.fish.remove());
     fishList = [];
     gold.style.display = "none";
-    document.getElementById("treasure").textContent = "🧰";
+    const treasure = document.getElementById("treasure");
+    setArt(treasure, 10);
+    treasure.setAttribute('aria-label', 'A closed treasure chest');
 }
 </script>
 

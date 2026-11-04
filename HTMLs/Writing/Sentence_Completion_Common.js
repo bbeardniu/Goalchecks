@@ -20,9 +20,8 @@
       .sentence-completion-eyebrow{margin:0 0 .2rem;color:#537187;font-size:.78rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
       .sentence-completion-heading h1{margin:0;color:var(--sc-navy);font-family:"Comic Sans MS","Chalkboard SE",cursive;font-size:clamp(1.7rem,5vw,2.45rem);line-height:1.06}
       .sentence-completion-directions{margin:1rem 0 0;color:#456276;font-size:1.03rem;line-height:1.5}
-      .sentence-completion-card{display:grid;grid-template-columns:minmax(180px,.72fr) minmax(0,1.55fr);gap:clamp(.8rem,2vw,1.25rem);align-items:center;margin:1rem 0;padding:clamp(.85rem,2.4vw,1.25rem);border:2px solid #d6e7ef;border-radius:20px;background:linear-gradient(135deg,#f5fbff,#fffdf6)}
-      .sentence-completion-art{min-height:170px;border:2px solid #d1e6f0;border-radius:16px;overflow:hidden;background:#eaf8ff}
-      .sentence-completion-art svg{display:block;width:100%;height:100%}
+      .sentence-completion-card{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(0,1.45fr);gap:clamp(.8rem,2vw,1.25rem);align-items:center;margin:1rem 0;padding:clamp(.85rem,2.4vw,1.25rem);border:2px solid #dedac9;border-radius:20px;background:#fffdf7}
+      .sentence-completion-art{width:100%;max-width:300px;aspect-ratio:1;border:1px solid #e5dfcc;border-radius:16px;overflow:hidden;background:#fffdf7;box-shadow:0 3px 9px rgba(103,83,54,.07)}
       .sentence-completion-prompt-label{margin:0 0 .5rem;color:#587489;font-size:.78rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
       #sentence{margin:0;color:var(--sc-navy);font-size:clamp(1.35rem,3.5vw,2rem);font-weight:900;line-height:1.34;overflow-wrap:anywhere}
       .sentence-completion-progress{display:flex;justify-content:space-between;gap:.75rem;align-items:center;flex-wrap:wrap;margin:1rem 0 .65rem}
@@ -52,7 +51,7 @@
       .sentence-completion-direct-list{margin:.85rem 0 0;padding-left:1.25rem;line-height:1.5}
       .sentence-completion-direct-list .correct{color:var(--sc-green);font-weight:850}
       .sentence-completion-direct-list .incorrect{color:var(--sc-red);font-weight:850}
-      @media(max-width:620px){body[data-beard-compact-report="sentence-completion"]{padding:.7rem}.sentence-completion-shell{width:100%;padding:1rem;border-radius:18px}.sentence-completion-heading,.sentence-completion-card{grid-template-columns:1fr;text-align:center}.sentence-completion-badge{margin:auto}.sentence-completion-art{min-height:145px;max-width:360px;margin:auto;width:100%}.sentence-completion-options{grid-template-columns:1fr}.sentence-completion-option{min-height:58px}}
+      @media(max-width:620px){body[data-beard-compact-report="sentence-completion"]{padding:.7rem}.sentence-completion-shell{width:100%;padding:1rem;border-radius:18px}.sentence-completion-heading,.sentence-completion-card{grid-template-columns:1fr;text-align:center}.sentence-completion-badge{margin:auto}.sentence-completion-art{max-width:220px;margin:auto;width:100%}.sentence-completion-options{grid-template-columns:1fr}.sentence-completion-option{min-height:58px}}
       @media print{.sentence-completion-workspace,.sentence-completion-controls,.sentence-completion-stats{display:none!important}}
     `;
     document.head.append(style);
@@ -69,37 +68,6 @@
       [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
     }
     return copy;
-  }
-
-  function hash(value) {
-    return [...String(value)].reduce((total, character) => ((total << 5) - total + character.charCodeAt(0)) | 0, 0) >>> 0;
-  }
-
-  function sceneFamily(scene) {
-    if (/cat|kitten|dog|puppy|rabbit|squirrel|frog|turtle|cow|octopus|spider|bee|butterfly|bird|duck|penguin|horse|fox|owl|eagle|crow|fish|caterpillar|hen|lion|sheep|animal/.test(scene)) return 'animal';
-    if (/rain|storm|snow|sun|moon|stars|rainbow|weather|ice|ocean|pond|river|waterfall|beach|cloud|leaves|mountain|garden|flower|tree|soil|hike|forest|trail|nature/.test(scene)) return 'nature';
-    if (/book|library|writing|question|classroom|pencil|sharpener|scissors|ruler|board|math|science|museum|map|calendar|story|reading|school|teacher|student|notebook/.test(scene)) return 'learning';
-    if (/train|car|bicycle|bus|station|boat|ship|skateboard|runner|crosswalk|parade|firetruck|transport/.test(scene)) return 'transport';
-    if (/cake|sandwich|soup|bakery|lunch|lunchbox|picnic|vegetables|apple|food|chef|baker/.test(scene)) return 'food';
-    if (/rocket|spaceship|astronaut|scientist|detective|magic|robot|compass|camera|magnify/.test(scene)) return 'discovery';
-    if (/ball|game|soccer|team|playground|kite|drum|band|art|paint|music|puzzle|costume/.test(scene)) return 'play';
-    return 'home';
-  }
-
-  function renderScene(scene, alt) {
-    const colors = [{sky:'#dff4ff',ground:'#bfe4a9',accent:'#f7bf5d',detail:'#4d83a5'},{sky:'#f2e6ff',ground:'#c9e9d6',accent:'#ef9a8e',detail:'#7461a5'},{sky:'#fff0d7',ground:'#bfe0bd',accent:'#e99675',detail:'#4f8090'},{sky:'#e6f4ee',ground:'#c5dcf3',accent:'#e8b858',detail:'#5d7da3'}][hash(scene) % 4];
-    const family = sceneFamily(scene);
-    const base = `<rect width="320" height="180" fill="${colors.sky}"/><rect y="120" width="320" height="60" fill="${colors.ground}"/><circle cx="273" cy="35" r="20" fill="#ffd76c"/><path d="M34 38c13-15 33-12 38 2 15-11 34-2 32 13H29c-5-6-3-11 5-15Z" fill="#fff" opacity=".88"/>`;
-    let drawing = '';
-    if (family === 'animal') drawing = `<ellipse cx="157" cy="123" rx="66" ry="30" fill="${colors.accent}"/><circle cx="116" cy="93" r="35" fill="${colors.accent}"/><path d="M93 73l8-31 19 26M124 68l20-26 6 33" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="5" stroke-linejoin="round"/><circle cx="105" cy="91" r="4" fill="#26394b"/><circle cx="126" cy="91" r="4" fill="#26394b"/><ellipse cx="115" cy="105" rx="7" ry="5" fill="#26394b"/><path d="M184 115q35-30 54 5" fill="none" stroke="${colors.accent}" stroke-width="13" stroke-linecap="round"/><path d="M131 148v15m27-15v15m29-15v15" stroke="${colors.detail}" stroke-width="7" stroke-linecap="round"/>`;
-    else if (family === 'nature') drawing = `<path d="M22 126q34-56 69 0 34-76 75 0 37-48 70 0 28-60 64 0" fill="none" stroke="${colors.detail}" stroke-width="10" stroke-linecap="round" opacity=".9"/><path d="M107 164V76m0 45-30-19m30 2 30-22" stroke="#42825e" stroke-width="8" stroke-linecap="round"/><circle cx="107" cy="68" r="25" fill="${colors.accent}"/><circle cx="77" cy="104" r="15" fill="#f4ce65"/><circle cx="139" cy="96" r="16" fill="#f4ce65"/><path d="M214 70c14-18 40-18 52 0 8 11 1 30-16 32h-41c-15-6-11-23 5-32Z" fill="#fff"/><path d="M220 109v27m17-27v35m17-27v21" stroke="${colors.detail}" stroke-width="5" stroke-linecap="round"/>`;
-    else if (family === 'learning') drawing = `<rect x="72" y="48" width="176" height="98" rx="10" fill="#fffdf5" stroke="${colors.detail}" stroke-width="7"/><path d="M160 50v94M89 76h54m-54 22h54m-54 22h54m34-44h46m-46 22h46m-46 22h46" stroke="#8fb7cf" stroke-width="6" stroke-linecap="round"/><path d="M68 151l58-19 17 17-58 19Z" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="5"/><path d="M126 132l21-7 17 17-21 7Z" fill="#f6d5ae" stroke="${colors.detail}" stroke-width="5"/>`;
-    else if (family === 'transport') drawing = `<rect x="60" y="78" width="193" height="58" rx="15" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="6"/><rect x="89" y="88" width="47" height="25" rx="4" fill="#eaf8ff"/><rect x="147" y="88" width="47" height="25" rx="4" fill="#eaf8ff"/><rect x="205" y="88" width="30" height="25" rx="4" fill="#eaf8ff"/><circle cx="102" cy="142" r="16" fill="#26394b"/><circle cx="210" cy="142" r="16" fill="#26394b"/><circle cx="102" cy="142" r="6" fill="#fff"/><circle cx="210" cy="142" r="6" fill="#fff"/><path d="M50 160h220" stroke="${colors.detail}" stroke-width="7" stroke-linecap="round"/>`;
-    else if (family === 'food') drawing = `<ellipse cx="161" cy="141" rx="92" ry="19" fill="#d0e6f0"/><path d="M91 121q11-68 70-68t70 68" fill="#fffaf0" stroke="${colors.detail}" stroke-width="7"/><path d="M95 120h132l-11 28H105Z" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="6"/><circle cx="134" cy="100" r="16" fill="#ec7768"/><circle cx="164" cy="87" r="17" fill="#f5d368"/><circle cx="191" cy="105" r="15" fill="#78b879"/><path d="M166 64q8-12 17-9" stroke="#4f995d" stroke-width="6" stroke-linecap="round"/>`;
-    else if (family === 'discovery') drawing = `<path d="M164 39c29 34 45 62 45 89l-45 27-45-27c0-27 16-55 45-89Z" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="7"/><circle cx="164" cy="101" r="19" fill="#eaf8ff" stroke="${colors.detail}" stroke-width="5"/><path d="M119 129l-39 29 45-9m84-20 39 29-45-9" fill="${colors.detail}"/><path d="M149 154l-15 17m45-17 15 17" stroke="#e87a68" stroke-width="10" stroke-linecap="round"/><circle cx="58" cy="56" r="4" fill="#fff"/><circle cx="90" cy="31" r="3" fill="#fff"/><circle cx="242" cy="61" r="4" fill="#fff"/>`;
-    else if (family === 'play') drawing = `<circle cx="126" cy="107" r="45" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="7"/><path d="M126 63v88M82 107h88M95 76l62 62m0-62-62 62" stroke="#fff" stroke-width="6" opacity=".9"/><path d="M210 147l25-84 29 53-31 31Z" fill="#fffdf5" stroke="${colors.detail}" stroke-width="6"/><path d="M236 63l17-30m-1 30 31 3" stroke="${colors.detail}" stroke-width="5" stroke-linecap="round"/>`;
-    else drawing = `<rect x="69" y="82" width="182" height="72" rx="8" fill="#fffdf5" stroke="${colors.detail}" stroke-width="7"/><path d="M57 84l103-55 103 55" fill="${colors.accent}" stroke="${colors.detail}" stroke-width="7" stroke-linejoin="round"/><rect x="140" y="111" width="39" height="43" rx="4" fill="#9cc7d9"/><rect x="91" y="107" width="28" height="27" rx="3" fill="#eaf8ff"/><rect x="200" y="107" width="28" height="27" rx="3" fill="#eaf8ff"/><path d="M41 160h238" stroke="${colors.detail}" stroke-width="7" stroke-linecap="round"/>`;
-    return `<svg viewBox="0 0 320 180" role="img" aria-label="${escapeHtml(alt)}"><title>${escapeHtml(alt)}</title>${base}${drawing}</svg>`;
   }
 
   addStyles();
@@ -135,7 +103,7 @@
     if (questionIndex >= questions.length) { stopAssessment(true); return; }
     currentQuestion = questions[questionIndex]; locked = false; answer.value = ''; feedback.textContent = ''; feedback.className = '';
     sentence.textContent = cleanSentence(currentQuestion); sentence.dataset.beardPrompt = normalizeSentence(currentQuestion.s);
-    scene.innerHTML = renderScene(currentQuestion.scene, `Original illustration for: ${cleanSentence(currentQuestion)}`);
+    window.BeardStorybook.render(scene, currentQuestion.artKey);
     progress.textContent = `Sentence ${questionIndex + 1} of ${questions.length}`;
     options.replaceChildren(...shuffle(currentQuestion.o).map(choice => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'sentence-completion-option'; button.textContent = choice;
@@ -164,7 +132,7 @@
     if (autoFinished) setTimeout(() => stopButton.click(), 0);
   }
   function resetAssessment() {
-    clearTimeout(nextQuestionId); clearInterval(timerId); questions = shuffle(config.questions); questionIndex = 0; history = []; currentQuestion = null; locked = false; ended = false;
+    clearTimeout(nextQuestionId); clearInterval(timerId); questions = shuffle(config.questions.map((question, index) => ({...question,artKey:`${config.artGroup}:${index + 1}`}))); questionIndex = 0; history = []; currentQuestion = null; locked = false; ended = false;
     summary.innerHTML = ''; summary.style.display = 'none'; workArea.hidden = false; updateStats(); startTimer(); showQuestion();
   }
   stopButton.addEventListener('click', () => stopAssessment());

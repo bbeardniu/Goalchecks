@@ -15,8 +15,8 @@
   .eyebrow{margin:0 0 .2rem;color:#537187;font-size:.78rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
   h1{margin:0;color:var(--navy);font-family:"Comic Sans MS","Chalkboard SE",cursive;font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.04}
   .instructions{margin:1rem 0 0;line-height:1.5;font-size:1.04rem}
-  .picture-card{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:1rem;margin:1rem 0;padding:clamp(.8rem,2.5vw,1.2rem);border:3px solid #f0d98b;border-radius:18px;background:linear-gradient(135deg,#fff8d9,#fffdf7);box-shadow:0 4px 0 rgba(190,148,53,.12)}
-  .picture-icon{min-width:clamp(110px,27vw,190px);min-height:clamp(98px,22vw,150px);display:grid;place-items:center;border-radius:15px;background:#fff;border:2px solid #f7e5a9;font-size:clamp(3.2rem,10vw,6rem);line-height:1;letter-spacing:.08em}
+  .picture-card{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);align-items:center;gap:1rem;margin:1rem 0;padding:clamp(.8rem,2.5vw,1.2rem);border:2px solid #e6d7b2;border-radius:18px;background:#fffdf7;box-shadow:0 4px 0 rgba(190,148,53,.08)}
+  .picture-icon{width:100%;max-width:300px;min-width:0;aspect-ratio:1;display:grid;place-items:center;border-radius:15px;background:#fffdf7;border:1px solid #e5dfcc;box-shadow:0 3px 9px rgba(103,83,54,.07);color:var(--navy);font-size:1.1rem;line-height:1.4}
   .picture-copy p{margin:.15rem 0;color:#47667e;line-height:1.4}
   .picture-copy strong{display:block;color:var(--navy);font-size:1.1rem}
   .progress-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin:1.1rem 0 .65rem}
@@ -128,507 +128,509 @@
   <section id="summary" data-beard-hide-auto-history aria-live="polite"></section>
 </main>
 
+<script src="../../assets/illustrations/manifest.js"></script>
+<script src="../../assets/illustrations/storybook-art.js"></script>
 <script>
 (function(){
   const beginnerPictureBank = [
   {
     "sentence": "The dog runs.",
-    "picture": "🐶🏃",
+    "artKey": "picture:1",
     "alt": "A dog running."
   },
   {
     "sentence": "The cat sleeps.",
-    "picture": "🐱💤",
+    "artKey": "picture:2",
     "alt": "A cat sleeping."
   },
   {
     "sentence": "The bird flies.",
-    "picture": "🐦☁️",
+    "artKey": "picture:3",
     "alt": "A bird flying."
   },
   {
     "sentence": "The fish swims.",
-    "picture": "🐟🌊",
+    "artKey": "picture:4",
     "alt": "A fish swimming."
   },
   {
     "sentence": "The frog jumps.",
-    "picture": "🐸↗️",
+    "artKey": "picture:5",
     "alt": "A frog jumping."
   },
   {
     "sentence": "The cow eats.",
-    "picture": "🐄🌿",
+    "artKey": "picture:6",
     "alt": "A cow eating grass."
   },
   {
     "sentence": "The pig rolls.",
-    "picture": "🐷🌀",
+    "artKey": "picture:7",
     "alt": "A pig rolling."
   },
   {
     "sentence": "The duck quacks.",
-    "picture": "🦆🔊",
+    "artKey": "picture:8",
     "alt": "A duck quacking."
   },
   {
     "sentence": "The horse trots.",
-    "picture": "🐴🏃",
+    "artKey": "picture:9",
     "alt": "A horse trotting."
   },
   {
     "sentence": "The sheep rests.",
-    "picture": "🐑😴",
+    "artKey": "picture:10",
     "alt": "A sheep resting."
   },
   {
     "sentence": "A boy smiles.",
-    "picture": "👦😊",
+    "artKey": "picture:11",
     "alt": "A smiling boy."
   },
   {
     "sentence": "A girl waves.",
-    "picture": "👧👋",
+    "artKey": "picture:12",
     "alt": "A girl waving."
   },
   {
     "sentence": "The baby crawls.",
-    "picture": "👶➡️",
+    "artKey": "picture:13",
     "alt": "A baby crawling."
   },
   {
     "sentence": "Mom cooks soup.",
-    "picture": "👩‍🍳🥣",
+    "artKey": "picture:14",
     "alt": "A mother cooking soup."
   },
   {
     "sentence": "Dad reads books.",
-    "picture": "👨📚",
+    "artKey": "picture:15",
     "alt": "A father reading books."
   },
   {
     "sentence": "The sun shines.",
-    "picture": "☀️✨",
+    "artKey": "picture:16",
     "alt": "A shining sun."
   },
   {
     "sentence": "The rain falls.",
-    "picture": "🌧️⬇️",
+    "artKey": "picture:17",
     "alt": "Rain falling."
   },
   {
     "sentence": "Snow covers grass.",
-    "picture": "❄️🌱",
+    "artKey": "picture:18",
     "alt": "Snow covering grass."
   },
   {
     "sentence": "The moon glows.",
-    "picture": "🌙✨",
+    "artKey": "picture:19",
     "alt": "A glowing moon."
   },
   {
     "sentence": "Stars twinkle tonight.",
-    "picture": "⭐✨🌙",
+    "artKey": "picture:20",
     "alt": "Stars twinkling at night."
   },
   {
     "sentence": "A kite rises.",
-    "picture": "🪁⬆️",
+    "artKey": "picture:21",
     "alt": "A kite rising."
   },
   {
     "sentence": "The bus stops.",
-    "picture": "🚌🛑",
+    "artKey": "picture:22",
     "alt": "A bus stopping."
   },
   {
     "sentence": "A car moves.",
-    "picture": "🚗💨",
+    "artKey": "picture:23",
     "alt": "A moving car."
   },
   {
     "sentence": "The train rolls.",
-    "picture": "🚆➡️",
+    "artKey": "picture:24",
     "alt": "A train rolling."
   },
   {
     "sentence": "A boat sails.",
-    "picture": "⛵🌊",
+    "artKey": "picture:25",
     "alt": "A boat sailing."
   },
   {
     "sentence": "A plane lands.",
-    "picture": "✈️🛬",
+    "artKey": "picture:26",
     "alt": "A plane landing."
   },
   {
     "sentence": "The bike turns.",
-    "picture": "🚲↪️",
+    "artKey": "picture:27",
     "alt": "A bike turning."
   },
   {
     "sentence": "A truck honks.",
-    "picture": "🚚📣",
+    "artKey": "picture:28",
     "alt": "A truck honking."
   },
   {
     "sentence": "The child paints.",
-    "picture": "🧒🎨",
+    "artKey": "picture:29",
     "alt": "A child painting."
   },
   {
     "sentence": "A girl dances.",
-    "picture": "👧💃",
+    "artKey": "picture:30",
     "alt": "A girl dancing."
   },
   {
     "sentence": "The boy kicks balls.",
-    "picture": "👦⚽",
+    "artKey": "picture:31",
     "alt": "A boy kicking balls."
   },
   {
     "sentence": "The girl sings.",
-    "picture": "👧🎤",
+    "artKey": "picture:32",
     "alt": "A girl singing."
   },
   {
     "sentence": "A baby laughs.",
-    "picture": "👶😂",
+    "artKey": "picture:33",
     "alt": "A laughing baby."
   },
   {
     "sentence": "The child claps.",
-    "picture": "🧒👏",
+    "artKey": "picture:34",
     "alt": "A child clapping."
   },
   {
     "sentence": "A teacher writes words.",
-    "picture": "👩‍🏫✏️",
+    "artKey": "picture:35",
     "alt": "A teacher writing words."
   },
   {
     "sentence": "A student listens.",
-    "picture": "🧑‍🎓👂",
+    "artKey": "picture:36",
     "alt": "A student listening."
   },
   {
     "sentence": "The baker stirs batter.",
-    "picture": "🧑‍🍳🥣",
+    "artKey": "picture:37",
     "alt": "A baker stirring batter."
   },
   {
     "sentence": "A chef chops carrots.",
-    "picture": "👨‍🍳🥕",
+    "artKey": "picture:38",
     "alt": "A chef chopping carrots."
   },
   {
     "sentence": "The nurse helps kids.",
-    "picture": "🧑‍⚕️🧒",
+    "artKey": "picture:39",
     "alt": "A nurse helping children."
   },
   {
     "sentence": "A doctor checks hearts.",
-    "picture": "🧑‍⚕️🩺",
+    "artKey": "picture:40",
     "alt": "A doctor checking a heart."
   },
   {
     "sentence": "The bee buzzes.",
-    "picture": "🐝〰️",
+    "artKey": "picture:41",
     "alt": "A buzzing bee."
   },
   {
     "sentence": "A butterfly lands.",
-    "picture": "🦋🌸",
+    "artKey": "picture:42",
     "alt": "A butterfly landing on a flower."
   },
   {
     "sentence": "An ant carries crumbs.",
-    "picture": "🐜🍞",
+    "artKey": "picture:43",
     "alt": "An ant carrying crumbs."
   },
   {
     "sentence": "A snail crawls.",
-    "picture": "🐌➡️",
+    "artKey": "picture:44",
     "alt": "A snail crawling."
   },
   {
     "sentence": "The turtle walks.",
-    "picture": "🐢🚶",
+    "artKey": "picture:45",
     "alt": "A turtle walking."
   },
   {
     "sentence": "A rabbit hops.",
-    "picture": "🐰↗️",
+    "artKey": "picture:46",
     "alt": "A rabbit hopping."
   },
   {
     "sentence": "The mouse hides.",
-    "picture": "🐭📦",
+    "artKey": "picture:47",
     "alt": "A mouse hiding."
   },
   {
     "sentence": "The fox runs.",
-    "picture": "🦊🏃",
+    "artKey": "picture:48",
     "alt": "A fox running."
   },
   {
     "sentence": "A bear climbs.",
-    "picture": "🐻🌳",
+    "artKey": "picture:49",
     "alt": "A bear climbing a tree."
   },
   {
     "sentence": "The lion roars.",
-    "picture": "🦁📣",
+    "artKey": "picture:50",
     "alt": "A lion roaring."
   },
   {
     "sentence": "The owl hoots.",
-    "picture": "🦉🌙",
+    "artKey": "picture:51",
     "alt": "An owl hooting at night."
   },
   {
     "sentence": "A monkey swings.",
-    "picture": "🐒🌿",
+    "artKey": "picture:52",
     "alt": "A monkey swinging."
   },
   {
     "sentence": "The panda chews.",
-    "picture": "🐼🎋",
+    "artKey": "picture:53",
     "alt": "A panda chewing bamboo."
   },
   {
     "sentence": "A zebra walks.",
-    "picture": "🦓🚶",
+    "artKey": "picture:54",
     "alt": "A zebra walking."
   },
   {
     "sentence": "The camel drinks.",
-    "picture": "🐪💧",
+    "artKey": "picture:55",
     "alt": "A camel drinking."
   },
   {
     "sentence": "A penguin slides.",
-    "picture": "🐧🧊",
+    "artKey": "picture:56",
     "alt": "A penguin sliding on ice."
   },
   {
     "sentence": "The seal claps.",
-    "picture": "🦭👏",
+    "artKey": "picture:57",
     "alt": "A seal clapping."
   },
   {
     "sentence": "A whale splashes.",
-    "picture": "🐋💦",
+    "artKey": "picture:58",
     "alt": "A whale splashing."
   },
   {
     "sentence": "The shark swims.",
-    "picture": "🦈🌊",
+    "artKey": "picture:59",
     "alt": "A shark swimming."
   },
   {
     "sentence": "A crab walks.",
-    "picture": "🦀➡️",
+    "artKey": "picture:60",
     "alt": "A crab walking."
   },
   {
     "sentence": "A child digs sand.",
-    "picture": "🧒🪣🏖️",
+    "artKey": "picture:61",
     "alt": "A child digging sand."
   },
   {
     "sentence": "A child builds towers.",
-    "picture": "🧒🧱",
+    "artKey": "picture:62",
     "alt": "A child building towers."
   },
   {
     "sentence": "The child opens gifts.",
-    "picture": "🧒🎁",
+    "artKey": "picture:63",
     "alt": "A child opening gifts."
   },
   {
     "sentence": "A child hugs teddy.",
-    "picture": "🧒🧸💛",
+    "artKey": "picture:64",
     "alt": "A child hugging a teddy bear."
   },
   {
     "sentence": "The girl pets a puppy.",
-    "picture": "👧🐶",
+    "artKey": "picture:65",
     "alt": "A girl petting a puppy."
   },
   {
     "sentence": "The boy feeds ducks.",
-    "picture": "👦🌽🦆",
+    "artKey": "picture:66",
     "alt": "A boy feeding ducks."
   },
   {
     "sentence": "A child blows bubbles.",
-    "picture": "🧒🫧",
+    "artKey": "picture:67",
     "alt": "A child blowing bubbles."
   },
   {
     "sentence": "The baby holds blocks.",
-    "picture": "👶🧱",
+    "artKey": "picture:68",
     "alt": "A baby holding blocks."
   },
   {
     "sentence": "The child stacks cups.",
-    "picture": "🧒🥤",
+    "artKey": "picture:69",
     "alt": "A child stacking cups."
   },
   {
     "sentence": "A girl skips rope.",
-    "picture": "👧🪢",
+    "artKey": "picture:70",
     "alt": "A girl skipping rope."
   },
   {
     "sentence": "A boy rolls dough.",
-    "picture": "👦🍞",
+    "artKey": "picture:71",
     "alt": "A boy rolling dough."
   },
   {
     "sentence": "The child colors stars.",
-    "picture": "🧒🖍️⭐",
+    "artKey": "picture:72",
     "alt": "A child coloring stars."
   },
   {
     "sentence": "A child washes hands.",
-    "picture": "🧒🧼",
+    "artKey": "picture:73",
     "alt": "A child washing hands."
   },
   {
     "sentence": "The boy drinks milk.",
-    "picture": "👦🥛",
+    "artKey": "picture:74",
     "alt": "A boy drinking milk."
   },
   {
     "sentence": "A girl eats grapes.",
-    "picture": "👧🍇",
+    "artKey": "picture:75",
     "alt": "A girl eating grapes."
   },
   {
     "sentence": "The baby naps quietly.",
-    "picture": "👶💤",
+    "artKey": "picture:76",
     "alt": "A baby napping."
   },
   {
     "sentence": "The child kicks one ball.",
-    "picture": "🧒⚽",
+    "artKey": "picture:77",
     "alt": "A child kicking a ball."
   },
   {
     "sentence": "A girl catches leaves.",
-    "picture": "👧🍂",
+    "artKey": "picture:78",
     "alt": "A girl catching leaves."
   },
   {
     "sentence": "A boy carries boxes.",
-    "picture": "👦📦",
+    "artKey": "picture:79",
     "alt": "A boy carrying boxes."
   },
   {
     "sentence": "The child pulls a sled.",
-    "picture": "🧒🛷",
+    "artKey": "picture:80",
     "alt": "A child pulling a sled."
   },
   {
     "sentence": "The boy opens a door.",
-    "picture": "👦🚪",
+    "artKey": "picture:81",
     "alt": "A boy opening a door."
   },
   {
     "sentence": "The child closes a box.",
-    "picture": "🧒📦",
+    "artKey": "picture:82",
     "alt": "A child closing a box."
   },
   {
     "sentence": "A girl wears boots.",
-    "picture": "👧🥾",
+    "artKey": "picture:83",
     "alt": "A girl wearing boots."
   },
   {
     "sentence": "A boy finds shells.",
-    "picture": "👦🐚",
+    "artKey": "picture:84",
     "alt": "A boy finding shells."
   },
   {
     "sentence": "The child sees a rainbow.",
-    "picture": "🧒🌈",
+    "artKey": "picture:85",
     "alt": "A child seeing a rainbow."
   },
   {
     "sentence": "The girl blows a horn.",
-    "picture": "👧🎺",
+    "artKey": "picture:86",
     "alt": "A girl blowing a horn."
   },
   {
     "sentence": "A boy uses crayons.",
-    "picture": "👦🖍️",
+    "artKey": "picture:87",
     "alt": "A boy using crayons."
   },
   {
     "sentence": "The child waters plants.",
-    "picture": "🧒💧🪴",
+    "artKey": "picture:88",
     "alt": "A child watering plants."
   },
   {
     "sentence": "A girl picks flowers.",
-    "picture": "👧🌸",
+    "artKey": "picture:89",
     "alt": "A girl picking flowers."
   },
   {
     "sentence": "A boy collects rocks.",
-    "picture": "👦🪨",
+    "artKey": "picture:90",
     "alt": "A boy collecting rocks."
   },
   {
     "sentence": "The child rides a scooter.",
-    "picture": "🧒🛴",
+    "artKey": "picture:91",
     "alt": "A child riding a scooter."
   },
   {
     "sentence": "The girl throws a ball.",
-    "picture": "👧⚾",
+    "artKey": "picture:92",
     "alt": "A girl throwing a ball."
   },
   {
     "sentence": "The boy fixes a toy.",
-    "picture": "👦🛠️🧸",
+    "artKey": "picture:93",
     "alt": "A boy fixing a toy."
   },
   {
     "sentence": "The child folds paper.",
-    "picture": "🧒📄",
+    "artKey": "picture:94",
     "alt": "A child folding paper."
   },
   {
     "sentence": "The girl hugs dolls.",
-    "picture": "👧🪆",
+    "artKey": "picture:95",
     "alt": "A girl hugging dolls."
   },
   {
     "sentence": "The boy sweeps floors.",
-    "picture": "👦🧹",
+    "artKey": "picture:96",
     "alt": "A boy sweeping floors."
   },
   {
     "sentence": "The child plants seeds.",
-    "picture": "🧒🌱",
+    "artKey": "picture:97",
     "alt": "A child planting seeds."
   },
   {
     "sentence": "A girl sees moonlight.",
-    "picture": "👧🌙",
+    "artKey": "picture:98",
     "alt": "A girl seeing moonlight."
   },
   {
     "sentence": "A boy spots stars.",
-    "picture": "👦⭐",
+    "artKey": "picture:99",
     "alt": "A boy spotting stars."
   },
   {
     "sentence": "The child reads stories.",
-    "picture": "🧒📖",
+    "artKey": "picture:100",
     "alt": "A child reading stories."
   }
 ];
@@ -678,7 +680,7 @@
     const validLength=beginnerPictureBank.length===100&&uniqueSentences.size===100;
     const validItems=beginnerPictureBank.every(function(item){
       const words=item.sentence.replace(/[.?!]$/,'').toLowerCase().split(/\s+/);
-      return item.picture&&item.alt&&/[.?!]$/.test(item.sentence)&&words.length>=3&&words.length<=5&&new Set(words).size===words.length;
+      return item.artKey&&item.alt&&/[.?!]$/.test(item.sentence)&&words.length>=3&&words.length<=5&&new Set(words).size===words.length;
     });
     if(!validLength||!validItems) throw new Error('The picture sentence bank must contain 100 unique, simple sentences.');
   }
@@ -729,7 +731,8 @@
   function loadNextSentence(){
     if(!remaining.length){
       currentItem=null;targetWords=[];bankWords=[];placedWords=[];itemSolved=false;
-      pictureIcon.textContent='🏁';
+      pictureIcon.style.backgroundImage='none';
+      pictureIcon.textContent='All done!';
       pictureIcon.setAttribute('aria-label','All sentences are complete.');
       setFeedback('You used all '+beginnerPictureBank.length+' sentences. Stop the assessment to view the report, or reset to begin again.','good');
       render();return;
@@ -738,8 +741,7 @@
     targetWords=currentItem.sentence.split(' ');
     bankWords=shuffle(targetWords.map(function(text,index){return {id:index,text:text};}));
     placedWords=[];itemSolved=false;responseStartedAt=Date.now();
-    pictureIcon.textContent=currentItem.picture;
-    pictureIcon.setAttribute('aria-label',currentItem.alt);
+    window.BeardStorybook.render(pictureIcon,currentItem.artKey,currentItem.alt);
     clearFeedback();render();
   }
 
