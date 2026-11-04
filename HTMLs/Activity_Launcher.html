@@ -83,7 +83,7 @@
         .beard-compact-answer-history .beard-compact-timing-key{margin:-.1rem 0 .7rem;color:#47667e;font-size:.82rem;line-height:1.35}
         .beard-compact-timing-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.42rem}
         .beard-compact-timing-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:.36rem;align-items:start;min-width:0;min-height:42px;padding:.42rem .48rem;border:1px solid #d7e7ef;border-radius:9px;background:#fff}
-        .beard-compact-timing-row.is-math{min-height:56px}
+        .beard-compact-timing-row.is-math,.beard-compact-timing-row.is-sentence-completion{min-height:56px}
         .beard-compact-timing-number{color:#7891a2;font-size:.76rem;font-weight:900;line-height:1.35}
         .beard-compact-timing-content{min-width:0}
         .beard-compact-timing-prompt,.beard-compact-timing-answer{display:block;min-width:0;font-size:.95rem;font-weight:900;line-height:1.25;overflow-wrap:anywhere}
@@ -103,7 +103,7 @@
         .beard-native-report-control{display:none!important}
         #beard-print-report{display:none}
         @media(max-width:930px){.beard-compact-timing-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
-        @media(max-width:620px){.beard-compact-timing-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:.38rem}.beard-compact-timing-row{min-height:40px;padding:.4rem}.beard-compact-timing-row.is-math{min-height:54px}.beard-compact-timing-prompt,.beard-compact-timing-answer{font-size:.9rem}.beard-compact-timing-problem,.beard-compact-timing-time{font-size:.71rem}}
+        @media(max-width:620px){.beard-compact-timing-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:.38rem}.beard-compact-timing-row{min-height:40px;padding:.4rem}.beard-compact-timing-row.is-math,.beard-compact-timing-row.is-sentence-completion{min-height:54px}.beard-compact-timing-prompt,.beard-compact-timing-answer{font-size:.9rem}.beard-compact-timing-problem,.beard-compact-timing-time{font-size:.71rem}}
         @media print{
           @page{margin:.45in}
           html,body{background:#fff!important;padding:0!important;print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}
@@ -114,9 +114,9 @@
           #beard-print-report .beard-answer-history h3{font-size:1rem!important}
           #beard-print-report .beard-compact-timing-key{margin-bottom:.45rem!important;font-size:.72rem!important}
           #beard-print-report .beard-compact-timing-list{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:.24rem!important}
-          #beard-print-report.is-math .beard-compact-timing-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+          #beard-print-report.is-math .beard-compact-timing-list,#beard-print-report.is-sentence-completion .beard-compact-timing-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}
           #beard-print-report .beard-compact-timing-row{min-height:32px!important;padding:.28rem .34rem!important;border-color:#b9d0dd!important;break-inside:avoid!important;page-break-inside:avoid!important}
-          #beard-print-report .beard-compact-timing-row.is-math{min-height:42px!important}
+          #beard-print-report .beard-compact-timing-row.is-math,#beard-print-report .beard-compact-timing-row.is-sentence-completion{min-height:42px!important}
           #beard-print-report .beard-compact-timing-number{font-size:.66rem!important}
           #beard-print-report .beard-compact-timing-prompt,#beard-print-report .beard-compact-timing-answer{font-size:.8rem!important}
           #beard-print-report .beard-compact-timing-problem,#beard-print-report .beard-compact-timing-time{font-size:.63rem!important}
@@ -204,6 +204,7 @@
       const isMathAssessment=/\/HTMLs\/Math\//i.test(assessmentPath);
       const isPhonicsAssessment=/\/HTMLs\/QPS\//i.test(assessmentPath);
       const isFryWordAssessment=/\/HTMLs\/Reading Fluency\/Fry_Words_First_100\.html$/i.test(assessmentPath);
+      const isSentenceCompletionAssessment=doc.body?.dataset.beardCompactReport==='sentence-completion';
       const showsPromptInsteadOfAnswer=isPhonicsAssessment||isFryWordAssessment;
       const nativeAttemptsEl=isMathAssessment?doc.querySelector('#attempts'):null;
       const nativeScoreEl=isMathAssessment?doc.querySelector('#score'):null;
@@ -218,9 +219,9 @@
       function escapeHtml(value){return String(value??'—').replace(/[&<>"']/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]))}
       function normalizedText(value){return String(value??'').replace(/\s+/g,' ').trim()}
       function capturedProblem(){if(!isMathAssessment)return '';const annotated=doc.querySelector('[data-beard-problem]'),annotation=normalizedText(annotated?.getAttribute('data-beard-problem'));if(annotation)return annotation;return normalizedText(doc.querySelector('#problem')?.textContent)||'—'}
-      function capturedPrompt(){const prompt=normalizedText(doc.querySelector('#letter,#word')?.textContent);return prompt&&!/^(press\b|loading\b)/i.test(prompt)?prompt:'—'}
+      function capturedPrompt(){const prompt=normalizedText(doc.querySelector('[data-beard-prompt],#letter,#word')?.textContent);return prompt&&!/^(press\b|loading\b)/i.test(prompt)?prompt:'—'}
       function capturedAnswer(){if(showsPromptInsteadOfAnswer)return capturedPrompt();const answer=doc.querySelector('#answer');if(answer&&String(answer.value??'').trim())return String(answer.value).trim();const hour=doc.querySelector('#hourSelect'),minute=doc.querySelector('#minuteSelect');if(hour&&minute&&hour.value!==''&&minute.value!=='')return `${hour.value}:${String(minute.value).padStart(2,'0')}`;const selected=doc.querySelector('input[type="radio"]:checked,input[type="checkbox"]:checked');if(selected)return String(selected.value||selected.labels?.[0]?.textContent||'Selected').trim();const response=[...doc.querySelectorAll('textarea,input[type="text"],input[type="number"],input:not([type]),select')].find(field=>String(field.value??'').trim());return response?String(response.value).trim():'—'}
-      function logAnswer(outcome){answerHistory.push({outcome,problem:capturedProblem(),answer:capturedAnswer(),seconds:secondsToAnswer()})}
+      function logAnswer(outcome){answerHistory.push({outcome,problem:capturedProblem(),prompt:capturedPrompt(),answer:capturedAnswer(),seconds:secondsToAnswer()})}
       function render(){hud.percent.textContent=unscored?'Score: Pending':`Score: ${percentage()}%`;hud.attempts.textContent=`Attempts: ${attempts}`;hud.errors.textContent=`Errors: ${errors}`}
       function toast(text,outcome='neutral'){if(!text)return;hud.feedback.textContent=text;hud.feedback.className=`beard-feedback show ${outcome}`;clearTimeout(feedbackTimer);feedbackTimer=setTimeout(()=>hud.feedback.className='beard-feedback',1600)}
       function record(outcome,text){if(ended||usesNativeMathCounters||outcome===undefined)return;logAnswer(outcome);attempts++;if(outcome===false)errors++;render();toast(text||(outcome?'✓ Correct':'✗ Incorrect'),outcome?'good':'bad')}
@@ -269,7 +270,7 @@
         report.append(actions);
       }
       decorateSummary=function(){
-        const compactTimingReport=isPhonicsAssessment||isFryWordAssessment||isMathAssessment;
+        const compactTimingReport=isPhonicsAssessment||isFryWordAssessment||isMathAssessment||isSentenceCompletionAssessment;
         if(!compactTimingReport){standardDecorateSummary();return}
         const summary=[...doc.querySelectorAll('#summary,#results,.summary')].find(el=>el&&el.textContent.trim()&&win.getComputedStyle(el).display!=='none');
         if(!summary){clearCompactReportArtifacts();return}
@@ -282,21 +283,27 @@
           const seconds=item.seconds.toFixed(1);
           const answer=item.answer||'—';
           const problem=item.problem||'Math problem';
-          const ariaLabel='Attempt '+(index+1)+': '+(isMathAssessment?problem+', answer '+answer:answer)+', '+label+', '+seconds+' seconds';
+          const prompt=item.prompt||'Sentence prompt';
+          const detailedPrompt=isMathAssessment||isSentenceCompletionAssessment;
+          const promptText=isMathAssessment?problem:prompt;
+          const ariaLabel='Attempt '+(index+1)+': '+(detailedPrompt?promptText+', answer '+answer:answer)+', '+label+', '+seconds+' seconds';
           const content=isMathAssessment
             ?'<span class="beard-compact-timing-problem">'+escapeHtml(problem)+'</span><strong class="beard-compact-timing-answer '+className+'">'+escapeHtml(answer)+'</strong>'
-            :'<strong class="beard-compact-timing-prompt '+className+'">'+escapeHtml(answer)+'</strong>';
-          return '<article class="beard-compact-timing-row'+(isMathAssessment?' is-math':'')+'" aria-label="'+escapeHtml(ariaLabel)+'"><span class="beard-compact-timing-number">'+(index+1)+'.</span><span class="beard-compact-timing-content">'+content+'</span><span class="beard-compact-timing-time">'+seconds+' s</span></article>';
+            :isSentenceCompletionAssessment
+              ?'<span class="beard-compact-timing-problem">'+escapeHtml(prompt)+'</span><strong class="beard-compact-timing-answer '+className+'">'+escapeHtml(answer)+'</strong>'
+              :'<strong class="beard-compact-timing-prompt '+className+'">'+escapeHtml(answer)+'</strong>';
+          const rowClass=isMathAssessment?' is-math':isSentenceCompletionAssessment?' is-sentence-completion':'';
+          return '<article class="beard-compact-timing-row'+rowClass+'" aria-label="'+escapeHtml(ariaLabel)+'"><span class="beard-compact-timing-number">'+(index+1)+'.</span><span class="beard-compact-timing-content">'+content+'</span><span class="beard-compact-timing-time">'+seconds+' s</span></article>';
         }).join('');
         const report=doc.createElement('section');
-        report.className='beard-unified-summary'+(isMathAssessment?' is-math':'');
+        report.className='beard-unified-summary'+(isMathAssessment?' is-math':isSentenceCompletionAssessment?' is-sentence-completion':'');
         const date=new Date().toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
         const score=unscored?'Pending':percentage()+'%';
         const printPresentation=letterformPractice.summaryText();
         report.innerHTML='<h2>Assessment Results</h2><p class="beard-compact-report-meta"><strong>Date:</strong> '+date+' &nbsp;•&nbsp; <strong>Total time:</strong> '+formatTime(clock.elapsed())+' &nbsp;•&nbsp; <strong>Score:</strong> '+score+' &nbsp;•&nbsp; <strong>Attempts:</strong> '+attempts+' &nbsp;•&nbsp; <strong>Errors:</strong> '+errors+(printPresentation?' &nbsp;•&nbsp; <strong>Print:</strong> '+escapeHtml(printPresentation):'')+'</p>';
         const history=doc.createElement('section');
         history.className='beard-answer-history beard-compact-answer-history';
-        const timingKey=isMathAssessment?'Problem · answer in green = correct · answer in red = incorrect · seconds':'Word or letter · green = correct · red = incorrect · seconds';
+        const timingKey=isMathAssessment?'Problem · answer in green = correct · answer in red = incorrect · seconds':isSentenceCompletionAssessment?'Sentence · answer in green = correct · answer in red = incorrect · seconds':'Word or letter · green = correct · red = incorrect · seconds';
         history.innerHTML='<h3>Response timing</h3><p class="beard-compact-timing-key">'+timingKey+'</p>'+(cards?'<div class="beard-compact-timing-list">'+cards+'</div>':'<p class="beard-compact-timing-key">No responses recorded.</p>');
         report.append(history);
         addReportActions(report,restartSource);
