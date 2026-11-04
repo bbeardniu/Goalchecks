@@ -1,0 +1,3418 @@
+{
+  "schemaVersion": 1,
+  "grid": {
+    "columns": 4,
+    "rows": 4
+  },
+  "artStyle": "Original watercolor and colored-pencil children's-book illustrations on warm white paper.",
+  "sheets": {
+    "1": "storybook-01.webp",
+    "2": "storybook-02.webp",
+    "3": "storybook-03.webp",
+    "4": "storybook-04.webp",
+    "5": "storybook-05.webp",
+    "6": "storybook-06.webp",
+    "7": "storybook-07.webp",
+    "8": "storybook-08.webp",
+    "9": "storybook-09.webp",
+    "10": "storybook-10.webp",
+    "11": "storybook-11.webp",
+    "12": "storybook-12.webp",
+    "13": "storybook-13.webp",
+    "14": "storybook-14.webp"
+  },
+  "pictureOrder": [
+    {
+      "sheet": 1,
+      "index": 0,
+      "alt": "A dog running.",
+      "sentence": "The dog runs."
+    },
+    {
+      "sheet": 1,
+      "index": 1,
+      "alt": "A cat sleeping.",
+      "sentence": "The cat sleeps."
+    },
+    {
+      "sheet": 1,
+      "index": 2,
+      "alt": "A bird flying.",
+      "sentence": "The bird flies."
+    },
+    {
+      "sheet": 1,
+      "index": 3,
+      "alt": "A fish swimming.",
+      "sentence": "The fish swims."
+    },
+    {
+      "sheet": 1,
+      "index": 4,
+      "alt": "A frog jumping.",
+      "sentence": "The frog jumps."
+    },
+    {
+      "sheet": 1,
+      "index": 5,
+      "alt": "A cow eating grass.",
+      "sentence": "The cow eats."
+    },
+    {
+      "sheet": 1,
+      "index": 6,
+      "alt": "A pig rolling.",
+      "sentence": "The pig rolls."
+    },
+    {
+      "sheet": 1,
+      "index": 7,
+      "alt": "A duck quacking.",
+      "sentence": "The duck quacks."
+    },
+    {
+      "sheet": 1,
+      "index": 8,
+      "alt": "A horse trotting.",
+      "sentence": "The horse trots."
+    },
+    {
+      "sheet": 1,
+      "index": 9,
+      "alt": "A sheep resting.",
+      "sentence": "The sheep rests."
+    },
+    {
+      "sheet": 1,
+      "index": 10,
+      "alt": "A smiling boy.",
+      "sentence": "A boy smiles."
+    },
+    {
+      "sheet": 1,
+      "index": 11,
+      "alt": "A girl waving.",
+      "sentence": "A girl waves."
+    },
+    {
+      "sheet": 1,
+      "index": 12,
+      "alt": "A baby crawling.",
+      "sentence": "The baby crawls."
+    },
+    {
+      "sheet": 1,
+      "index": 13,
+      "alt": "A mother cooking soup.",
+      "sentence": "Mom cooks soup."
+    },
+    {
+      "sheet": 1,
+      "index": 14,
+      "alt": "A father reading books.",
+      "sentence": "Dad reads books."
+    },
+    {
+      "sheet": 1,
+      "index": 15,
+      "alt": "A shining sun.",
+      "sentence": "The sun shines."
+    },
+    {
+      "sheet": 2,
+      "index": 0,
+      "alt": "Rain falling.",
+      "sentence": "The rain falls."
+    },
+    {
+      "sheet": 2,
+      "index": 1,
+      "alt": "Snow covering grass.",
+      "sentence": "Snow covers grass."
+    },
+    {
+      "sheet": 2,
+      "index": 2,
+      "alt": "A glowing moon.",
+      "sentence": "The moon glows."
+    },
+    {
+      "sheet": 2,
+      "index": 3,
+      "alt": "Stars twinkling at night.",
+      "sentence": "Stars twinkle tonight."
+    },
+    {
+      "sheet": 2,
+      "index": 4,
+      "alt": "A kite rising.",
+      "sentence": "A kite rises."
+    },
+    {
+      "sheet": 2,
+      "index": 5,
+      "alt": "A bus stopping.",
+      "sentence": "The bus stops."
+    },
+    {
+      "sheet": 2,
+      "index": 6,
+      "alt": "A moving car.",
+      "sentence": "A car moves."
+    },
+    {
+      "sheet": 2,
+      "index": 7,
+      "alt": "A train rolling.",
+      "sentence": "The train rolls."
+    },
+    {
+      "sheet": 2,
+      "index": 8,
+      "alt": "A boat sailing.",
+      "sentence": "A boat sails."
+    },
+    {
+      "sheet": 2,
+      "index": 9,
+      "alt": "A plane landing.",
+      "sentence": "A plane lands."
+    },
+    {
+      "sheet": 2,
+      "index": 10,
+      "alt": "A bike turning.",
+      "sentence": "The bike turns."
+    },
+    {
+      "sheet": 2,
+      "index": 11,
+      "alt": "A truck honking.",
+      "sentence": "A truck honks."
+    },
+    {
+      "sheet": 2,
+      "index": 12,
+      "alt": "A child painting.",
+      "sentence": "The child paints."
+    },
+    {
+      "sheet": 2,
+      "index": 13,
+      "alt": "A girl dancing.",
+      "sentence": "A girl dances."
+    },
+    {
+      "sheet": 2,
+      "index": 14,
+      "alt": "A boy kicking balls.",
+      "sentence": "The boy kicks balls."
+    },
+    {
+      "sheet": 2,
+      "index": 15,
+      "alt": "A girl singing.",
+      "sentence": "The girl sings."
+    },
+    {
+      "sheet": 3,
+      "index": 0,
+      "alt": "A laughing baby.",
+      "sentence": "A baby laughs."
+    },
+    {
+      "sheet": 3,
+      "index": 1,
+      "alt": "A child clapping.",
+      "sentence": "The child claps."
+    },
+    {
+      "sheet": 3,
+      "index": 2,
+      "alt": "A teacher writing words.",
+      "sentence": "A teacher writes words."
+    },
+    {
+      "sheet": 3,
+      "index": 3,
+      "alt": "A student listening.",
+      "sentence": "A student listens."
+    },
+    {
+      "sheet": 3,
+      "index": 4,
+      "alt": "A baker stirring batter.",
+      "sentence": "The baker stirs batter."
+    },
+    {
+      "sheet": 3,
+      "index": 5,
+      "alt": "A chef chopping carrots.",
+      "sentence": "A chef chops carrots."
+    },
+    {
+      "sheet": 3,
+      "index": 6,
+      "alt": "A nurse helping children.",
+      "sentence": "The nurse helps kids."
+    },
+    {
+      "sheet": 3,
+      "index": 7,
+      "alt": "A doctor checking a heart.",
+      "sentence": "A doctor checks hearts."
+    },
+    {
+      "sheet": 3,
+      "index": 8,
+      "alt": "A buzzing bee.",
+      "sentence": "The bee buzzes."
+    },
+    {
+      "sheet": 3,
+      "index": 9,
+      "alt": "A butterfly landing on a flower.",
+      "sentence": "A butterfly lands."
+    },
+    {
+      "sheet": 3,
+      "index": 10,
+      "alt": "An ant carrying crumbs.",
+      "sentence": "An ant carries crumbs."
+    },
+    {
+      "sheet": 3,
+      "index": 11,
+      "alt": "A snail crawling.",
+      "sentence": "A snail crawls."
+    },
+    {
+      "sheet": 3,
+      "index": 12,
+      "alt": "A turtle walking.",
+      "sentence": "The turtle walks."
+    },
+    {
+      "sheet": 3,
+      "index": 13,
+      "alt": "A rabbit hopping.",
+      "sentence": "A rabbit hops."
+    },
+    {
+      "sheet": 3,
+      "index": 14,
+      "alt": "A mouse hiding.",
+      "sentence": "The mouse hides."
+    },
+    {
+      "sheet": 3,
+      "index": 15,
+      "alt": "A fox running.",
+      "sentence": "The fox runs."
+    },
+    {
+      "sheet": 4,
+      "index": 0,
+      "alt": "A bear climbing a tree.",
+      "sentence": "A bear climbs."
+    },
+    {
+      "sheet": 4,
+      "index": 1,
+      "alt": "A lion roaring.",
+      "sentence": "The lion roars."
+    },
+    {
+      "sheet": 4,
+      "index": 2,
+      "alt": "An owl hooting at night.",
+      "sentence": "The owl hoots."
+    },
+    {
+      "sheet": 4,
+      "index": 3,
+      "alt": "A monkey swinging.",
+      "sentence": "A monkey swings."
+    },
+    {
+      "sheet": 4,
+      "index": 4,
+      "alt": "A panda chewing bamboo.",
+      "sentence": "The panda chews."
+    },
+    {
+      "sheet": 4,
+      "index": 5,
+      "alt": "A zebra walking.",
+      "sentence": "A zebra walks."
+    },
+    {
+      "sheet": 4,
+      "index": 6,
+      "alt": "A camel drinking.",
+      "sentence": "The camel drinks."
+    },
+    {
+      "sheet": 4,
+      "index": 7,
+      "alt": "A penguin sliding on ice.",
+      "sentence": "A penguin slides."
+    },
+    {
+      "sheet": 4,
+      "index": 8,
+      "alt": "A seal clapping.",
+      "sentence": "The seal claps."
+    },
+    {
+      "sheet": 4,
+      "index": 9,
+      "alt": "A whale splashing.",
+      "sentence": "A whale splashes."
+    },
+    {
+      "sheet": 4,
+      "index": 10,
+      "alt": "A shark swimming.",
+      "sentence": "The shark swims."
+    },
+    {
+      "sheet": 4,
+      "index": 11,
+      "alt": "A crab walking.",
+      "sentence": "A crab walks."
+    },
+    {
+      "sheet": 4,
+      "index": 12,
+      "alt": "A child digging sand.",
+      "sentence": "A child digs sand."
+    },
+    {
+      "sheet": 4,
+      "index": 13,
+      "alt": "A child building towers.",
+      "sentence": "A child builds towers."
+    },
+    {
+      "sheet": 4,
+      "index": 14,
+      "alt": "A child opening gifts.",
+      "sentence": "The child opens gifts."
+    },
+    {
+      "sheet": 4,
+      "index": 15,
+      "alt": "A child hugging a teddy bear.",
+      "sentence": "A child hugs teddy."
+    },
+    {
+      "sheet": 5,
+      "index": 0,
+      "alt": "A girl petting a puppy.",
+      "sentence": "The girl pets a puppy."
+    },
+    {
+      "sheet": 5,
+      "index": 1,
+      "alt": "A boy feeding ducks.",
+      "sentence": "The boy feeds ducks."
+    },
+    {
+      "sheet": 5,
+      "index": 2,
+      "alt": "A child blowing bubbles.",
+      "sentence": "A child blows bubbles."
+    },
+    {
+      "sheet": 5,
+      "index": 3,
+      "alt": "A baby holding blocks.",
+      "sentence": "The baby holds blocks."
+    },
+    {
+      "sheet": 5,
+      "index": 4,
+      "alt": "A child stacking cups.",
+      "sentence": "The child stacks cups."
+    },
+    {
+      "sheet": 5,
+      "index": 5,
+      "alt": "A girl skipping rope.",
+      "sentence": "A girl skips rope."
+    },
+    {
+      "sheet": 5,
+      "index": 6,
+      "alt": "A boy rolling dough.",
+      "sentence": "A boy rolls dough."
+    },
+    {
+      "sheet": 5,
+      "index": 7,
+      "alt": "A child coloring stars.",
+      "sentence": "The child colors stars."
+    },
+    {
+      "sheet": 5,
+      "index": 8,
+      "alt": "A child washing hands.",
+      "sentence": "A child washes hands."
+    },
+    {
+      "sheet": 5,
+      "index": 9,
+      "alt": "A boy drinking milk.",
+      "sentence": "The boy drinks milk."
+    },
+    {
+      "sheet": 5,
+      "index": 10,
+      "alt": "A girl eating grapes.",
+      "sentence": "A girl eats grapes."
+    },
+    {
+      "sheet": 5,
+      "index": 11,
+      "alt": "A baby napping.",
+      "sentence": "The baby naps quietly."
+    },
+    {
+      "sheet": 5,
+      "index": 12,
+      "alt": "A child kicking a ball.",
+      "sentence": "The child kicks one ball."
+    },
+    {
+      "sheet": 5,
+      "index": 13,
+      "alt": "A girl catching leaves.",
+      "sentence": "A girl catches leaves."
+    },
+    {
+      "sheet": 5,
+      "index": 14,
+      "alt": "A boy carrying boxes.",
+      "sentence": "A boy carries boxes."
+    },
+    {
+      "sheet": 5,
+      "index": 15,
+      "alt": "A child pulling a sled.",
+      "sentence": "The child pulls a sled."
+    },
+    {
+      "sheet": 6,
+      "index": 0,
+      "alt": "A boy opening a door.",
+      "sentence": "The boy opens a door."
+    },
+    {
+      "sheet": 6,
+      "index": 1,
+      "alt": "A child closing a box.",
+      "sentence": "The child closes a box."
+    },
+    {
+      "sheet": 6,
+      "index": 2,
+      "alt": "A girl wearing boots.",
+      "sentence": "A girl wears boots."
+    },
+    {
+      "sheet": 6,
+      "index": 3,
+      "alt": "A boy finding shells.",
+      "sentence": "A boy finds shells."
+    },
+    {
+      "sheet": 6,
+      "index": 4,
+      "alt": "A child seeing a rainbow.",
+      "sentence": "The child sees a rainbow."
+    },
+    {
+      "sheet": 6,
+      "index": 5,
+      "alt": "A girl blowing a horn.",
+      "sentence": "The girl blows a horn."
+    },
+    {
+      "sheet": 6,
+      "index": 6,
+      "alt": "A boy using crayons.",
+      "sentence": "A boy uses crayons."
+    },
+    {
+      "sheet": 6,
+      "index": 7,
+      "alt": "A child watering plants.",
+      "sentence": "The child waters plants."
+    },
+    {
+      "sheet": 6,
+      "index": 8,
+      "alt": "A girl picking flowers.",
+      "sentence": "A girl picks flowers."
+    },
+    {
+      "sheet": 6,
+      "index": 9,
+      "alt": "A boy collecting rocks.",
+      "sentence": "A boy collects rocks."
+    },
+    {
+      "sheet": 6,
+      "index": 10,
+      "alt": "A child riding a scooter.",
+      "sentence": "The child rides a scooter."
+    },
+    {
+      "sheet": 6,
+      "index": 11,
+      "alt": "A girl throwing a ball.",
+      "sentence": "The girl throws a ball."
+    },
+    {
+      "sheet": 6,
+      "index": 12,
+      "alt": "A boy fixing a toy.",
+      "sentence": "The boy fixes a toy."
+    },
+    {
+      "sheet": 6,
+      "index": 13,
+      "alt": "A child folding paper.",
+      "sentence": "The child folds paper."
+    },
+    {
+      "sheet": 6,
+      "index": 14,
+      "alt": "A girl hugging dolls.",
+      "sentence": "The girl hugs dolls."
+    },
+    {
+      "sheet": 6,
+      "index": 15,
+      "alt": "A boy sweeping floors.",
+      "sentence": "The boy sweeps floors."
+    },
+    {
+      "sheet": 7,
+      "index": 0,
+      "alt": "A child planting seeds.",
+      "sentence": "The child plants seeds."
+    },
+    {
+      "sheet": 7,
+      "index": 1,
+      "alt": "A girl seeing moonlight.",
+      "sentence": "A girl sees moonlight."
+    },
+    {
+      "sheet": 7,
+      "index": 2,
+      "alt": "A boy spotting stars.",
+      "sentence": "A boy spots stars."
+    },
+    {
+      "sheet": 7,
+      "index": 3,
+      "alt": "A child reading stories.",
+      "sentence": "The child reads stories."
+    }
+  ],
+  "completionGrade2": [
+    {
+      "sheet": 13,
+      "index": 4,
+      "alt": "A small kitten curled up asleep in a cozy woven basket.",
+      "sentence": "The kitten slept in a cozy ___."
+    },
+    {
+      "sheet": 12,
+      "index": 6,
+      "alt": "A squirrel with a large bushy tail holding a nut, with more nuts by a tree.",
+      "sentence": "A squirrel has a bushy ___."
+    },
+    {
+      "sheet": 13,
+      "index": 2,
+      "alt": "A child opening a colorful umbrella while rain falls.",
+      "sentence": "We open an umbrella when it ___."
+    },
+    {
+      "sheet": 7,
+      "index": 3,
+      "alt": "A child reading stories.",
+      "sentence": "I read a story from a ___."
+    },
+    {
+      "sheet": 11,
+      "index": 14,
+      "alt": "A peanut-butter-and-jelly sandwich cut in half on a small plate.",
+      "sentence": "Peanut butter and jelly make a ___."
+    },
+    {
+      "sheet": 11,
+      "index": 2,
+      "alt": "A child sharpening a wooden pencil in a small handheld sharpener.",
+      "sentence": "I sharpen my pencil with a ___."
+    },
+    {
+      "sheet": 11,
+      "index": 5,
+      "alt": "A cheerful playground with a child sliding down a slide.",
+      "sentence": "At recess, we slide down the ___."
+    },
+    {
+      "sheet": 1,
+      "index": 3,
+      "alt": "A fish swimming.",
+      "sentence": "Fish swim in the ___."
+    },
+    {
+      "sheet": 7,
+      "index": 10,
+      "alt": "A birthday cake with small lit candles on a table.",
+      "sentence": "We blow out candles on a birthday ___."
+    },
+    {
+      "sheet": 2,
+      "index": 3,
+      "alt": "Stars twinkling at night.",
+      "sentence": "The stars sparkle in the ___."
+    },
+    {
+      "sheet": 7,
+      "index": 0,
+      "alt": "A child planting seeds.",
+      "sentence": "A seed needs soil, water, and sun to ___."
+    },
+    {
+      "sheet": 8,
+      "index": 13,
+      "alt": "A kind dentist checking a child's teeth in a bright friendly dental room.",
+      "sentence": "A dentist checks our ___."
+    },
+    {
+      "sheet": 2,
+      "index": 1,
+      "alt": "Snow covering grass.",
+      "sentence": "Fresh snow is usually ___."
+    },
+    {
+      "sheet": 6,
+      "index": 2,
+      "alt": "A girl wearing boots.",
+      "sentence": "We put shoes on our ___."
+    },
+    {
+      "sheet": 10,
+      "index": 3,
+      "alt": "Children borrowing books from a friendly quiet library counter.",
+      "sentence": "We borrow books from the ___."
+    },
+    {
+      "sheet": 3,
+      "index": 8,
+      "alt": "A buzzing bee.",
+      "sentence": "Bees make ___."
+    },
+    {
+      "sheet": 10,
+      "index": 8,
+      "alt": "An envelope with a small colored postage stamp beside an open mailbox.",
+      "sentence": "We put a letter in a ___."
+    },
+    {
+      "sheet": 2,
+      "index": 10,
+      "alt": "A bike turning.",
+      "sentence": "A bicycle has two ___."
+    },
+    {
+      "sheet": 10,
+      "index": 7,
+      "alt": "A child using a magnifying glass to inspect a small leaf; an enlarged detail visible through the lens.",
+      "sentence": "A magnifying glass makes small things look ___."
+    },
+    {
+      "sheet": 9,
+      "index": 1,
+      "alt": "A young drummer playing a large drum with two drumsticks.",
+      "sentence": "A drummer plays a ___."
+    },
+    {
+      "sheet": 9,
+      "index": 7,
+      "alt": "A friendly firefighter in a red helmet spraying water from a hose beside a fire engine.",
+      "sentence": "A firefighter sprays water from a ___."
+    },
+    {
+      "sheet": 14,
+      "index": 14,
+      "alt": "A chef stirring a pot of soup with a wooden spoon.",
+      "sentence": "A chef stirs soup in a ___."
+    },
+    {
+      "sheet": 10,
+      "index": 0,
+      "alt": "A clear ice cube melting into a small puddle in warm sunshine.",
+      "sentence": "Water can freeze into ___."
+    },
+    {
+      "sheet": 2,
+      "index": 6,
+      "alt": "A moving car.",
+      "sentence": "We buckle a seat belt in a ___."
+    },
+    {
+      "sheet": 10,
+      "index": 15,
+      "alt": "A friendly orange octopus underwater, all eight arms clearly separated and visible.",
+      "sentence": "An octopus has eight ___."
+    },
+    {
+      "sheet": 6,
+      "index": 4,
+      "alt": "A child seeing a rainbow.",
+      "sentence": "A rainbow has many bright ___."
+    },
+    {
+      "sheet": 12,
+      "index": 1,
+      "alt": "A child's hands safely cutting a piece of colored paper with blunt school scissors.",
+      "sentence": "We use scissors to cut ___."
+    },
+    {
+      "sheet": 3,
+      "index": 12,
+      "alt": "A turtle walking.",
+      "sentence": "A turtle carries a shell on its ___."
+    },
+    {
+      "sheet": 2,
+      "index": 1,
+      "alt": "Snow covering grass.",
+      "sentence": "The opposite of hot is ___."
+    },
+    {
+      "sheet": 1,
+      "index": 10,
+      "alt": "A smiling boy.",
+      "sentence": "A word that means happy is ___."
+    },
+    {
+      "sheet": 3,
+      "index": 10,
+      "alt": "An ant carrying crumbs.",
+      "sentence": "A word that means small is ___."
+    },
+    {
+      "sheet": 5,
+      "index": 13,
+      "alt": "A girl catching leaves.",
+      "sentence": "The plural of leaf is ___."
+    },
+    {
+      "sheet": 7,
+      "index": 5,
+      "alt": "Two happy babies sitting together on a soft play mat.",
+      "sentence": "The plural of baby is ___."
+    },
+    {
+      "sheet": 3,
+      "index": 2,
+      "alt": "A teacher writing words.",
+      "sentence": "At the beginning of a sentence, we use a capital ___."
+    },
+    {
+      "sheet": 11,
+      "index": 8,
+      "alt": "A curious child raising a hand to ask a teacher a question, no text.",
+      "sentence": "We put a ___ at the end of a question."
+    },
+    {
+      "sheet": 1,
+      "index": 11,
+      "alt": "A girl waving.",
+      "sentence": "Maya is a person's ___."
+    },
+    {
+      "sheet": 13,
+      "index": 8,
+      "alt": "A bright red ball resting on green grass.",
+      "sentence": "In ‘I see a red ball,’ the word red tells the ball's ___."
+    },
+    {
+      "sheet": 13,
+      "index": 9,
+      "alt": "A child cupping one hand behind an ear to listen to a small singing bird.",
+      "sentence": "We use our ears to ___."
+    },
+    {
+      "sheet": 13,
+      "index": 10,
+      "alt": "A child smelling a flower with their nose close to its petals.",
+      "sentence": "We use our nose to ___."
+    },
+    {
+      "sheet": 13,
+      "index": 11,
+      "alt": "A child looking carefully with open eyes at a butterfly nearby.",
+      "sentence": "We use our eyes to ___."
+    },
+    {
+      "sheet": 13,
+      "index": 12,
+      "alt": "A child's hand gently touching soft rabbit fur.",
+      "sentence": "We use our hands to ___."
+    },
+    {
+      "sheet": 11,
+      "index": 9,
+      "alt": "A soft brown rabbit eating a crunchy orange carrot.",
+      "sentence": "A rabbit eats a crunchy ___."
+    },
+    {
+      "sheet": 13,
+      "index": 13,
+      "alt": "A gentle farm cow beside a small metal pail of milk.",
+      "sentence": "A cow gives us ___."
+    },
+    {
+      "sheet": 9,
+      "index": 10,
+      "alt": "A pond with a frog on a lily pad and clearly visible little tadpoles in the water.",
+      "sentence": "A frog starts life as a ___."
+    },
+    {
+      "sheet": 12,
+      "index": 5,
+      "alt": "A small friendly spider sitting in a delicate web between two branches.",
+      "sentence": "A spider spins a ___."
+    },
+    {
+      "sheet": 12,
+      "index": 15,
+      "alt": "A train arriving alongside a small station platform.",
+      "sentence": "A train travels on ___."
+    },
+    {
+      "sheet": 7,
+      "index": 3,
+      "alt": "A child reading stories.",
+      "sentence": "In a story, a character is a person or ___."
+    },
+    {
+      "sheet": 7,
+      "index": 3,
+      "alt": "A child reading stories.",
+      "sentence": "The setting tells where a story ___."
+    },
+    {
+      "sheet": 7,
+      "index": 3,
+      "alt": "A child reading stories.",
+      "sentence": "The ending tells how the problem is ___."
+    },
+    {
+      "sheet": 3,
+      "index": 2,
+      "alt": "A teacher writing words.",
+      "sentence": "A sentence needs a naming part and a telling ___."
+    },
+    {
+      "sheet": 10,
+      "index": 4,
+      "alt": "An open lunchbox holding a sandwich, an apple and a small snack.",
+      "sentence": "We ___ our hands before lunch."
+    },
+    {
+      "sheet": 11,
+      "index": 9,
+      "alt": "A soft brown rabbit eating a crunchy orange carrot.",
+      "sentence": "The rabbit has soft ___."
+    },
+    {
+      "sheet": 8,
+      "index": 4,
+      "alt": "A large simple classroom analog clock hanging on a wall; clear face, no decorative writing.",
+      "sentence": "We use a ___ to tell time."
+    },
+    {
+      "sheet": 1,
+      "index": 3,
+      "alt": "A fish swimming.",
+      "sentence": "A fish can ___ in water."
+    },
+    {
+      "sheet": 7,
+      "index": 9,
+      "alt": "Baby birds sitting in a twig nest high in a leafy tree.",
+      "sentence": "The baby bird is in a ___."
+    },
+    {
+      "sheet": 6,
+      "index": 2,
+      "alt": "A girl wearing boots.",
+      "sentence": "I wore boots because the ground was ___."
+    },
+    {
+      "sheet": 10,
+      "index": 3,
+      "alt": "Children borrowing books from a friendly quiet library counter.",
+      "sentence": "The librarian asked us to be ___."
+    },
+    {
+      "sheet": 1,
+      "index": 0,
+      "alt": "A dog running.",
+      "sentence": "The dog wagged ___ tail."
+    },
+    {
+      "sheet": 2,
+      "index": 2,
+      "alt": "A glowing moon.",
+      "sentence": "The moon shines at ___."
+    },
+    {
+      "sheet": 7,
+      "index": 0,
+      "alt": "A child planting seeds.",
+      "sentence": "We planted seeds in the ___."
+    },
+    {
+      "sheet": 13,
+      "index": 5,
+      "alt": "A cat sleeping underneath a wooden chair.",
+      "sentence": "Yesterday, the cat ___ under the chair."
+    },
+    {
+      "sheet": 11,
+      "index": 5,
+      "alt": "A cheerful playground with a child sliding down a slide.",
+      "sentence": "Yesterday, Mia and I ___ to the playground."
+    },
+    {
+      "sheet": 1,
+      "index": 15,
+      "alt": "A shining sun.",
+      "sentence": "The sun is ___ than a ball."
+    },
+    {
+      "sheet": 12,
+      "index": 7,
+      "alt": "Dark gray rain clouds over a small landscape, a distant gentle lightning flash.",
+      "sentence": "I can hear thunder during a ___."
+    },
+    {
+      "sheet": 7,
+      "index": 7,
+      "alt": "A baker placing two golden bread loaves into an oven.",
+      "sentence": "The baker put bread in the ___."
+    },
+    {
+      "sheet": 10,
+      "index": 9,
+      "alt": "Two children examining a simple trail map before a forest walk, no legible text.",
+      "sentence": "A map can help us find our ___."
+    },
+    {
+      "sheet": 14,
+      "index": 8,
+      "alt": "A puppy chewing gently on a small rubber toy.",
+      "sentence": "The puppy chewed on a rubber ___."
+    },
+    {
+      "sheet": 6,
+      "index": 0,
+      "alt": "A boy opening a door.",
+      "sentence": "Please ___ the door softly."
+    },
+    {
+      "sheet": 9,
+      "index": 11,
+      "alt": "A children's soccer team cheering together after a goal, with a goal net behind them.",
+      "sentence": "Yesterday, our team ___."
+    },
+    {
+      "sheet": 3,
+      "index": 9,
+      "alt": "A butterfly landing on a flower.",
+      "sentence": "A butterfly has colorful ___."
+    },
+    {
+      "sheet": 11,
+      "index": 10,
+      "alt": "An empty clean metal soup can being placed in a recycling bin, no logos or writing.",
+      "sentence": "We can recycle an empty ___ can."
+    },
+    {
+      "sheet": 9,
+      "index": 10,
+      "alt": "A pond with a frog on a lily pad and clearly visible little tadpoles in the water.",
+      "sentence": "The frog jumped into the ___."
+    },
+    {
+      "sheet": 3,
+      "index": 7,
+      "alt": "A doctor checking a heart.",
+      "sentence": "The doctor listened to my ___."
+    },
+    {
+      "sheet": 2,
+      "index": 4,
+      "alt": "A kite rising.",
+      "sentence": "The kite flew high ___ the trees."
+    },
+    {
+      "sheet": 10,
+      "index": 8,
+      "alt": "An envelope with a small colored postage stamp beside an open mailbox.",
+      "sentence": "We put a stamp on a ___."
+    },
+    {
+      "sheet": 10,
+      "index": 0,
+      "alt": "A clear ice cube melting into a small puddle in warm sunshine.",
+      "sentence": "The ice cube began to ___ in the sun."
+    },
+    {
+      "sheet": 6,
+      "index": 15,
+      "alt": "A boy sweeping floors.",
+      "sentence": "I used a ___ to sweep the floor."
+    },
+    {
+      "sheet": 11,
+      "index": 3,
+      "alt": "An open picnic basket containing sandwiches and apples on a checkered picnic blanket.",
+      "sentence": "The picnic basket held ___ and apples."
+    },
+    {
+      "sheet": 8,
+      "index": 3,
+      "alt": "A small caterpillar on a green leaf beside a butterfly, showing the two animals clearly.",
+      "sentence": "We watched the caterpillar turn into a ___."
+    },
+    {
+      "sheet": 9,
+      "index": 8,
+      "alt": "Firefighters holding a hose spraying water beside a red fire engine.",
+      "sentence": "The firefighters used a hose to spray ___."
+    },
+    {
+      "sheet": 6,
+      "index": 6,
+      "alt": "A boy using crayons.",
+      "sentence": "My sister ___ a picture for me yesterday."
+    },
+    {
+      "sheet": 11,
+      "index": 6,
+      "alt": "A child in muddy shoes standing beside a puddle after rain.",
+      "sentence": "We saw a ___ on the road after the rain."
+    },
+    {
+      "sheet": 3,
+      "index": 2,
+      "alt": "A teacher writing words.",
+      "sentence": "The teacher wrote the date on the ___."
+    },
+    {
+      "sheet": 9,
+      "index": 13,
+      "alt": "A farm hen sitting beside a nest containing one egg.",
+      "sentence": "At the farm, the hen laid an ___."
+    },
+    {
+      "sheet": 12,
+      "index": 15,
+      "alt": "A train arriving alongside a small station platform.",
+      "sentence": "The train stopped at the ___."
+    },
+    {
+      "sheet": 10,
+      "index": 4,
+      "alt": "An open lunchbox holding a sandwich, an apple and a small snack.",
+      "sentence": "I packed a snack in my ___."
+    },
+    {
+      "sheet": 12,
+      "index": 6,
+      "alt": "A squirrel with a large bushy tail holding a nut, with more nuts by a tree.",
+      "sentence": "A squirrel likes to gather ___."
+    },
+    {
+      "sheet": 7,
+      "index": 3,
+      "alt": "A child reading stories.",
+      "sentence": "We ___ a story before bed."
+    },
+    {
+      "sheet": 12,
+      "index": 3,
+      "alt": "A snowman with a carrot nose and a knitted scarf wrapped around its neck.",
+      "sentence": "The snowman wore a scarf around its ___."
+    },
+    {
+      "sheet": 9,
+      "index": 3,
+      "alt": "A hand using a pink eraser to rub out a pencil mark on paper.",
+      "sentence": "I used an eraser to ___ a mistake."
+    },
+    {
+      "sheet": 3,
+      "index": 8,
+      "alt": "A buzzing bee.",
+      "sentence": "The bee buzzed from flower to ___."
+    },
+    {
+      "sheet": 8,
+      "index": 11,
+      "alt": "A child at a zebra crossing looking left and right before crossing with an adult.",
+      "sentence": "We must ___ both ways before crossing the street."
+    },
+    {
+      "sheet": 3,
+      "index": 5,
+      "alt": "A chef chopping carrots.",
+      "sentence": "The chef chopped ___ for the soup."
+    },
+    {
+      "sheet": 9,
+      "index": 9,
+      "alt": "A child shining a flashlight in a dark room, creating a bright cone of light.",
+      "sentence": "A flashlight helps us see in the ___."
+    },
+    {
+      "sheet": 14,
+      "index": 5,
+      "alt": "A child's hands mixing red paint and white paint to create a pink paint puddle on an art palette.",
+      "sentence": "The artist mixed red and white paint to make ___."
+    },
+    {
+      "sheet": 8,
+      "index": 1,
+      "alt": "Children camping in a cozy canvas tent under a clear night sky.",
+      "sentence": "The campers slept in a ___."
+    },
+    {
+      "sheet": 9,
+      "index": 12,
+      "alt": "An adult using a hammer to tap a nail into a wooden board.",
+      "sentence": "Dad used a hammer to pound a ___."
+    },
+    {
+      "sheet": 7,
+      "index": 15,
+      "alt": "A paper calendar hanging on a wall, abstract grid only with no legible text.",
+      "sentence": "A calendar shows the days of the ___."
+    },
+    {
+      "sheet": 8,
+      "index": 6,
+      "alt": "Three colorful raincoats hanging neatly on wooden wall hooks.",
+      "sentence": "We put our wet coats on the ___ to dry."
+    },
+    {
+      "sheet": 5,
+      "index": 2,
+      "alt": "A child blowing bubbles.",
+      "sentence": "The baby smiled when she saw the ___."
+    }
+  ],
+  "completionGrade3": [
+    {
+      "sheet": 14,
+      "index": 15,
+      "alt": "A child handing a book to a smiling librarian at a library counter.",
+      "sentence": "Yesterday, Maya ____ her library book."
+    },
+    {
+      "sheet": 2,
+      "index": 2,
+      "alt": "A glowing moon.",
+      "sentence": "Last night, the bright moon ____ above the trees."
+    },
+    {
+      "sheet": 9,
+      "index": 14,
+      "alt": "A child's hiking backpack open beside snacks and two reusable water bottles.",
+      "sentence": "We packed both snacks ____ bottles of water for the hike."
+    },
+    {
+      "sheet": 12,
+      "index": 9,
+      "alt": "A young sunflower growing from dark soil, with sunshine and a small watering can.",
+      "sentence": "The tiny seed will ____ into a sunflower."
+    },
+    {
+      "sheet": 6,
+      "index": 2,
+      "alt": "A girl wearing boots.",
+      "sentence": "Marcus put his boots ____ the muddy porch."
+    },
+    {
+      "sheet": 5,
+      "index": 0,
+      "alt": "A girl petting a puppy.",
+      "sentence": "The puppy wagged ____ tail."
+    },
+    {
+      "sheet": 2,
+      "index": 0,
+      "alt": "Rain falling.",
+      "sentence": "We could not play outside ____ it was raining."
+    },
+    {
+      "sheet": 14,
+      "index": 14,
+      "alt": "A chef stirring a pot of soup with a wooden spoon.",
+      "sentence": "The chef ____ the soup with a wooden spoon."
+    },
+    {
+      "sheet": 14,
+      "index": 7,
+      "alt": "A rabbit hiding among tall green grass.",
+      "sentence": "The rabbit hid ____ the tall grass."
+    },
+    {
+      "sheet": 7,
+      "index": 6,
+      "alt": "A sleeping baby in a crib while an older child nearby holds a finger to their lips.",
+      "sentence": "Lena spoke ____ so the baby could sleep."
+    },
+    {
+      "sheet": 14,
+      "index": 1,
+      "alt": "Three small blue birds flying over a calm pond.",
+      "sentence": "Three blue ____ flew over the pond."
+    },
+    {
+      "sheet": 7,
+      "index": 0,
+      "alt": "A child planting seeds.",
+      "sentence": "The class planted ____ garden behind the school."
+    },
+    {
+      "sheet": 6,
+      "index": 3,
+      "alt": "A boy finding shells.",
+      "sentence": "I found a shiny shell ____ the beach."
+    },
+    {
+      "sheet": 9,
+      "index": 7,
+      "alt": "A friendly firefighter in a red helmet spraying water from a hose beside a fire engine.",
+      "sentence": "The firefighter wore a ____ helmet."
+    },
+    {
+      "sheet": 3,
+      "index": 2,
+      "alt": "A teacher writing words.",
+      "sentence": "When the bell rang, the students ____ their papers."
+    },
+    {
+      "sheet": 7,
+      "index": 13,
+      "alt": "A wooden footbridge crossing a small stream.",
+      "sentence": "The old bridge was ____ than the new one."
+    },
+    {
+      "sheet": 11,
+      "index": 1,
+      "alt": "A cheerful small street parade with musicians and people waving.",
+      "sentence": "We watched the parade ____ Saturday morning."
+    },
+    {
+      "sheet": 14,
+      "index": 6,
+      "alt": "A bushy-tailed squirrel carrying an acorn toward its nest in a tree.",
+      "sentence": "The squirrel carried an acorn ____ its nest."
+    },
+    {
+      "sheet": 12,
+      "index": 12,
+      "alt": "A child brushing teeth at a bathroom sink before bed.",
+      "sentence": "Nora ____ her teeth before bed."
+    },
+    {
+      "sheet": 7,
+      "index": 7,
+      "alt": "A baker placing two golden bread loaves into an oven.",
+      "sentence": "The baker made ____ loaves of bread."
+    },
+    {
+      "sheet": 12,
+      "index": 7,
+      "alt": "Dark gray rain clouds over a small landscape, a distant gentle lightning flash.",
+      "sentence": "The storm clouds looked both dark ____ heavy."
+    },
+    {
+      "sheet": 11,
+      "index": 4,
+      "alt": "An adult hanging a framed drawing neatly on a wall.",
+      "sentence": "Dad hung the picture ____ the wall."
+    },
+    {
+      "sheet": 3,
+      "index": 12,
+      "alt": "A turtle walking.",
+      "sentence": "The turtle moved ____ across the path."
+    },
+    {
+      "sheet": 11,
+      "index": 7,
+      "alt": "Two siblings fitting pieces into a colorful simple jigsaw puzzle.",
+      "sentence": "My brother and I ____ a puzzle after dinner."
+    },
+    {
+      "sheet": 10,
+      "index": 3,
+      "alt": "Children borrowing books from a friendly quiet library counter.",
+      "sentence": "The librarian asked us to ____ our voices."
+    },
+    {
+      "sheet": 12,
+      "index": 13,
+      "alt": "A winding walking trail through a calm leafy forest.",
+      "sentence": "The ____ trail curved through the forest."
+    },
+    {
+      "sheet": 9,
+      "index": 2,
+      "alt": "An eagle stretching its wide wings above a deep canyon.",
+      "sentence": "Yesterday, the eagle ____ its wings over the canyon."
+    },
+    {
+      "sheet": 10,
+      "index": 2,
+      "alt": "A child putting on a warm jacket on a chilly day.",
+      "sentence": "I wore a jacket ____ the air was chilly."
+    },
+    {
+      "sheet": 10,
+      "index": 1,
+      "alt": "Children smiling and cheering beside a cheerful small ice-cream truck.",
+      "sentence": "The children ____ when the ice cream truck arrived."
+    },
+    {
+      "sheet": 9,
+      "index": 5,
+      "alt": "A farmer scattering grain for a small flock of chickens.",
+      "sentence": "The farmer fed ____ chickens each morning."
+    },
+    {
+      "sheet": 10,
+      "index": 9,
+      "alt": "Two children examining a simple trail map before a forest walk, no legible text.",
+      "sentence": "A map can help you ____ your way."
+    },
+    {
+      "sheet": 12,
+      "index": 3,
+      "alt": "A snowman with a carrot nose and a knitted scarf wrapped around its neck.",
+      "sentence": "The snowman had a carrot ____ its nose."
+    },
+    {
+      "sheet": 12,
+      "index": 15,
+      "alt": "A train arriving alongside a small station platform.",
+      "sentence": "Yesterday, the train ____ at the station at noon."
+    },
+    {
+      "sheet": 9,
+      "index": 4,
+      "alt": "A child visiting a smiling grandmother at her front door.",
+      "sentence": "We will visit Grandma ____ Sunday."
+    },
+    {
+      "sheet": 12,
+      "index": 2,
+      "alt": "A child saving coins in a jar beside a colorful skateboard.",
+      "sentence": "Carlos saved his coins ____ he could buy a skateboard."
+    },
+    {
+      "sheet": 1,
+      "index": 3,
+      "alt": "A fish swimming.",
+      "sentence": "The fish swam ____ the clear water."
+    },
+    {
+      "sheet": 8,
+      "index": 5,
+      "alt": "A friendly coach explaining a soccer play to attentive children.",
+      "sentence": "Mia listened ____ while the coach explained the game."
+    },
+    {
+      "sheet": 10,
+      "index": 13,
+      "alt": "A child painting a colorful simple mural with a broad paintbrush.",
+      "sentence": "The artist used a brush to ____ the mural."
+    },
+    {
+      "sheet": 13,
+      "index": 14,
+      "alt": "A little duckling following its mother duck along the edge of a pond.",
+      "sentence": "The baby duck followed ____ mother."
+    },
+    {
+      "sheet": 13,
+      "index": 0,
+      "alt": "A tall spreading oak tree in a green park.",
+      "sentence": "The tallest tree ____ the park is an oak."
+    },
+    {
+      "sheet": 10,
+      "index": 4,
+      "alt": "An open lunchbox holding a sandwich, an apple and a small snack.",
+      "sentence": "I ate an apple ____ a sandwich for lunch."
+    },
+    {
+      "sheet": 2,
+      "index": 14,
+      "alt": "A boy kicking balls.",
+      "sentence": "Yesterday, the soccer players ____ after the final goal."
+    },
+    {
+      "sheet": 6,
+      "index": 4,
+      "alt": "A child seeing a rainbow.",
+      "sentence": "A rainbow appeared ____ the rain stopped."
+    },
+    {
+      "sheet": 10,
+      "index": 6,
+      "alt": "A friendly stage magician pulling a white rabbit from a top hat.",
+      "sentence": "The magician pulled a rabbit ____ the hat."
+    },
+    {
+      "sheet": 3,
+      "index": 15,
+      "alt": "A fox running.",
+      "sentence": "The fox has a ____ tail."
+    },
+    {
+      "sheet": 11,
+      "index": 15,
+      "alt": "Children presenting a simple science experiment with plants to their class.",
+      "sentence": "Our team will ____ the science project tomorrow."
+    },
+    {
+      "sheet": 11,
+      "index": 6,
+      "alt": "A child in muddy shoes standing beside a puddle after rain.",
+      "sentence": "I stepped in a puddle, ____ my shoes got wet."
+    },
+    {
+      "sheet": 8,
+      "index": 13,
+      "alt": "A kind dentist checking a child's teeth in a bright friendly dental room.",
+      "sentence": "The dentist ____ my teeth at the checkup."
+    },
+    {
+      "sheet": 8,
+      "index": 0,
+      "alt": "A cozy canvas tent and a small safe campfire beside a lake.",
+      "sentence": "The campers built a fire ____ the lake."
+    },
+    {
+      "sheet": 8,
+      "index": 10,
+      "alt": "A baby sleeping peacefully in a simple wooden crib with safe clear bedding.",
+      "sentence": "The baby slept ____ in the crib."
+    },
+    {
+      "sheet": 10,
+      "index": 10,
+      "alt": "Children finishing pencil-and-paper mathematics at classroom desks.",
+      "sentence": "The class ____ their math test before recess."
+    },
+    {
+      "sheet": 13,
+      "index": 15,
+      "alt": "Autumn leaves blowing across a sidewalk on a breezy day.",
+      "sentence": "Yesterday, the wind ____ the leaves across the sidewalk."
+    },
+    {
+      "sheet": 10,
+      "index": 14,
+      "alt": "Children waiting in an orderly line to enter a museum.",
+      "sentence": "We stood ____ line before entering the museum."
+    },
+    {
+      "sheet": 4,
+      "index": 7,
+      "alt": "A penguin sliding on ice.",
+      "sentence": "A penguin cannot ____ very high."
+    },
+    {
+      "sheet": 11,
+      "index": 12,
+      "alt": "A child using a ruler to draw a straight pencil line on paper.",
+      "sentence": "Sofia used a ruler to draw a ____ line."
+    },
+    {
+      "sheet": 14,
+      "index": 0,
+      "alt": "A horse jumping cleanly over a low wooden fence.",
+      "sentence": "Yesterday, the horse ____ over the small fence."
+    },
+    {
+      "sheet": 13,
+      "index": 2,
+      "alt": "A child opening a colorful umbrella while rain falls.",
+      "sentence": "I will bring an umbrella ____ the forecast says rain."
+    },
+    {
+      "sheet": 8,
+      "index": 14,
+      "alt": "A child detective using a magnifying glass to examine small clues on the ground.",
+      "sentence": "The detective searched for ____ clues."
+    },
+    {
+      "sheet": 7,
+      "index": 8,
+      "alt": "A cheerful small marching band with a large drum.",
+      "sentence": "The parade band played ____ drums loudly."
+    },
+    {
+      "sheet": 10,
+      "index": 12,
+      "alt": "A family sharing a bowl of popcorn while watching a movie at home.",
+      "sentence": "We ate popcorn ____ watching the movie."
+    },
+    {
+      "sheet": 14,
+      "index": 2,
+      "alt": "A gardener watering rosebushes with a small watering can.",
+      "sentence": "The gardener ____ the roses every morning."
+    },
+    {
+      "sheet": 9,
+      "index": 0,
+      "alt": "Children practicing an earthquake drill safely under classroom desks.",
+      "sentence": "The earthquake drill taught us how to stay ____."
+    },
+    {
+      "sheet": 12,
+      "index": 8,
+      "alt": "A child trying to lift a heavy old suitcase, clearly heavy but not distressed.",
+      "sentence": "The old suitcase was too ____ to lift."
+    },
+    {
+      "sheet": 12,
+      "index": 4,
+      "alt": "A small rocket spaceship traveling through a starry sky.",
+      "sentence": "The spaceship traveled far ____ the stars."
+    },
+    {
+      "sheet": 3,
+      "index": 2,
+      "alt": "A teacher writing words.",
+      "sentence": "The teacher smiled ____ everyone had shared an idea."
+    },
+    {
+      "sheet": 13,
+      "index": 6,
+      "alt": "A playful kitten chasing a ball of yarn.",
+      "sentence": "The kitten chased a ball ____ yarn."
+    },
+    {
+      "sheet": 12,
+      "index": 10,
+      "alt": "Two children pitching a canvas tent in a backyard.",
+      "sentence": "My cousins ____ a tent in the backyard last night."
+    },
+    {
+      "sheet": 11,
+      "index": 11,
+      "alt": "A winding blue river flowing through a green valley.",
+      "sentence": "The river flowed ____ the valley."
+    },
+    {
+      "sheet": 8,
+      "index": 8,
+      "alt": "A child's hand holding an open compass on a woodland walk.",
+      "sentence": "A compass points ____ north."
+    },
+    {
+      "sheet": 11,
+      "index": 13,
+      "alt": "A child running quickly along a path, natural running posture.",
+      "sentence": "Jordan ran ____ than he did yesterday."
+    },
+    {
+      "sheet": 4,
+      "index": 2,
+      "alt": "An owl hooting at night.",
+      "sentence": "The owl is ____ at night than during the day."
+    },
+    {
+      "sheet": 2,
+      "index": 12,
+      "alt": "A child painting.",
+      "sentence": "We will clean up ____ we finish the art project."
+    },
+    {
+      "sheet": 10,
+      "index": 11,
+      "alt": "Two child hikers in warm gloves climbing a gentle snowy mountain trail.",
+      "sentence": "The mountain climbers wore ____ gloves."
+    },
+    {
+      "file": "ship-harbor.webp",
+      "columns": 1,
+      "index": 0,
+      "alt": "A ship docked safely beside a harbor pier.",
+      "sentence": "Yesterday, the ship ____ safely in the harbor."
+    },
+    {
+      "sheet": 10,
+      "index": 5,
+      "alt": "A child packing a simple lunchbox with a sandwich and fruit.",
+      "sentence": "I packed my lunch ____ night before school."
+    },
+    {
+      "sheet": 8,
+      "index": 7,
+      "alt": "A shiny coin rolling off the edge of a wooden table.",
+      "sentence": "The coin rolled ____ the table."
+    },
+    {
+      "sheet": 9,
+      "index": 15,
+      "alt": "A gardener using a garden hose to water a bed of flowers.",
+      "sentence": "The gardener used a hose to ____ the flowers."
+    },
+    {
+      "sheet": 2,
+      "index": 14,
+      "alt": "A boy kicking balls.",
+      "sentence": "The team practiced ____ the game began."
+    },
+    {
+      "sheet": 13,
+      "index": 1,
+      "alt": "Three wooden triangular building blocks with three clear straight sides each.",
+      "sentence": "A triangle has ____ sides."
+    },
+    {
+      "sheet": 7,
+      "index": 11,
+      "alt": "An open storybook with a ribbon bookmark lying between its pages.",
+      "sentence": "Sam placed the bookmark ____ the pages."
+    },
+    {
+      "sheet": 12,
+      "index": 0,
+      "alt": "A friendly scientist recording an experiment in a notebook at a simple laboratory table.",
+      "sentence": "Yesterday, the scientist ____ the experiment in a notebook."
+    },
+    {
+      "sheet": 11,
+      "index": 0,
+      "alt": "A small children's orchestra tuning violins, a cello and a flute before a concert.",
+      "sentence": "Before last night's concert, the orchestra ____ their instruments."
+    },
+    {
+      "sheet": 8,
+      "index": 9,
+      "alt": "Three happy children in simple homemade Halloween costumes, a pumpkin, a star, and a wizard.",
+      "sentence": "We wore costumes ____ Halloween."
+    },
+    {
+      "sheet": 2,
+      "index": 1,
+      "alt": "Snow covering grass.",
+      "sentence": "Yesterday, the snow ____ slowly from the gray sky."
+    },
+    {
+      "sheet": 8,
+      "index": 2,
+      "alt": "A friendly ship captain giving directions to two attentive crew members.",
+      "sentence": "The captain gave a ____ command that everyone understood."
+    },
+    {
+      "sheet": 8,
+      "index": 11,
+      "alt": "A child at a zebra crossing looking left and right before crossing with an adult.",
+      "sentence": "You should ____ both ways before crossing the street."
+    },
+    {
+      "sheet": 3,
+      "index": 9,
+      "alt": "A butterfly landing on a flower.",
+      "sentence": "The caterpillar will ____ into a butterfly."
+    },
+    {
+      "sheet": 8,
+      "index": 15,
+      "alt": "Children looking at a large dinosaur skeleton in a museum.",
+      "sentence": "The museum displayed a ____ dinosaur skeleton."
+    },
+    {
+      "sheet": 14,
+      "index": 9,
+      "alt": "A teacher reading a picture book aloud to a small group of listening children.",
+      "sentence": "The children whispered ____ the teacher read aloud."
+    },
+    {
+      "sheet": 14,
+      "index": 3,
+      "alt": "A child cyclist riding a bicycle across a wooden bridge over a river.",
+      "sentence": "The cyclist rode ____ the bridge to the other side of the river."
+    },
+    {
+      "sheet": 12,
+      "index": 14,
+      "alt": "A family looking at a trail map at the start of a forest hike, no legible text.",
+      "sentence": "Our family ____ the trail map before hiking."
+    },
+    {
+      "sheet": 7,
+      "index": 4,
+      "alt": "An astronaut packing small sealed food pouches into a suitcase beside a space helmet.",
+      "sentence": "Yesterday, the astronauts ____ food for the long trip."
+    },
+    {
+      "sheet": 8,
+      "index": 12,
+      "alt": "A black crow building a twig nest in a tall pine tree.",
+      "sentence": "The crow built ____ nest in the tall pine tree."
+    },
+    {
+      "sheet": 7,
+      "index": 12,
+      "alt": "A librarian gently shelving books on a low wooden bookshelf.",
+      "sentence": "The librarian placed the books ____ the shelf."
+    },
+    {
+      "sheet": 14,
+      "index": 4,
+      "alt": "Ocean waves splashing against dark rocks on the shore.",
+      "sentence": "The waves crashed ____ the rocks."
+    },
+    {
+      "sheet": 7,
+      "index": 14,
+      "alt": "A baker carefully placing a round cake into an oven.",
+      "sentence": "Yesterday, the baker ____ the cake in the oven."
+    },
+    {
+      "sheet": 5,
+      "index": 3,
+      "alt": "A baby holding blocks.",
+      "sentence": "The baby reached ____ the colorful blocks."
+    },
+    {
+      "sheet": 13,
+      "index": 3,
+      "alt": "Two explorers discovering a cave behind a waterfall.",
+      "sentence": "Yesterday, the explorers ____ a cave behind the waterfall."
+    },
+    {
+      "sheet": 9,
+      "index": 6,
+      "alt": "A child runner crossing a ribbon finish line as friends cheer.",
+      "sentence": "We cheered ____ our friend crossed the finish line."
+    },
+    {
+      "sheet": 12,
+      "index": 11,
+      "alt": "Children writing thank-you notes at a table, no legible lettering.",
+      "sentence": "The class wrote ____ notes to thank the visitors."
+    }
+  ],
+  "decorative": {
+    "writing": {
+      "sheet": 14,
+      "index": 11,
+      "alt": "A cheerful notebook and a wooden pencil on a small desk, blank paper without lettering."
+    },
+    "math": {
+      "sheet": 14,
+      "index": 12,
+      "alt": "An inviting bowl of colored wooden counting blocks beside a simple abacus."
+    },
+    "celebration": {
+      "sheet": 14,
+      "index": 13,
+      "alt": "A cheerful gold star surrounded by small watercolor confetti and two leafy sprigs."
+    }
+  },
+  "tiles": [
+    {
+      "key": "picture_1",
+      "sheet": 1,
+      "index": 0,
+      "description": "A dog running.",
+      "alt": "A dog running."
+    },
+    {
+      "key": "picture_2",
+      "sheet": 1,
+      "index": 1,
+      "description": "A cat sleeping.",
+      "alt": "A cat sleeping."
+    },
+    {
+      "key": "picture_3",
+      "sheet": 1,
+      "index": 2,
+      "description": "A bird flying.",
+      "alt": "A bird flying."
+    },
+    {
+      "key": "picture_4",
+      "sheet": 1,
+      "index": 3,
+      "description": "A fish swimming.",
+      "alt": "A fish swimming."
+    },
+    {
+      "key": "picture_5",
+      "sheet": 1,
+      "index": 4,
+      "description": "A frog jumping.",
+      "alt": "A frog jumping."
+    },
+    {
+      "key": "picture_6",
+      "sheet": 1,
+      "index": 5,
+      "description": "A cow eating grass.",
+      "alt": "A cow eating grass."
+    },
+    {
+      "key": "picture_7",
+      "sheet": 1,
+      "index": 6,
+      "description": "A pig rolling.",
+      "alt": "A pig rolling."
+    },
+    {
+      "key": "picture_8",
+      "sheet": 1,
+      "index": 7,
+      "description": "A duck quacking.",
+      "alt": "A duck quacking."
+    },
+    {
+      "key": "picture_9",
+      "sheet": 1,
+      "index": 8,
+      "description": "A horse trotting.",
+      "alt": "A horse trotting."
+    },
+    {
+      "key": "picture_10",
+      "sheet": 1,
+      "index": 9,
+      "description": "A sheep resting.",
+      "alt": "A sheep resting."
+    },
+    {
+      "key": "picture_11",
+      "sheet": 1,
+      "index": 10,
+      "description": "A smiling boy.",
+      "alt": "A smiling boy."
+    },
+    {
+      "key": "picture_12",
+      "sheet": 1,
+      "index": 11,
+      "description": "A girl waving.",
+      "alt": "A girl waving."
+    },
+    {
+      "key": "picture_13",
+      "sheet": 1,
+      "index": 12,
+      "description": "A baby crawling.",
+      "alt": "A baby crawling."
+    },
+    {
+      "key": "picture_14",
+      "sheet": 1,
+      "index": 13,
+      "description": "A mother cooking soup.",
+      "alt": "A mother cooking soup."
+    },
+    {
+      "key": "picture_15",
+      "sheet": 1,
+      "index": 14,
+      "description": "A father reading books.",
+      "alt": "A father reading books."
+    },
+    {
+      "key": "picture_16",
+      "sheet": 1,
+      "index": 15,
+      "description": "A shining sun.",
+      "alt": "A shining sun."
+    },
+    {
+      "key": "picture_17",
+      "sheet": 2,
+      "index": 0,
+      "description": "Rain falling.",
+      "alt": "Rain falling."
+    },
+    {
+      "key": "picture_18",
+      "sheet": 2,
+      "index": 1,
+      "description": "Snow covering grass.",
+      "alt": "Snow covering grass."
+    },
+    {
+      "key": "picture_19",
+      "sheet": 2,
+      "index": 2,
+      "description": "A glowing moon.",
+      "alt": "A glowing moon."
+    },
+    {
+      "key": "picture_20",
+      "sheet": 2,
+      "index": 3,
+      "description": "Stars twinkling at night.",
+      "alt": "Stars twinkling at night."
+    },
+    {
+      "key": "picture_21",
+      "sheet": 2,
+      "index": 4,
+      "description": "A kite rising.",
+      "alt": "A kite rising."
+    },
+    {
+      "key": "picture_22",
+      "sheet": 2,
+      "index": 5,
+      "description": "A bus stopping.",
+      "alt": "A bus stopping."
+    },
+    {
+      "key": "picture_23",
+      "sheet": 2,
+      "index": 6,
+      "description": "A moving car.",
+      "alt": "A moving car."
+    },
+    {
+      "key": "picture_24",
+      "sheet": 2,
+      "index": 7,
+      "description": "A train rolling.",
+      "alt": "A train rolling."
+    },
+    {
+      "key": "picture_25",
+      "sheet": 2,
+      "index": 8,
+      "description": "A boat sailing.",
+      "alt": "A boat sailing."
+    },
+    {
+      "key": "picture_26",
+      "sheet": 2,
+      "index": 9,
+      "description": "A plane landing.",
+      "alt": "A plane landing."
+    },
+    {
+      "key": "picture_27",
+      "sheet": 2,
+      "index": 10,
+      "description": "A bike turning.",
+      "alt": "A bike turning."
+    },
+    {
+      "key": "picture_28",
+      "sheet": 2,
+      "index": 11,
+      "description": "A truck honking.",
+      "alt": "A truck honking."
+    },
+    {
+      "key": "picture_29",
+      "sheet": 2,
+      "index": 12,
+      "description": "A child painting.",
+      "alt": "A child painting."
+    },
+    {
+      "key": "picture_30",
+      "sheet": 2,
+      "index": 13,
+      "description": "A girl dancing.",
+      "alt": "A girl dancing."
+    },
+    {
+      "key": "picture_31",
+      "sheet": 2,
+      "index": 14,
+      "description": "A boy kicking balls.",
+      "alt": "A boy kicking balls."
+    },
+    {
+      "key": "picture_32",
+      "sheet": 2,
+      "index": 15,
+      "description": "A girl singing.",
+      "alt": "A girl singing."
+    },
+    {
+      "key": "picture_33",
+      "sheet": 3,
+      "index": 0,
+      "description": "A laughing baby.",
+      "alt": "A laughing baby."
+    },
+    {
+      "key": "picture_34",
+      "sheet": 3,
+      "index": 1,
+      "description": "A child clapping.",
+      "alt": "A child clapping."
+    },
+    {
+      "key": "picture_35",
+      "sheet": 3,
+      "index": 2,
+      "description": "A teacher writing words.",
+      "alt": "A teacher writing words."
+    },
+    {
+      "key": "picture_36",
+      "sheet": 3,
+      "index": 3,
+      "description": "A student listening.",
+      "alt": "A student listening."
+    },
+    {
+      "key": "picture_37",
+      "sheet": 3,
+      "index": 4,
+      "description": "A baker stirring batter.",
+      "alt": "A baker stirring batter."
+    },
+    {
+      "key": "picture_38",
+      "sheet": 3,
+      "index": 5,
+      "description": "A chef chopping carrots.",
+      "alt": "A chef chopping carrots."
+    },
+    {
+      "key": "picture_39",
+      "sheet": 3,
+      "index": 6,
+      "description": "A nurse helping children.",
+      "alt": "A nurse helping children."
+    },
+    {
+      "key": "picture_40",
+      "sheet": 3,
+      "index": 7,
+      "description": "A doctor checking a heart.",
+      "alt": "A doctor checking a heart."
+    },
+    {
+      "key": "picture_41",
+      "sheet": 3,
+      "index": 8,
+      "description": "A buzzing bee.",
+      "alt": "A buzzing bee."
+    },
+    {
+      "key": "picture_42",
+      "sheet": 3,
+      "index": 9,
+      "description": "A butterfly landing on a flower.",
+      "alt": "A butterfly landing on a flower."
+    },
+    {
+      "key": "picture_43",
+      "sheet": 3,
+      "index": 10,
+      "description": "An ant carrying crumbs.",
+      "alt": "An ant carrying crumbs."
+    },
+    {
+      "key": "picture_44",
+      "sheet": 3,
+      "index": 11,
+      "description": "A snail crawling.",
+      "alt": "A snail crawling."
+    },
+    {
+      "key": "picture_45",
+      "sheet": 3,
+      "index": 12,
+      "description": "A turtle walking.",
+      "alt": "A turtle walking."
+    },
+    {
+      "key": "picture_46",
+      "sheet": 3,
+      "index": 13,
+      "description": "A rabbit hopping.",
+      "alt": "A rabbit hopping."
+    },
+    {
+      "key": "picture_47",
+      "sheet": 3,
+      "index": 14,
+      "description": "A mouse hiding.",
+      "alt": "A mouse hiding."
+    },
+    {
+      "key": "picture_48",
+      "sheet": 3,
+      "index": 15,
+      "description": "A fox running.",
+      "alt": "A fox running."
+    },
+    {
+      "key": "picture_49",
+      "sheet": 4,
+      "index": 0,
+      "description": "A bear climbing a tree.",
+      "alt": "A bear climbing a tree."
+    },
+    {
+      "key": "picture_50",
+      "sheet": 4,
+      "index": 1,
+      "description": "A lion roaring.",
+      "alt": "A lion roaring."
+    },
+    {
+      "key": "picture_51",
+      "sheet": 4,
+      "index": 2,
+      "description": "An owl hooting at night.",
+      "alt": "An owl hooting at night."
+    },
+    {
+      "key": "picture_52",
+      "sheet": 4,
+      "index": 3,
+      "description": "A monkey swinging.",
+      "alt": "A monkey swinging."
+    },
+    {
+      "key": "picture_53",
+      "sheet": 4,
+      "index": 4,
+      "description": "A panda chewing bamboo.",
+      "alt": "A panda chewing bamboo."
+    },
+    {
+      "key": "picture_54",
+      "sheet": 4,
+      "index": 5,
+      "description": "A zebra walking.",
+      "alt": "A zebra walking."
+    },
+    {
+      "key": "picture_55",
+      "sheet": 4,
+      "index": 6,
+      "description": "A camel drinking.",
+      "alt": "A camel drinking."
+    },
+    {
+      "key": "picture_56",
+      "sheet": 4,
+      "index": 7,
+      "description": "A penguin sliding on ice.",
+      "alt": "A penguin sliding on ice."
+    },
+    {
+      "key": "picture_57",
+      "sheet": 4,
+      "index": 8,
+      "description": "A seal clapping.",
+      "alt": "A seal clapping."
+    },
+    {
+      "key": "picture_58",
+      "sheet": 4,
+      "index": 9,
+      "description": "A whale splashing.",
+      "alt": "A whale splashing."
+    },
+    {
+      "key": "picture_59",
+      "sheet": 4,
+      "index": 10,
+      "description": "A shark swimming.",
+      "alt": "A shark swimming."
+    },
+    {
+      "key": "picture_60",
+      "sheet": 4,
+      "index": 11,
+      "description": "A crab walking.",
+      "alt": "A crab walking."
+    },
+    {
+      "key": "picture_61",
+      "sheet": 4,
+      "index": 12,
+      "description": "A child digging sand.",
+      "alt": "A child digging sand."
+    },
+    {
+      "key": "picture_62",
+      "sheet": 4,
+      "index": 13,
+      "description": "A child building towers.",
+      "alt": "A child building towers."
+    },
+    {
+      "key": "picture_63",
+      "sheet": 4,
+      "index": 14,
+      "description": "A child opening gifts.",
+      "alt": "A child opening gifts."
+    },
+    {
+      "key": "picture_64",
+      "sheet": 4,
+      "index": 15,
+      "description": "A child hugging a teddy bear.",
+      "alt": "A child hugging a teddy bear."
+    },
+    {
+      "key": "picture_65",
+      "sheet": 5,
+      "index": 0,
+      "description": "A girl petting a puppy.",
+      "alt": "A girl petting a puppy."
+    },
+    {
+      "key": "picture_66",
+      "sheet": 5,
+      "index": 1,
+      "description": "A boy feeding ducks.",
+      "alt": "A boy feeding ducks."
+    },
+    {
+      "key": "picture_67",
+      "sheet": 5,
+      "index": 2,
+      "description": "A child blowing bubbles.",
+      "alt": "A child blowing bubbles."
+    },
+    {
+      "key": "picture_68",
+      "sheet": 5,
+      "index": 3,
+      "description": "A baby holding blocks.",
+      "alt": "A baby holding blocks."
+    },
+    {
+      "key": "picture_69",
+      "sheet": 5,
+      "index": 4,
+      "description": "A child stacking cups.",
+      "alt": "A child stacking cups."
+    },
+    {
+      "key": "picture_70",
+      "sheet": 5,
+      "index": 5,
+      "description": "A girl skipping rope.",
+      "alt": "A girl skipping rope."
+    },
+    {
+      "key": "picture_71",
+      "sheet": 5,
+      "index": 6,
+      "description": "A boy rolling dough.",
+      "alt": "A boy rolling dough."
+    },
+    {
+      "key": "picture_72",
+      "sheet": 5,
+      "index": 7,
+      "description": "A child coloring stars.",
+      "alt": "A child coloring stars."
+    },
+    {
+      "key": "picture_73",
+      "sheet": 5,
+      "index": 8,
+      "description": "A child washing hands.",
+      "alt": "A child washing hands."
+    },
+    {
+      "key": "picture_74",
+      "sheet": 5,
+      "index": 9,
+      "description": "A boy drinking milk.",
+      "alt": "A boy drinking milk."
+    },
+    {
+      "key": "picture_75",
+      "sheet": 5,
+      "index": 10,
+      "description": "A girl eating grapes.",
+      "alt": "A girl eating grapes."
+    },
+    {
+      "key": "picture_76",
+      "sheet": 5,
+      "index": 11,
+      "description": "A baby napping.",
+      "alt": "A baby napping."
+    },
+    {
+      "key": "picture_77",
+      "sheet": 5,
+      "index": 12,
+      "description": "A child kicking a ball.",
+      "alt": "A child kicking a ball."
+    },
+    {
+      "key": "picture_78",
+      "sheet": 5,
+      "index": 13,
+      "description": "A girl catching leaves.",
+      "alt": "A girl catching leaves."
+    },
+    {
+      "key": "picture_79",
+      "sheet": 5,
+      "index": 14,
+      "description": "A boy carrying boxes.",
+      "alt": "A boy carrying boxes."
+    },
+    {
+      "key": "picture_80",
+      "sheet": 5,
+      "index": 15,
+      "description": "A child pulling a sled.",
+      "alt": "A child pulling a sled."
+    },
+    {
+      "key": "picture_81",
+      "sheet": 6,
+      "index": 0,
+      "description": "A boy opening a door.",
+      "alt": "A boy opening a door."
+    },
+    {
+      "key": "picture_82",
+      "sheet": 6,
+      "index": 1,
+      "description": "A child closing a box.",
+      "alt": "A child closing a box."
+    },
+    {
+      "key": "picture_83",
+      "sheet": 6,
+      "index": 2,
+      "description": "A girl wearing boots.",
+      "alt": "A girl wearing boots."
+    },
+    {
+      "key": "picture_84",
+      "sheet": 6,
+      "index": 3,
+      "description": "A boy finding shells.",
+      "alt": "A boy finding shells."
+    },
+    {
+      "key": "picture_85",
+      "sheet": 6,
+      "index": 4,
+      "description": "A child seeing a rainbow.",
+      "alt": "A child seeing a rainbow."
+    },
+    {
+      "key": "picture_86",
+      "sheet": 6,
+      "index": 5,
+      "description": "A girl blowing a horn.",
+      "alt": "A girl blowing a horn."
+    },
+    {
+      "key": "picture_87",
+      "sheet": 6,
+      "index": 6,
+      "description": "A boy using crayons.",
+      "alt": "A boy using crayons."
+    },
+    {
+      "key": "picture_88",
+      "sheet": 6,
+      "index": 7,
+      "description": "A child watering plants.",
+      "alt": "A child watering plants."
+    },
+    {
+      "key": "picture_89",
+      "sheet": 6,
+      "index": 8,
+      "description": "A girl picking flowers.",
+      "alt": "A girl picking flowers."
+    },
+    {
+      "key": "picture_90",
+      "sheet": 6,
+      "index": 9,
+      "description": "A boy collecting rocks.",
+      "alt": "A boy collecting rocks."
+    },
+    {
+      "key": "picture_91",
+      "sheet": 6,
+      "index": 10,
+      "description": "A child riding a scooter.",
+      "alt": "A child riding a scooter."
+    },
+    {
+      "key": "picture_92",
+      "sheet": 6,
+      "index": 11,
+      "description": "A girl throwing a ball.",
+      "alt": "A girl throwing a ball."
+    },
+    {
+      "key": "picture_93",
+      "sheet": 6,
+      "index": 12,
+      "description": "A boy fixing a toy.",
+      "alt": "A boy fixing a toy."
+    },
+    {
+      "key": "picture_94",
+      "sheet": 6,
+      "index": 13,
+      "description": "A child folding paper.",
+      "alt": "A child folding paper."
+    },
+    {
+      "key": "picture_95",
+      "sheet": 6,
+      "index": 14,
+      "description": "A girl hugging dolls.",
+      "alt": "A girl hugging dolls."
+    },
+    {
+      "key": "picture_96",
+      "sheet": 6,
+      "index": 15,
+      "description": "A boy sweeping floors.",
+      "alt": "A boy sweeping floors."
+    },
+    {
+      "key": "picture_97",
+      "sheet": 7,
+      "index": 0,
+      "description": "A child planting seeds.",
+      "alt": "A child planting seeds."
+    },
+    {
+      "key": "picture_98",
+      "sheet": 7,
+      "index": 1,
+      "description": "A girl seeing moonlight.",
+      "alt": "A girl seeing moonlight."
+    },
+    {
+      "key": "picture_99",
+      "sheet": 7,
+      "index": 2,
+      "description": "A boy spotting stars.",
+      "alt": "A boy spotting stars."
+    },
+    {
+      "key": "picture_100",
+      "sheet": 7,
+      "index": 3,
+      "description": "A child reading stories.",
+      "alt": "A child reading stories."
+    },
+    {
+      "key": "astronaut",
+      "sheet": 7,
+      "index": 4,
+      "description": "An astronaut packing small sealed food pouches into a suitcase beside a space helmet.",
+      "alt": "An astronaut packing small sealed food pouches into a suitcase beside a space helmet."
+    },
+    {
+      "key": "babies",
+      "sheet": 7,
+      "index": 5,
+      "description": "Two happy babies sitting together on a soft play mat.",
+      "alt": "Two happy babies sitting together on a soft play mat."
+    },
+    {
+      "key": "baby",
+      "sheet": 7,
+      "index": 6,
+      "description": "A sleeping baby in a crib while an older child nearby holds a finger to their lips.",
+      "alt": "A sleeping baby in a crib while an older child nearby holds a finger to their lips."
+    },
+    {
+      "key": "bakery",
+      "sheet": 7,
+      "index": 7,
+      "description": "A baker placing two golden bread loaves into an oven.",
+      "alt": "A baker placing two golden bread loaves into an oven."
+    },
+    {
+      "key": "band",
+      "sheet": 7,
+      "index": 8,
+      "description": "A cheerful small marching band with a large drum.",
+      "alt": "A cheerful small marching band with a large drum."
+    },
+    {
+      "key": "bird",
+      "sheet": 7,
+      "index": 9,
+      "description": "Baby birds sitting in a twig nest high in a leafy tree.",
+      "alt": "Baby birds sitting in a twig nest high in a leafy tree."
+    },
+    {
+      "key": "birthday",
+      "sheet": 7,
+      "index": 10,
+      "description": "A birthday cake with small lit candles on a table.",
+      "alt": "A birthday cake with small lit candles on a table."
+    },
+    {
+      "key": "bookmark",
+      "sheet": 7,
+      "index": 11,
+      "description": "An open storybook with a ribbon bookmark lying between its pages.",
+      "alt": "An open storybook with a ribbon bookmark lying between its pages."
+    },
+    {
+      "key": "bookshelf",
+      "sheet": 7,
+      "index": 12,
+      "description": "A librarian gently shelving books on a low wooden bookshelf.",
+      "alt": "A librarian gently shelving books on a low wooden bookshelf."
+    },
+    {
+      "key": "bridge",
+      "sheet": 7,
+      "index": 13,
+      "description": "A wooden footbridge crossing a small stream.",
+      "alt": "A wooden footbridge crossing a small stream."
+    },
+    {
+      "key": "cake",
+      "sheet": 7,
+      "index": 14,
+      "description": "A baker carefully placing a round cake into an oven.",
+      "alt": "A baker carefully placing a round cake into an oven."
+    },
+    {
+      "key": "calendar",
+      "sheet": 7,
+      "index": 15,
+      "description": "A paper calendar hanging on a wall, abstract grid only with no legible text.",
+      "alt": "A paper calendar hanging on a wall, abstract grid only with no legible text."
+    },
+    {
+      "key": "campfire",
+      "sheet": 8,
+      "index": 0,
+      "description": "A cozy canvas tent and a small safe campfire beside a lake.",
+      "alt": "A cozy canvas tent and a small safe campfire beside a lake."
+    },
+    {
+      "key": "camping",
+      "sheet": 8,
+      "index": 1,
+      "description": "Children camping in a cozy canvas tent under a clear night sky.",
+      "alt": "Children camping in a cozy canvas tent under a clear night sky."
+    },
+    {
+      "key": "captain",
+      "sheet": 8,
+      "index": 2,
+      "description": "A friendly ship captain giving directions to two attentive crew members.",
+      "alt": "A friendly ship captain giving directions to two attentive crew members."
+    },
+    {
+      "key": "caterpillar",
+      "sheet": 8,
+      "index": 3,
+      "description": "A small caterpillar on a green leaf beside a butterfly, showing the two animals clearly.",
+      "alt": "A small caterpillar on a green leaf beside a butterfly, showing the two animals clearly."
+    },
+    {
+      "key": "clock",
+      "sheet": 8,
+      "index": 4,
+      "description": "A large simple classroom analog clock hanging on a wall; clear face, no decorative writing.",
+      "alt": "A large simple classroom analog clock hanging on a wall; clear face, no decorative writing."
+    },
+    {
+      "key": "coach",
+      "sheet": 8,
+      "index": 5,
+      "description": "A friendly coach explaining a soccer play to attentive children.",
+      "alt": "A friendly coach explaining a soccer play to attentive children."
+    },
+    {
+      "key": "coats",
+      "sheet": 8,
+      "index": 6,
+      "description": "Three colorful raincoats hanging neatly on wooden wall hooks.",
+      "alt": "Three colorful raincoats hanging neatly on wooden wall hooks."
+    },
+    {
+      "key": "coin",
+      "sheet": 8,
+      "index": 7,
+      "description": "A shiny coin rolling off the edge of a wooden table.",
+      "alt": "A shiny coin rolling off the edge of a wooden table."
+    },
+    {
+      "key": "compass",
+      "sheet": 8,
+      "index": 8,
+      "description": "A child's hand holding an open compass on a woodland walk.",
+      "alt": "A child's hand holding an open compass on a woodland walk."
+    },
+    {
+      "key": "costume",
+      "sheet": 8,
+      "index": 9,
+      "description": "Three happy children in simple homemade Halloween costumes, a pumpkin, a star, and a wizard.",
+      "alt": "Three happy children in simple homemade Halloween costumes, a pumpkin, a star, and a wizard."
+    },
+    {
+      "key": "crib",
+      "sheet": 8,
+      "index": 10,
+      "description": "A baby sleeping peacefully in a simple wooden crib with safe clear bedding.",
+      "alt": "A baby sleeping peacefully in a simple wooden crib with safe clear bedding."
+    },
+    {
+      "key": "crosswalk",
+      "sheet": 8,
+      "index": 11,
+      "description": "A child at a zebra crossing looking left and right before crossing with an adult.",
+      "alt": "A child at a zebra crossing looking left and right before crossing with an adult."
+    },
+    {
+      "key": "crow",
+      "sheet": 8,
+      "index": 12,
+      "description": "A black crow building a twig nest in a tall pine tree.",
+      "alt": "A black crow building a twig nest in a tall pine tree."
+    },
+    {
+      "key": "dentist",
+      "sheet": 8,
+      "index": 13,
+      "description": "A kind dentist checking a child's teeth in a bright friendly dental room.",
+      "alt": "A kind dentist checking a child's teeth in a bright friendly dental room."
+    },
+    {
+      "key": "detective",
+      "sheet": 8,
+      "index": 14,
+      "description": "A child detective using a magnifying glass to examine small clues on the ground.",
+      "alt": "A child detective using a magnifying glass to examine small clues on the ground."
+    },
+    {
+      "key": "dinosaur",
+      "sheet": 8,
+      "index": 15,
+      "description": "Children looking at a large dinosaur skeleton in a museum.",
+      "alt": "Children looking at a large dinosaur skeleton in a museum."
+    },
+    {
+      "key": "drill",
+      "sheet": 9,
+      "index": 0,
+      "description": "Children practicing an earthquake drill safely under classroom desks.",
+      "alt": "Children practicing an earthquake drill safely under classroom desks."
+    },
+    {
+      "key": "drum",
+      "sheet": 9,
+      "index": 1,
+      "description": "A young drummer playing a large drum with two drumsticks.",
+      "alt": "A young drummer playing a large drum with two drumsticks."
+    },
+    {
+      "key": "eagle",
+      "sheet": 9,
+      "index": 2,
+      "description": "An eagle stretching its wide wings above a deep canyon.",
+      "alt": "An eagle stretching its wide wings above a deep canyon."
+    },
+    {
+      "key": "eraser",
+      "sheet": 9,
+      "index": 3,
+      "description": "A hand using a pink eraser to rub out a pencil mark on paper.",
+      "alt": "A hand using a pink eraser to rub out a pencil mark on paper."
+    },
+    {
+      "key": "family",
+      "sheet": 9,
+      "index": 4,
+      "description": "A child visiting a smiling grandmother at her front door.",
+      "alt": "A child visiting a smiling grandmother at her front door."
+    },
+    {
+      "key": "farm",
+      "sheet": 9,
+      "index": 5,
+      "description": "A farmer scattering grain for a small flock of chickens.",
+      "alt": "A farmer scattering grain for a small flock of chickens."
+    },
+    {
+      "key": "finish_line",
+      "sheet": 9,
+      "index": 6,
+      "description": "A child runner crossing a ribbon finish line as friends cheer.",
+      "alt": "A child runner crossing a ribbon finish line as friends cheer."
+    },
+    {
+      "key": "firefighter",
+      "sheet": 9,
+      "index": 7,
+      "description": "A friendly firefighter in a red helmet spraying water from a hose beside a fire engine.",
+      "alt": "A friendly firefighter in a red helmet spraying water from a hose beside a fire engine."
+    },
+    {
+      "key": "firetruck",
+      "sheet": 9,
+      "index": 8,
+      "description": "Firefighters holding a hose spraying water beside a red fire engine.",
+      "alt": "Firefighters holding a hose spraying water beside a red fire engine."
+    },
+    {
+      "key": "flashlight",
+      "sheet": 9,
+      "index": 9,
+      "description": "A child shining a flashlight in a dark room, creating a bright cone of light.",
+      "alt": "A child shining a flashlight in a dark room, creating a bright cone of light."
+    },
+    {
+      "key": "frog",
+      "sheet": 9,
+      "index": 10,
+      "description": "A pond with a frog on a lily pad and clearly visible little tadpoles in the water.",
+      "alt": "A pond with a frog on a lily pad and clearly visible little tadpoles in the water."
+    },
+    {
+      "key": "game",
+      "sheet": 9,
+      "index": 11,
+      "description": "A children's soccer team cheering together after a goal, with a goal net behind them.",
+      "alt": "A children's soccer team cheering together after a goal, with a goal net behind them."
+    },
+    {
+      "key": "hammer",
+      "sheet": 9,
+      "index": 12,
+      "description": "An adult using a hammer to tap a nail into a wooden board.",
+      "alt": "An adult using a hammer to tap a nail into a wooden board."
+    },
+    {
+      "key": "hen",
+      "sheet": 9,
+      "index": 13,
+      "description": "A farm hen sitting beside a nest containing one egg.",
+      "alt": "A farm hen sitting beside a nest containing one egg."
+    },
+    {
+      "key": "hike",
+      "sheet": 9,
+      "index": 14,
+      "description": "A child's hiking backpack open beside snacks and two reusable water bottles.",
+      "alt": "A child's hiking backpack open beside snacks and two reusable water bottles."
+    },
+    {
+      "key": "hose",
+      "sheet": 9,
+      "index": 15,
+      "description": "A gardener using a garden hose to water a bed of flowers.",
+      "alt": "A gardener using a garden hose to water a bed of flowers."
+    },
+    {
+      "key": "ice",
+      "sheet": 10,
+      "index": 0,
+      "description": "A clear ice cube melting into a small puddle in warm sunshine.",
+      "alt": "A clear ice cube melting into a small puddle in warm sunshine."
+    },
+    {
+      "key": "ice_cream",
+      "sheet": 10,
+      "index": 1,
+      "description": "Children smiling and cheering beside a cheerful small ice-cream truck.",
+      "alt": "Children smiling and cheering beside a cheerful small ice-cream truck."
+    },
+    {
+      "key": "jacket",
+      "sheet": 10,
+      "index": 2,
+      "description": "A child putting on a warm jacket on a chilly day.",
+      "alt": "A child putting on a warm jacket on a chilly day."
+    },
+    {
+      "key": "library",
+      "sheet": 10,
+      "index": 3,
+      "description": "Children borrowing books from a friendly quiet library counter.",
+      "alt": "Children borrowing books from a friendly quiet library counter."
+    },
+    {
+      "key": "lunch",
+      "sheet": 10,
+      "index": 4,
+      "description": "An open lunchbox holding a sandwich, an apple and a small snack.",
+      "alt": "An open lunchbox holding a sandwich, an apple and a small snack."
+    },
+    {
+      "key": "lunchbox",
+      "sheet": 10,
+      "index": 5,
+      "description": "A child packing a simple lunchbox with a sandwich and fruit.",
+      "alt": "A child packing a simple lunchbox with a sandwich and fruit."
+    },
+    {
+      "key": "magic",
+      "sheet": 10,
+      "index": 6,
+      "description": "A friendly stage magician pulling a white rabbit from a top hat.",
+      "alt": "A friendly stage magician pulling a white rabbit from a top hat."
+    },
+    {
+      "key": "magnify",
+      "sheet": 10,
+      "index": 7,
+      "description": "A child using a magnifying glass to inspect a small leaf; an enlarged detail visible through the lens.",
+      "alt": "A child using a magnifying glass to inspect a small leaf; an enlarged detail visible through the lens."
+    },
+    {
+      "key": "mail",
+      "sheet": 10,
+      "index": 8,
+      "description": "An envelope with a small colored postage stamp beside an open mailbox.",
+      "alt": "An envelope with a small colored postage stamp beside an open mailbox."
+    },
+    {
+      "key": "map",
+      "sheet": 10,
+      "index": 9,
+      "description": "Two children examining a simple trail map before a forest walk, no legible text.",
+      "alt": "Two children examining a simple trail map before a forest walk, no legible text."
+    },
+    {
+      "key": "math",
+      "sheet": 10,
+      "index": 10,
+      "description": "Children finishing pencil-and-paper mathematics at classroom desks.",
+      "alt": "Children finishing pencil-and-paper mathematics at classroom desks."
+    },
+    {
+      "key": "mountain",
+      "sheet": 10,
+      "index": 11,
+      "description": "Two child hikers in warm gloves climbing a gentle snowy mountain trail.",
+      "alt": "Two child hikers in warm gloves climbing a gentle snowy mountain trail."
+    },
+    {
+      "key": "movie",
+      "sheet": 10,
+      "index": 12,
+      "description": "A family sharing a bowl of popcorn while watching a movie at home.",
+      "alt": "A family sharing a bowl of popcorn while watching a movie at home."
+    },
+    {
+      "key": "mural",
+      "sheet": 10,
+      "index": 13,
+      "description": "A child painting a colorful simple mural with a broad paintbrush.",
+      "alt": "A child painting a colorful simple mural with a broad paintbrush."
+    },
+    {
+      "key": "museum",
+      "sheet": 10,
+      "index": 14,
+      "description": "Children waiting in an orderly line to enter a museum.",
+      "alt": "Children waiting in an orderly line to enter a museum."
+    },
+    {
+      "key": "octopus",
+      "sheet": 10,
+      "index": 15,
+      "description": "A friendly orange octopus underwater, all eight arms clearly separated and visible.",
+      "alt": "A friendly orange octopus underwater, all eight arms clearly separated and visible."
+    },
+    {
+      "key": "orchestra",
+      "sheet": 11,
+      "index": 0,
+      "description": "A small children's orchestra tuning violins, a cello and a flute before a concert.",
+      "alt": "A small children's orchestra tuning violins, a cello and a flute before a concert."
+    },
+    {
+      "key": "parade",
+      "sheet": 11,
+      "index": 1,
+      "description": "A cheerful small street parade with musicians and people waving.",
+      "alt": "A cheerful small street parade with musicians and people waving."
+    },
+    {
+      "key": "pencil",
+      "sheet": 11,
+      "index": 2,
+      "description": "A child sharpening a wooden pencil in a small handheld sharpener.",
+      "alt": "A child sharpening a wooden pencil in a small handheld sharpener."
+    },
+    {
+      "key": "picnic",
+      "sheet": 11,
+      "index": 3,
+      "description": "An open picnic basket containing sandwiches and apples on a checkered picnic blanket.",
+      "alt": "An open picnic basket containing sandwiches and apples on a checkered picnic blanket."
+    },
+    {
+      "key": "picture",
+      "sheet": 11,
+      "index": 4,
+      "description": "An adult hanging a framed drawing neatly on a wall.",
+      "alt": "An adult hanging a framed drawing neatly on a wall."
+    },
+    {
+      "key": "playground",
+      "sheet": 11,
+      "index": 5,
+      "description": "A cheerful playground with a child sliding down a slide.",
+      "alt": "A cheerful playground with a child sliding down a slide."
+    },
+    {
+      "key": "puddle",
+      "sheet": 11,
+      "index": 6,
+      "description": "A child in muddy shoes standing beside a puddle after rain.",
+      "alt": "A child in muddy shoes standing beside a puddle after rain."
+    },
+    {
+      "key": "puzzle",
+      "sheet": 11,
+      "index": 7,
+      "description": "Two siblings fitting pieces into a colorful simple jigsaw puzzle.",
+      "alt": "Two siblings fitting pieces into a colorful simple jigsaw puzzle."
+    },
+    {
+      "key": "question",
+      "sheet": 11,
+      "index": 8,
+      "description": "A curious child raising a hand to ask a teacher a question, no text.",
+      "alt": "A curious child raising a hand to ask a teacher a question, no text."
+    },
+    {
+      "key": "rabbit",
+      "sheet": 11,
+      "index": 9,
+      "description": "A soft brown rabbit eating a crunchy orange carrot.",
+      "alt": "A soft brown rabbit eating a crunchy orange carrot."
+    },
+    {
+      "key": "recycle",
+      "sheet": 11,
+      "index": 10,
+      "description": "An empty clean metal soup can being placed in a recycling bin, no logos or writing.",
+      "alt": "An empty clean metal soup can being placed in a recycling bin, no logos or writing."
+    },
+    {
+      "key": "river",
+      "sheet": 11,
+      "index": 11,
+      "description": "A winding blue river flowing through a green valley.",
+      "alt": "A winding blue river flowing through a green valley."
+    },
+    {
+      "key": "ruler",
+      "sheet": 11,
+      "index": 12,
+      "description": "A child using a ruler to draw a straight pencil line on paper.",
+      "alt": "A child using a ruler to draw a straight pencil line on paper."
+    },
+    {
+      "key": "runner",
+      "sheet": 11,
+      "index": 13,
+      "description": "A child running quickly along a path, natural running posture.",
+      "alt": "A child running quickly along a path, natural running posture."
+    },
+    {
+      "key": "sandwich",
+      "sheet": 11,
+      "index": 14,
+      "description": "A peanut-butter-and-jelly sandwich cut in half on a small plate.",
+      "alt": "A peanut-butter-and-jelly sandwich cut in half on a small plate."
+    },
+    {
+      "key": "science",
+      "sheet": 11,
+      "index": 15,
+      "description": "Children presenting a simple science experiment with plants to their class.",
+      "alt": "Children presenting a simple science experiment with plants to their class."
+    },
+    {
+      "key": "scientist",
+      "sheet": 12,
+      "index": 0,
+      "description": "A friendly scientist recording an experiment in a notebook at a simple laboratory table.",
+      "alt": "A friendly scientist recording an experiment in a notebook at a simple laboratory table."
+    },
+    {
+      "key": "scissors",
+      "sheet": 12,
+      "index": 1,
+      "description": "A child's hands safely cutting a piece of colored paper with blunt school scissors.",
+      "alt": "A child's hands safely cutting a piece of colored paper with blunt school scissors."
+    },
+    {
+      "key": "skateboard",
+      "sheet": 12,
+      "index": 2,
+      "description": "A child saving coins in a jar beside a colorful skateboard.",
+      "alt": "A child saving coins in a jar beside a colorful skateboard."
+    },
+    {
+      "key": "snowman",
+      "sheet": 12,
+      "index": 3,
+      "description": "A snowman with a carrot nose and a knitted scarf wrapped around its neck.",
+      "alt": "A snowman with a carrot nose and a knitted scarf wrapped around its neck."
+    },
+    {
+      "key": "spaceship",
+      "sheet": 12,
+      "index": 4,
+      "description": "A small rocket spaceship traveling through a starry sky.",
+      "alt": "A small rocket spaceship traveling through a starry sky."
+    },
+    {
+      "key": "spider",
+      "sheet": 12,
+      "index": 5,
+      "description": "A small friendly spider sitting in a delicate web between two branches.",
+      "alt": "A small friendly spider sitting in a delicate web between two branches."
+    },
+    {
+      "key": "squirrel",
+      "sheet": 12,
+      "index": 6,
+      "description": "A squirrel with a large bushy tail holding a nut, with more nuts by a tree.",
+      "alt": "A squirrel with a large bushy tail holding a nut, with more nuts by a tree."
+    },
+    {
+      "key": "storm",
+      "sheet": 12,
+      "index": 7,
+      "description": "Dark gray rain clouds over a small landscape, a distant gentle lightning flash.",
+      "alt": "Dark gray rain clouds over a small landscape, a distant gentle lightning flash."
+    },
+    {
+      "key": "suitcase",
+      "sheet": 12,
+      "index": 8,
+      "description": "A child trying to lift a heavy old suitcase, clearly heavy but not distressed.",
+      "alt": "A child trying to lift a heavy old suitcase, clearly heavy but not distressed."
+    },
+    {
+      "key": "sunflower",
+      "sheet": 12,
+      "index": 9,
+      "description": "A young sunflower growing from dark soil, with sunshine and a small watering can.",
+      "alt": "A young sunflower growing from dark soil, with sunshine and a small watering can."
+    },
+    {
+      "key": "tent",
+      "sheet": 12,
+      "index": 10,
+      "description": "Two children pitching a canvas tent in a backyard.",
+      "alt": "Two children pitching a canvas tent in a backyard."
+    },
+    {
+      "key": "thank_you",
+      "sheet": 12,
+      "index": 11,
+      "description": "Children writing thank-you notes at a table, no legible lettering.",
+      "alt": "Children writing thank-you notes at a table, no legible lettering."
+    },
+    {
+      "key": "toothbrush",
+      "sheet": 12,
+      "index": 12,
+      "description": "A child brushing teeth at a bathroom sink before bed.",
+      "alt": "A child brushing teeth at a bathroom sink before bed."
+    },
+    {
+      "key": "trail",
+      "sheet": 12,
+      "index": 13,
+      "description": "A winding walking trail through a calm leafy forest.",
+      "alt": "A winding walking trail through a calm leafy forest."
+    },
+    {
+      "key": "trail_map",
+      "sheet": 12,
+      "index": 14,
+      "description": "A family looking at a trail map at the start of a forest hike, no legible text.",
+      "alt": "A family looking at a trail map at the start of a forest hike, no legible text."
+    },
+    {
+      "key": "train",
+      "sheet": 12,
+      "index": 15,
+      "description": "A train arriving alongside a small station platform.",
+      "alt": "A train arriving alongside a small station platform."
+    },
+    {
+      "key": "tree",
+      "sheet": 13,
+      "index": 0,
+      "description": "A tall spreading oak tree in a green park.",
+      "alt": "A tall spreading oak tree in a green park."
+    },
+    {
+      "key": "triangle",
+      "sheet": 13,
+      "index": 1,
+      "description": "Three wooden triangular building blocks with three clear straight sides each.",
+      "alt": "Three wooden triangular building blocks with three clear straight sides each."
+    },
+    {
+      "key": "umbrella",
+      "sheet": 13,
+      "index": 2,
+      "description": "A child opening a colorful umbrella while rain falls.",
+      "alt": "A child opening a colorful umbrella while rain falls."
+    },
+    {
+      "key": "waterfall",
+      "sheet": 13,
+      "index": 3,
+      "description": "Two explorers discovering a cave behind a waterfall.",
+      "alt": "Two explorers discovering a cave behind a waterfall."
+    },
+    {
+      "key": "cat_basket",
+      "sheet": 13,
+      "index": 4,
+      "description": "A small kitten curled up asleep in a cozy woven basket.",
+      "alt": "A small kitten curled up asleep in a cozy woven basket."
+    },
+    {
+      "key": "cat_chair",
+      "sheet": 13,
+      "index": 5,
+      "description": "A cat sleeping underneath a wooden chair.",
+      "alt": "A cat sleeping underneath a wooden chair."
+    },
+    {
+      "key": "kitten_yarn",
+      "sheet": 13,
+      "index": 6,
+      "description": "A playful kitten chasing a ball of yarn.",
+      "alt": "A playful kitten chasing a ball of yarn."
+    },
+    {
+      "key": "bee_honey",
+      "sheet": 13,
+      "index": 7,
+      "description": "A bee beside a beehive with a small jar of golden honey, no labels.",
+      "alt": "A bee beside a beehive with a small jar of golden honey, no labels."
+    },
+    {
+      "key": "red_ball",
+      "sheet": 13,
+      "index": 8,
+      "description": "A bright red ball resting on green grass.",
+      "alt": "A bright red ball resting on green grass."
+    },
+    {
+      "key": "sense_hearing",
+      "sheet": 13,
+      "index": 9,
+      "description": "A child cupping one hand behind an ear to listen to a small singing bird.",
+      "alt": "A child cupping one hand behind an ear to listen to a small singing bird."
+    },
+    {
+      "key": "sense_smell",
+      "sheet": 13,
+      "index": 10,
+      "description": "A child smelling a flower with their nose close to its petals.",
+      "alt": "A child smelling a flower with their nose close to its petals."
+    },
+    {
+      "key": "sense_sight",
+      "sheet": 13,
+      "index": 11,
+      "description": "A child looking carefully with open eyes at a butterfly nearby.",
+      "alt": "A child looking carefully with open eyes at a butterfly nearby."
+    },
+    {
+      "key": "sense_touch",
+      "sheet": 13,
+      "index": 12,
+      "description": "A child's hand gently touching soft rabbit fur.",
+      "alt": "A child's hand gently touching soft rabbit fur."
+    },
+    {
+      "key": "cow_milk",
+      "sheet": 13,
+      "index": 13,
+      "description": "A gentle farm cow beside a small metal pail of milk.",
+      "alt": "A gentle farm cow beside a small metal pail of milk."
+    },
+    {
+      "key": "duck_family",
+      "sheet": 13,
+      "index": 14,
+      "description": "A little duckling following its mother duck along the edge of a pond.",
+      "alt": "A little duckling following its mother duck along the edge of a pond."
+    },
+    {
+      "key": "wind_leaves",
+      "sheet": 13,
+      "index": 15,
+      "description": "Autumn leaves blowing across a sidewalk on a breezy day.",
+      "alt": "Autumn leaves blowing across a sidewalk on a breezy day."
+    },
+    {
+      "key": "horse_jump",
+      "sheet": 14,
+      "index": 0,
+      "description": "A horse jumping cleanly over a low wooden fence.",
+      "alt": "A horse jumping cleanly over a low wooden fence."
+    },
+    {
+      "key": "birds_pond",
+      "sheet": 14,
+      "index": 1,
+      "description": "Three small blue birds flying over a calm pond.",
+      "alt": "Three small blue birds flying over a calm pond."
+    },
+    {
+      "key": "roses_water",
+      "sheet": 14,
+      "index": 2,
+      "description": "A gardener watering rosebushes with a small watering can.",
+      "alt": "A gardener watering rosebushes with a small watering can."
+    },
+    {
+      "key": "bike_bridge",
+      "sheet": 14,
+      "index": 3,
+      "description": "A child cyclist riding a bicycle across a wooden bridge over a river.",
+      "alt": "A child cyclist riding a bicycle across a wooden bridge over a river."
+    },
+    {
+      "key": "waves_rocks",
+      "sheet": 14,
+      "index": 4,
+      "description": "Ocean waves splashing against dark rocks on the shore.",
+      "alt": "Ocean waves splashing against dark rocks on the shore."
+    },
+    {
+      "key": "paint_mix",
+      "sheet": 14,
+      "index": 5,
+      "description": "A child's hands mixing red paint and white paint to create a pink paint puddle on an art palette.",
+      "alt": "A child's hands mixing red paint and white paint to create a pink paint puddle on an art palette."
+    },
+    {
+      "key": "squirrel_nest",
+      "sheet": 14,
+      "index": 6,
+      "description": "A bushy-tailed squirrel carrying an acorn toward its nest in a tree.",
+      "alt": "A bushy-tailed squirrel carrying an acorn toward its nest in a tree."
+    },
+    {
+      "key": "rabbit_grass",
+      "sheet": 14,
+      "index": 7,
+      "description": "A rabbit hiding among tall green grass.",
+      "alt": "A rabbit hiding among tall green grass."
+    },
+    {
+      "key": "puppy_toy",
+      "sheet": 14,
+      "index": 8,
+      "description": "A puppy chewing gently on a small rubber toy.",
+      "alt": "A puppy chewing gently on a small rubber toy."
+    },
+    {
+      "key": "teacher_read",
+      "sheet": 14,
+      "index": 9,
+      "description": "A teacher reading a picture book aloud to a small group of listening children.",
+      "alt": "A teacher reading a picture book aloud to a small group of listening children."
+    },
+    {
+      "key": "reading_nook",
+      "sheet": 14,
+      "index": 10,
+      "description": "A cozy classroom reading nook with books and cushions.",
+      "alt": "A cozy classroom reading nook with books and cushions."
+    },
+    {
+      "key": "writing_notebook",
+      "sheet": 14,
+      "index": 11,
+      "description": "A cheerful notebook and a wooden pencil on a small desk, blank paper without lettering.",
+      "alt": "A cheerful notebook and a wooden pencil on a small desk, blank paper without lettering."
+    },
+    {
+      "key": "math_counters",
+      "sheet": 14,
+      "index": 12,
+      "description": "An inviting bowl of colored wooden counting blocks beside a simple abacus.",
+      "alt": "An inviting bowl of colored wooden counting blocks beside a simple abacus."
+    },
+    {
+      "key": "celebration",
+      "sheet": 14,
+      "index": 13,
+      "description": "A cheerful gold star surrounded by small watercolor confetti and two leafy sprigs.",
+      "alt": "A cheerful gold star surrounded by small watercolor confetti and two leafy sprigs."
+    },
+    {
+      "key": "soup_stir",
+      "sheet": 14,
+      "index": 14,
+      "description": "A chef stirring a pot of soup with a wooden spoon.",
+      "alt": "A chef stirring a pot of soup with a wooden spoon."
+    },
+    {
+      "key": "library_return",
+      "sheet": 14,
+      "index": 15,
+      "description": "A child handing a book to a smiling librarian at a library counter.",
+      "alt": "A child handing a book to a smiling librarian at a library counter."
+    }
+  ]
+}
