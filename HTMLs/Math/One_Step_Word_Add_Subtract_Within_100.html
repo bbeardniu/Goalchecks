@@ -75,6 +75,7 @@
 <div id="summary"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -98,6 +99,7 @@ function startTimer() {
 function stopTimer() { clearInterval(timerInterval); }
 
 function randomWordProblem() {
+  if(window.BeardMathLevels) return window.BeardMathLevels.wordProblem(names,items);
   const type = Math.random() < 0.5 ? "add" : "subtract";
   const name1 = names[Math.floor(Math.random() * names.length)];
   const item = items[Math.floor(Math.random() * items.length)];
@@ -260,6 +262,7 @@ document.getElementById("answer").addEventListener("keydown",(e)=>{if(e.key==="E
 
 startTimer();
 newProblem();
+if(window.BeardMathLevels) window.BeardMathLevels.bind(resetAll);
 </script>
 </body>
 </html>

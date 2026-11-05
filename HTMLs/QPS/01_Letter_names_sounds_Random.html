@@ -126,6 +126,9 @@
   .incorrect { color:var(--red); font-weight:700; font-size:1.5rem; display:inline-block; margin:4px 6px; }
 
   .hint { color:#475569; margin-top:6px; font-size:14px; }
+  .skill-settings{display:flex;justify-content:center;gap:.7rem;flex-wrap:wrap;margin:.8rem 0}
+  .skill-settings label{display:grid;gap:.3rem;text-align:left;color:#334155;font-size:.88rem;font-weight:700}
+  .skill-settings select{min-height:44px;max-width:100%;padding:.5rem;border:2px solid #cbd5e1;border-radius:9px;background:#fff;color:#0f172a;font:inherit}
 
   @media (max-width:420px){
     #letter { font-size:92px; }
@@ -162,6 +165,11 @@
 <body>
   <div class="wrap" role="application" aria-label="Letter names and sounds goal check">
     <h1>Letter Names &amp; Sounds Goal Check</h1>
+    <div class="skill-settings" aria-label="Letter skill settings">
+      <label for="letterTask">Skill<select id="letterTask"><option value="names">Letter names</option><option value="sounds">Letter sounds</option></select></label>
+      <label for="letterCase">Letters<select id="letterCase"><option value="mixed">Uppercase and lowercase</option><option value="upper">Uppercase only</option><option value="lower">Lowercase only</option></select></label>
+    </div>
+    <p id="taskDirections" class="hint">Say the name of each letter.</p>
 
     <div id="letter" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
 
@@ -171,7 +179,7 @@
     </div>
 
     <div id="feedback" aria-live="polite"></div>
-    <div class="hint">One continuous, randomized letter list (52 unique letter forms). Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
+    <div class="hint" id="bankHint">One continuous, randomized letter list (52 unique letter forms). Type <strong>1</strong> for correct and <strong>2</strong> for incorrect.</div>
   </div>
 
   <div id="summary" aria-live="polite"></div>
@@ -197,6 +205,26 @@
   const resetBtn = document.getElementById('resetBtn');
   const stopBtn = document.getElementById('stopBtn');
   const summaryDiv = document.getElementById('summary');
+  const letterTask = document.getElementById('letterTask');
+  const letterCase = document.getElementById('letterCase');
+  const taskDirections = document.getElementById('taskDirections');
+  const bankHint = document.getElementById('bankHint');
+
+  function selectedLetters(){
+    return letterCase.value==='upper' ? upper : letterCase.value==='lower' ? lower : letters;
+  }
+
+  function syncSkillSettings(){
+    document.body.dataset.beardRunAware='true';
+    const skill=letterTask.value==='sounds' ? 'Letter sounds' : 'Letter names';
+    const letterForms=letterCase.value==='upper' ? 'uppercase' : letterCase.value==='lower' ? 'lowercase' : 'uppercase and lowercase';
+    document.body.dataset.beardLevel=skill+' · '+letterForms;
+    document.body.dataset.beardSkill=skill;
+    taskDirections.textContent=letterTask.value==='sounds'
+      ? 'Say the sound of each letter. For vowels, use the short vowel sound taught in class; follow the same scoring rule each time.'
+      : 'Say the name of each letter.';
+    bankHint.innerHTML='One continuous, randomized list ('+selectedLetters().length+' letter forms). Type <strong>1</strong> for correct, <strong>2</strong> for incorrect, and <strong>3</strong> to stop.';
+  }
 
   let currentChar = null;
   let total = 0;
@@ -207,6 +235,7 @@
   let startTime = null;
   let timerInterval = null;
   let elapsed = 0;
+  let questionStartedAt = 0;
 
   let runActive = true;
   let nextWordTimeout = null;
@@ -229,19 +258,21 @@
 
   function showLetter(ch){
     currentChar = ch;
+    questionStartedAt=Date.now();
     letterEl.textContent = ch;
     feedbackEl.textContent = '';
     answered = false;
   }
 
   function pickNext(){
-    if(pool.length === 0) pool = shuffle([...letters]);
+    if(pool.length === 0) pool = shuffle([...selectedLetters()]);
     return pool.pop();
   }
 
   function shuffle(a){
     for(let i=a.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
+      const random=window.BeardRun?.random ? window.BeardRun.random() : Math.random();
+      const j = Math.floor(random*(i+1));
       [a[i],a[j]]=[a[j],a[i]];
     }
     return a;
@@ -276,7 +307,7 @@
       feedbackEl.style.color='var(--red)';
     }
     answered = true;
-    history.push({char:currentChar,correct:!!isCorrect});
+    history.push({char:currentChar,prompt:currentChar,answer:currentChar,correct:!!isCorrect,seconds:Math.max(0,(Date.now()-questionStartedAt)/1000),elapsedSeconds:startTime===null?0:Math.max(0,(Date.now()-startTime)/1000)});
     nextWordTimeout=setTimeout(()=>{nextWordTimeout=null;if(runActive)showLetter(pickNext());},350);
   }
 
@@ -307,6 +338,7 @@ document.addEventListener('keydown',(e)=>{
     const percent = total?Math.round((correctCount/total)*100):0;
 
     let html=`<h2>Session Summary</h2>`;
+    html+=`<p><strong>Skill:</strong> ${document.body.dataset.beardLevel}</p>`;
     html+=`<p><strong>Time:</strong> ${elapsed}s</p>`;
     html+=`<p><strong>Total Attempted:</strong> ${total}</p>`;
     html+=`<p><strong>Correct:</strong> ${correctCount}</p>`;
@@ -339,13 +371,14 @@ document.addEventListener('keydown',(e)=>{
   function resetAll(){
     clearPendingWord(); runActive=true; setScoringControls(true); startTime=null;
     stopTimer();
+    syncSkillSettings();
     started=false; answered=false;
     total=0; correctCount=0; history=[];
     elapsed=0; timerEl.textContent='Time: 0s';
     summaryDiv.style.display='none';
     letterEl.style.display='block';
     stopBtn.style.display='inline-block';
-    pool=shuffle([...letters]);
+    pool=shuffle([...selectedLetters()]);
     showLetter(pickNext());
     startTimer(); // restart timer on reset
   }
@@ -357,7 +390,18 @@ document.addEventListener('keydown',(e)=>{
   document.getElementById("btnCorrect").addEventListener("click", ()=>markAnswer(true));
   document.getElementById("btnIncorrect").addEventListener("click", ()=>markAnswer(false));
 
+  function changeSkillSettings(){
+    resetAll();
+    document.dispatchEvent(new CustomEvent('beard:settings-changed',{detail:{level:document.body.dataset.beardLevel,skill:document.title}}));
+  }
+  letterTask.addEventListener('change',changeSkillSettings);
+  letterCase.addEventListener('change',changeSkillSettings);
+  document.addEventListener('beard:run-start',resetAll);
+  window.BeardAssessment={start:resetAll,reset:resetAll,stop:stopSession,getState:()=>({attempts:total,correct:correctCount,errors:total-correctCount,level:document.body.dataset.beardLevel,seconds:elapsed,responses:history.slice(),active:runActive})};
+
   // show first letter & auto-start timer
+  syncSkillSettings();
+  pool=shuffle([...selectedLetters()]);
   showLetter(pickNext());
   startTimer();
 

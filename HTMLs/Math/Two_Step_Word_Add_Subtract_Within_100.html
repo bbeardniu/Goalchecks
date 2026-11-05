@@ -73,6 +73,7 @@
   <div id="summary"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -118,7 +119,7 @@ function generateTwoStepSubtraction() {
   const question=`${name} had ${n1} ${item}. ${name} used ${n2} ${item}. Later, ${name} gave away ${n3} ${item}. How many ${item} does ${name} have left?`;
   return {question,answer};
 }
-function randomTwoStepProblem(){ return Math.random()<0.5?generateTwoStepAddition():generateTwoStepSubtraction(); }
+function randomTwoStepProblem(){ return window.BeardMathLevels ? window.BeardMathLevels.twoStep(names,items) : Math.random()<0.5?generateTwoStepAddition():generateTwoStepSubtraction(); }
 /* -------------------------------------------- */
 
 function newProblem() {
@@ -246,6 +247,7 @@ document.getElementById("pdfBtn").addEventListener("click",downloadPDF);
 document.getElementById("answer").addEventListener("keydown",(e)=>{if(e.key==="Enter") submitAnswer();});
 
 startTimer(); newProblem();
+if(window.BeardMathLevels) window.BeardMathLevels.bind(resetAll);
 </script>
 </body>
 </html>

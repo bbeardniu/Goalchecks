@@ -1,6 +1,8 @@
 (() => {
   const config = window.SentenceCompletionConfig;
   if (!config || !Array.isArray(config.questions) || !config.questions.length) return;
+  document.body.dataset.beardRunAware = 'true';
+  document.body.dataset.beardLevel = config.grade + ' sentence completion';
 
   const $ = selector => document.querySelector(selector);
   const app = $('#sentence-completion-app');
@@ -64,7 +66,8 @@
   function shuffle(items) {
     const copy = [...items];
     for (let index = copy.length - 1; index > 0; index--) {
-      const swapIndex = Math.floor(Math.random() * (index + 1));
+      const random = window.BeardRun && typeof window.BeardRun.random === 'function' ? window.BeardRun.random : Math.random;
+      const swapIndex = Math.floor(random() * (index + 1));
       [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
     }
     return copy;
@@ -86,7 +89,8 @@
   const workArea = $('#workArea');
   const stopButton = $('#stopBtn');
   const resetButton = $('#resetBtn');
-  let questions = [], questionIndex = 0, history = [], currentQuestion = null, locked = false, ended = false, startedAt = 0, timerId = null, nextQuestionId = null;
+  let questions = [], questionIndex = 0, history = [], currentQuestion = null, locked = false, ended = false, startedAt = 0, questionAt = 0, stoppedSeconds = 0, timerId = null, nextQuestionId = null, settings = {};
+  function reportState() { const correct = history.filter(item => item.correct).length; return {assessment:document.title,skill:'Sentence completion',level:document.body.dataset.beardLevel,mode:settings.mode||'practice',formId:settings.formId||'',scoreType:'Accuracy',score:history.length?correct/history.length:null,attempts:history.length,correct,errors:history.length-correct,percentage:history.length?Math.round(correct/history.length*100):null,pending:false,seconds:ended?stoppedSeconds:Math.max(0,(Date.now()-startedAt)/1000),responses:history.map(item=>({...item,prompt:item.question,outcome:item.correct}))}; }
 
   function updateStats() {
     const total = history.length;
@@ -101,7 +105,7 @@
   function showQuestion() {
     clearTimeout(nextQuestionId);
     if (questionIndex >= questions.length) { stopAssessment(true); return; }
-    currentQuestion = questions[questionIndex]; locked = false; answer.value = ''; feedback.textContent = ''; feedback.className = '';
+    currentQuestion = questions[questionIndex]; locked = false; questionAt = Date.now(); answer.value = ''; feedback.textContent = ''; feedback.className = ''; feedback.hidden = (settings.mode||'practice') !== 'practice';
     sentence.textContent = cleanSentence(currentQuestion); sentence.dataset.beardPrompt = normalizeSentence(currentQuestion.s);
     window.BeardStorybook.render(scene, currentQuestion.artKey);
     progress.textContent = `Sentence ${questionIndex + 1} of ${questions.length}`;
@@ -114,9 +118,10 @@
     if (locked || ended || !currentQuestion) return;
     locked = true; answer.value = choice;
     const correct = choice === currentQuestion.a;
-    options.querySelectorAll('button').forEach(button => { button.disabled = true; if (button.textContent === currentQuestion.a) button.classList.add('is-correct'); });
-    if (!correct) selectedButton.classList.add('is-incorrect');
-    history.push({question:normalizeSentence(currentQuestion.s),answer:choice,correct,correctAnswer:currentQuestion.a}); updateStats();
+    const practice = (settings.mode||'practice') === 'practice';
+    options.querySelectorAll('button').forEach(button => { button.disabled = true; if (practice && button.textContent === currentQuestion.a) button.classList.add('is-correct'); });
+    if (practice && !correct) selectedButton.classList.add('is-incorrect');
+    history.push({question:normalizeSentence(currentQuestion.s),answer:choice,correct,correctAnswer:currentQuestion.a,seconds:Math.max(0,Math.round((Date.now()-questionAt)/100)/10),elapsedSeconds:Math.max(0,Math.round((Date.now()-startedAt)/100)/10)}); updateStats();
     feedback.textContent = correct ? 'Correct!' : `Incorrect. The best answer is “${currentQuestion.a}.”`; feedback.className = correct ? 'feedback-correct' : 'feedback-incorrect';
     nextQuestionId = setTimeout(() => { questionIndex += 1; showQuestion(); }, 950);
   }
@@ -128,14 +133,18 @@
   }
   function stopAssessment(autoFinished = false) {
     if (ended) return;
-    ended = true; locked = true; clearTimeout(nextQuestionId); clearInterval(timerId); feedback.textContent = ''; feedback.className = ''; workArea.hidden = true; directSummary();
+    stoppedSeconds = Math.max(0,(Date.now()-startedAt)/1000); ended = true; locked = true; clearTimeout(nextQuestionId); clearInterval(timerId); feedback.textContent = ''; feedback.className = ''; workArea.hidden = true; directSummary();
+    document.dispatchEvent(new CustomEvent('beard:report-updated'));
     if (autoFinished) setTimeout(() => stopButton.click(), 0);
   }
-  function resetAssessment() {
+  function resetAssessment(runSettings) {
+    settings = runSettings && runSettings.mode ? {...runSettings} : {...(window.BeardRunSettings||settings)}; stoppedSeconds = 0;
     clearTimeout(nextQuestionId); clearInterval(timerId); questions = shuffle(config.questions.map((question, index) => ({...question,artKey:`${config.artGroup}:${index + 1}`}))); questionIndex = 0; history = []; currentQuestion = null; locked = false; ended = false;
     summary.innerHTML = ''; summary.style.display = 'none'; workArea.hidden = false; updateStats(); startTimer(); showQuestion();
   }
   stopButton.addEventListener('click', () => stopAssessment());
   resetButton.addEventListener('click', resetAssessment);
+  document.addEventListener('beard:run-start',event=>resetAssessment(event.detail&&event.detail.settings));
+  window.BeardAssessmentState = {getReport:reportState,reset:()=>resetAssessment(),stop:stopAssessment};
   resetAssessment();
 })();

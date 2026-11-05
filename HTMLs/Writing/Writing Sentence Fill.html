@@ -121,121 +121,30 @@
 
 <script>
 (function(){
-  const sentences = [
-    "The cat ____ up the tree.",
-    "She ____ her lunch at the park.",
-    "The rain ____ falling all day.",
-    "He ____ the ball over the fence.",
-    "The baby ____ when she saw the clown.",
-    "They ____ a movie together last night.",
-    "The wind ____ through the tall trees.",
-    "Mom ____ cookies for the bake sale.",
-    "The sun ____ behind the clouds.",
-    "The dog ____ loudly at the mailman."
-  ];
-
-  let pool = [...sentences];
-  let currentSentence = null;
-  let answers = [];
-  let startTime = null;
-  let timerInterval = null;
-  let elapsed = 0;
-
-  const sentenceEl = document.getElementById('sentence');
-  const inputEl = document.getElementById('answerInput');
-  const feedbackEl = document.getElementById('feedback');
-  const timerEl = document.getElementById('timer');
-  const summaryDiv = document.getElementById('summary');
-  const startBtn = document.getElementById('startBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const stopBtn = document.getElementById('stopBtn');
-
-  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
-
-  function startTimer(){
-    startTime = Date.now();
-    timerInterval = setInterval(()=>{
-      elapsed = Math.floor((Date.now() - startTime)/1000);
-      timerEl.textContent = `Time: ${elapsed}s`;
-    },1000);
-  }
-
-  function stopTimer(){ clearInterval(timerInterval); }
-
-  function showSentence(){
-    if(pool.length === 0){ sentenceEl.textContent = "No more sentences!"; return; }
-    currentSentence = pool.pop();
-    sentenceEl.textContent = currentSentence;
-    inputEl.value = "";
-    inputEl.disabled = false;
-    inputEl.focus();
-  }
-
-  function startGame(){
-    startBtn.disabled = true;
-    inputEl.disabled = false;
-    nextBtn.disabled = false;
-    feedbackEl.textContent = "";
-    summaryDiv.style.display = "none";
-    pool = shuffle([...sentences]);
-    answers = [];
-    showSentence();
-    startTimer();
-  }
-
-  function nextSentence(){
-    const response = inputEl.value.trim();
-    if(response){
-      answers.push({sentence: currentSentence, answer: response, correct: null});
-    }
-    showSentence();
-  }
-
-  function stopGame(){
-    stopTimer();
-    inputEl.disabled = true;
-    nextBtn.disabled = true;
-    feedbackEl.textContent = "";
-    if(answers.length === 0){
-      sentenceEl.textContent = "No responses recorded.";
-      return;
-    }
-    checkAnswers();
-  }
-
-  function checkAnswers(){
-    summaryDiv.innerHTML = "<h2>Teacher Check</h2><p>Enter 1 for correct, 2 for incorrect.</p>";
-    let correctCount = 0;
-    let i = 0;
-    function promptNext(){
-      if(i < answers.length){
-        const result = prompt(`Sentence:\n${answers[i].sentence}\nStudent answer: "${answers[i].answer}"\nCorrect (1) or Incorrect (2)?`);
-        if(result === "1"){ answers[i].correct = true; correctCount++; }
-        else { answers[i].correct = false; }
-        i++;
-        promptNext();
-      } else {
-        const percent = Math.round((correctCount / answers.length) * 100);
-        let html = `<h2>Results</h2>
-          <p><strong>Time:</strong> ${elapsed}s</p>
-          <p><strong>Total Answered:</strong> ${answers.length}</p>
-          <p><strong>Correct:</strong> ${correctCount}</p>
-          <p><strong>Incorrect:</strong> ${answers.length - correctCount}</p>
-          <p><strong>Score:</strong> ${percent}%</p><hr>`;
-        html += `<div><strong>Responses:</strong></div>`;
-        answers.forEach(item=>{
-          html += `<div style="margin:4px 0;" class="${item.correct ? 'correct':'incorrect'}">${item.sentence} <em>(${item.answer})</em></div>`;
-        });
-        summaryDiv.innerHTML = html;
-        summaryDiv.style.display = "block";
-      }
-    }
-    promptNext();
-  }
-
-  startBtn.addEventListener('click', startGame);
-  nextBtn.addEventListener('click', nextSentence);
-  stopBtn.addEventListener('click', stopGame);
+  'use strict';
+  document.body.dataset.beardRunAware='true';
+  document.body.dataset.beardLevel='Open sentence completion';
+  const sentences=["The cat ____ up the tree.","She ____ her lunch at the park.","The rain ____ falling all day.","He ____ the ball over the fence.","The baby ____ when she saw the clown.","They ____ a movie together last night.","The wind ____ through the tall trees.","Mom ____ cookies for the bake sale.","The sun ____ behind the clouds.","The dog ____ loudly at the mailman."];
+  const $=id=>document.getElementById(id),sentenceEl=$('sentence'),inputEl=$('answerInput'),feedbackEl=$('feedback'),timerEl=$('timer'),summaryDiv=$('summary'),startBtn=$('startBtn'),nextBtn=$('nextBtn'),stopBtn=$('stopBtn');
+  sentenceEl.setAttribute('data-beard-prompt','');
+  summaryDiv.setAttribute('data-beard-hide-auto-history','');
+  let pool=[],currentSentence=null,answers=[],startTime=null,timerInterval=null,elapsed=0,active=false,questionAt=0,settings={};
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function shuffle(a){const random=window.BeardRun&&typeof window.BeardRun.random==='function'?window.BeardRun.random:Math.random;for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+  function seconds(){return active&&startTime!==null?Math.max(0,(Date.now()-startTime)/1000):elapsed}
+  function state(){const pending=answers.some(a=>a.correct===null),correct=answers.filter(a=>a.correct===true).length;return {assessment:document.title,skill:'Open sentence completion',level:'Open sentence completion',mode:settings.mode||'practice',formId:settings.formId||'',scoreType:pending?'Pending':'Accuracy',score:pending||!answers.length?null:correct/answers.length,attempts:answers.length,correct:pending?null:correct,errors:pending?null:answers.length-correct,percentage:pending||!answers.length?null:Math.round(correct/answers.length*100),pending,seconds:seconds(),responses:answers.map(a=>({...a,prompt:a.sentence,outcome:a.correct}))}}
+  function notify(){document.dispatchEvent(new CustomEvent('beard:report-updated'))}
+  function stopTimer(){clearInterval(timerInterval);timerInterval=null}
+  function showSentence(){if(!pool.length){currentSentence=null;stopGame();return}currentSentence=pool.pop();sentenceEl.textContent=currentSentence;inputEl.value='';inputEl.disabled=false;questionAt=Date.now();inputEl.focus()}
+  function startGame(runSettings){settings=runSettings&&runSettings.mode?{...runSettings}:{...(window.BeardRunSettings||settings)};stopTimer();active=true;elapsed=0;startTime=Date.now();answers=[];pool=shuffle(sentences.slice());summaryDiv.style.display='none';summaryDiv.replaceChildren();startBtn.disabled=true;nextBtn.disabled=false;stopBtn.disabled=false;inputEl.disabled=false;feedbackEl.textContent='';showSentence();timerEl.textContent='Time: 0s';timerInterval=setInterval(()=>timerEl.textContent='Time: '+Math.floor(seconds())+'s',1000)}
+  function saveCurrent(){if(!currentSentence||!inputEl.value.trim())return false;answers.push({sentence:currentSentence,answer:inputEl.value.trim(),correct:null,seconds:Math.max(0,Math.round((Date.now()-questionAt)/100)/10),elapsedSeconds:Math.round(seconds()*10)/10});currentSentence=null;inputEl.value='';return true}
+  function nextSentence(){if(!active||!saveCurrent())return;showSentence()}
+  function renderScore(){const s=state(),el=$('teacherScore');if(el)el.textContent=s.pending?'Score: Pending — '+answers.filter(a=>a.correct===null).length+' response(s) still need a teacher check':s.attempts?'Score: '+s.percentage+'% · '+s.correct+' correct out of '+s.attempts:'No responses recorded.';notify()}
+  function renderReport(){summaryDiv.innerHTML='<h2>Teacher Check</h2><p><strong>Date:</strong> '+new Date().toLocaleDateString()+' · <strong>Total time:</strong> '+elapsed.toFixed(1)+' s</p><p id="teacherScore"></p><p>Read each response in context. Select Correct or Incorrect; leave it Pending if it has not been reviewed. More than one word can correctly complete these sentences.</p>'+answers.map((a,i)=>'<section style="padding:.8rem;margin:.6rem 0;border:1px solid #cfe2ed;border-radius:10px;text-align:left"><strong>'+esc(a.sentence)+'</strong><p>'+esc(a.answer)+' · '+a.seconds.toFixed(1)+' s</p><label>Teacher rating <select data-grade="'+i+'" style="font:inherit;min-height:44px"><option value="pending">Pending — not graded</option><option value="correct">Correct</option><option value="incorrect">Incorrect</option></select></label></section>').join('')+'<button type="button" id="restartCheck">Start a New Check</button> <button type="button" id="printCheck">Print / Save PDF</button>';summaryDiv.style.display='block';summaryDiv.querySelectorAll('[data-grade]').forEach(select=>select.addEventListener('change',()=>{answers[Number(select.dataset.grade)].correct=select.value==='pending'?null:select.value==='correct';renderScore()}));$('restartCheck').addEventListener('click',()=>startGame());$('printCheck').addEventListener('click',()=>window.print());renderScore()}
+  function stopGame(){if(!active)return;saveCurrent();elapsed=seconds();active=false;stopTimer();inputEl.disabled=true;nextBtn.disabled=true;stopBtn.disabled=true;startBtn.disabled=false;feedbackEl.textContent='';renderReport()}
+  startBtn.addEventListener('click',()=>startGame());nextBtn.addEventListener('click',nextSentence);stopBtn.addEventListener('click',stopGame);inputEl.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.repeat){event.preventDefault();nextSentence()}});
+  document.addEventListener('beard:run-start',event=>startGame(event.detail&&event.detail.settings));
+  window.BeardAssessmentState={getReport:state,reset:()=>startGame(),stop:stopGame};window.BeardAssessment={start:startGame,reset:startGame,stop:stopGame,getState:state};
 })();
 </script>
 </body>

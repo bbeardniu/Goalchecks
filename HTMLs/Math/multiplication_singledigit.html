@@ -60,6 +60,7 @@
 <!-- jsPDF library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -87,8 +88,10 @@ function newProblem() {
   nextProblemTimer = null;
   answered = false;
 
+  if(window.BeardMathLevels){const p=window.BeardMathLevels.factPair(false);num1=p.a;num2=p.b;}else{
   num1 = Math.floor(Math.random() * 10);
   num2 = Math.floor(Math.random() * 10);
+  }
   document.getElementById("problem").textContent = `${num1} × ${num2} = ?`;
   document.getElementById("answer").value = "";
   document.getElementById("feedback").textContent = "";
@@ -224,6 +227,7 @@ function downloadPDF() {
 document.getElementById("answer").addEventListener("keyup", e=>{ if(e.key==="Enter") checkAnswer(); });
 startTimer();
 newProblem();
+if(window.BeardMathLevels) window.BeardMathLevels.bind(resetAll);
 </script>
 </body>
 </html>

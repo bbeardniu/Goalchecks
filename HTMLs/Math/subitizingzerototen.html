@@ -126,6 +126,7 @@
 
 <div id="summary"></div>
 
+<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -148,6 +149,7 @@ let questionGeneration = 0;
   }
 
   function draw(n) {
+    if(window.BeardMathLevels && window.BeardMathLevels.drawDots(document.getElementById("dotBoard"),n)) return;
     const dotBoard = document.getElementById("dotBoard");
     dotBoard.innerHTML = "";
     if (n === 0) return;
@@ -179,7 +181,7 @@ let questionGeneration = 0;
   nextProblemTimer = null;
   const activeQuestion = ++questionGeneration;
 
-    ans = Math.floor(Math.random() * 11);
+    ans = window.BeardMathLevels ? window.BeardMathLevels.choose(Array.from({length:11},(_,i)=>i), "dot-counts") : Math.floor(Math.random() * 11);
     answered = false;
     document.getElementById("answer").value = "";
     document.getElementById("feedback").textContent = "";
@@ -363,6 +365,7 @@ let questionGeneration = 0;
 
   newProblem();
   startTimer();
+if(window.BeardMathLevels) window.BeardMathLevels.bind(resetAll);
 </script>
 
 </body>

@@ -132,6 +132,8 @@
 <script src="../../assets/illustrations/storybook-art.js"></script>
 <script>
 (function(){
+  document.body.dataset.beardRunAware='true';
+  document.body.dataset.beardLevel='Picture-supported sentence ordering';
   const beginnerPictureBank = [
   {
     "sentence": "The dog runs.",
@@ -663,11 +665,14 @@
   let startedAt=Date.now();
   let responseStartedAt=startedAt;
   let directTimerId=null;
+  let runSettings={},stoppedSeconds=0;
+  function reportState(){return {assessment:document.title,skill:'Picture-supported sentence construction',level:'Picture-supported sentence ordering',mode:runSettings.mode||'practice',formId:runSettings.formId||'',scoreType:'Accuracy',score:attempts?correct/attempts:null,attempts,correct,errors:attempts-correct,percentage:attempts?Math.round(correct/attempts*100):null,pending:false,seconds:runActive?elapsedSeconds(startedAt):stoppedSeconds,responses:answerLog.map(entry=>({...entry,prompt:entry.target,outcome:entry.correct}))};}
 
   function shuffle(items){
     const next=items.slice();
     for(let index=next.length-1;index>0;index--){
-      const swapIndex=Math.floor(Math.random()*(index+1));
+      const random=window.BeardRun&&typeof window.BeardRun.random==='function'?window.BeardRun.random:Math.random;
+      const swapIndex=Math.floor(random()*(index+1));
       const temporary=next[index];
       next[index]=next[swapIndex];
       next[swapIndex]=temporary;
@@ -714,9 +719,9 @@
     stripEl.replaceChildren();
     if(placedWords.length)placedWords.forEach(function(word){stripEl.append(makeTile(word,'sentence'));});else addEmptyNote(stripEl,'Tap words below to build your sentence.');
     if(bankWords.length)bankWords.forEach(function(word){bankEl.append(makeTile(word,'bank'));});
-    else if(itemSolved)addEmptyNote(bankEl,'Nice work! Choose Next sentence when you are ready.');
+    else if(itemSolved)addEmptyNote(bankEl,'Choose Next sentence when you are ready.');
     else addEmptyNote(bankEl,'Every word is in your sentence. Check the order!');
-    stripEl.classList.toggle('is-correct',itemSolved);
+    stripEl.classList.toggle('is-correct',(runSettings.mode||'practice')==='practice'&&itemSolved&&Boolean(answerLog.length&&answerLog[answerLog.length-1].correct));
     stripEl.classList.toggle('is-incorrect',feedbackEl.classList.contains('bad')&&!itemSolved);
     answerEl.value=currentOrder();
     const completed=beginnerPictureBank.length-remaining.length;
@@ -759,10 +764,11 @@
     const seconds=elapsedSeconds(responseStartedAt);
     attempts++;
     if(isCorrect)correct++;
-    answerLog.push({picture:currentItem.alt,target:currentItem.sentence,answer:answer,correct:isCorrect,seconds:seconds});
+    answerLog.push({picture:currentItem.alt,target:currentItem.sentence,answer:answer,correct:isCorrect,seconds:seconds,elapsedSeconds:elapsedSeconds(startedAt),firstAttempt:!answerLog.some(entry=>entry.target===currentItem.sentence)});
     responseStartedAt=Date.now();
     if(isCorrect){itemSolved=true;setFeedback('Correct! The sentence is in the right order.','good');}
-    else setFeedback('Incorrect — rearrange the word tiles and try again.','bad');
+    else{setFeedback('Incorrect — rearrange the word tiles and try again.','bad');if((runSettings.mode||'practice')!=='practice')itemSolved=true;}
+    feedbackEl.hidden=(runSettings.mode||'practice')!=='practice';
     render();
   }
 
@@ -780,8 +786,8 @@
     document.getElementById('reportResetBtn').addEventListener('click',resetAssessment);
   }
 
-  function stopAssessment(){if(!runActive)return;runActive=false;clearInterval(directTimerId);if(feedbackEl.textContent)setFeedback('','neutral');workArea.hidden=true;renderReport();}
-  function resetAssessment(){clearInterval(directTimerId);attempts=0;correct=0;answerLog=[];runActive=true;startedAt=Date.now();responseStartedAt=startedAt;remaining=shuffle(beginnerPictureBank);summaryEl.style.display='none';summaryEl.replaceChildren();workArea.hidden=false;setFeedback('','neutral');loadNextSentence();startDirectTimer();}
+  function stopAssessment(){if(!runActive)return;stoppedSeconds=elapsedSeconds(startedAt);runActive=false;clearInterval(directTimerId);if(feedbackEl.textContent)setFeedback('','neutral');workArea.hidden=true;renderReport();document.dispatchEvent(new CustomEvent('beard:report-updated'));}
+  function resetAssessment(settings){runSettings=settings&&settings.mode?{...settings}:{...(window.BeardRunSettings||runSettings)};stoppedSeconds=0;clearInterval(directTimerId);attempts=0;correct=0;answerLog=[];runActive=true;startedAt=Date.now();responseStartedAt=startedAt;remaining=shuffle(beginnerPictureBank);summaryEl.style.display='none';summaryEl.replaceChildren();workArea.hidden=false;setFeedback('','neutral');loadNextSentence();startDirectTimer();}
   function renderDirectTimer(){if(isEmbedded){directTimer.hidden=true;return;}directTimer.hidden=false;directTimer.textContent='Time: '+formatTime(elapsedSeconds(startedAt));}
   function startDirectTimer(){renderDirectTimer();if(isEmbedded)return;clearInterval(directTimerId);directTimerId=setInterval(renderDirectTimer,250);}
 
@@ -791,6 +797,8 @@
   nextBtn.addEventListener('click',function(){if(itemSolved)loadNextSentence();});
   stopBtn.addEventListener('click',stopAssessment);
   resetBtn.addEventListener('click',resetAssessment);
+  document.addEventListener('beard:run-start',event=>resetAssessment(event.detail&&event.detail.settings));
+  window.BeardAssessmentState={getReport:reportState,reset:()=>resetAssessment(),stop:stopAssessment};
   try{validateBank();resetAssessment();}catch(error){workArea.hidden=true;setFeedback('This activity needs a quick repair before it can start.','bad');console.error(error);}
 })();
 </script>

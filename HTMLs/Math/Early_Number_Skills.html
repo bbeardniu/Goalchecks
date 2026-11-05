@@ -10,21 +10,30 @@
 </head>
 <body data-beard-run-aware="true">
 <main class="shell"><h1>Early Number Skills</h1>
-<div class="settings"><label>Skill<select id="skill"><option value="name">Name a numeral</option><option value="count">Count objects</option><option value="match">Match numeral and quantity</option><option value="compare">Compare two numbers</option><option value="missing">Find a missing number</option><option value="bonds">Number bonds</option><option value="place">Tens and ones</option></select></label><label>Number range<select id="range"><option value="5">Within 5</option><option value="10">Within 10</option><option value="20" selected>Within 20</option><option value="100">Within 100</option></select></label></div>
+<div class="settings"><label>Skill<select id="skill"><option value="name">Name a numeral</option><option value="count">Count objects</option><option value="match">Match numeral and quantity</option><option value="compare">Compare two numbers</option><option value="order">Order three numbers</option><option value="missing">Find a missing number</option><option value="beforeafter">Number before or after</option><option value="skip">Skip counting</option><option value="bonds">Number bonds</option><option value="place">Tens and ones</option></select></label><label>Number range<select id="range"><option value="5">Within 5</option><option value="10">Within 10</option><option value="20" selected>Within 20</option><option value="100">Within 100</option></select></label><label id="skipSettings" hidden>Count by<select id="skipStep"><option value="2">Twos</option><option value="5">Fives</option><option value="10">Tens</option></select></label></div>
 <p class="note" id="directions">An adult marks the child's spoken number name. Changing a level starts a fresh check.</p>
 <section id="workArea"><div class="question"><div id="problem" data-beard-problem>Choose a skill, then press Start.</div><div id="visual"></div></div><div id="choices" class="choices"></div><div class="response"><input id="answer" type="number" inputmode="numeric" aria-label="Your answer" hidden><button id="submitBtn" type="button" hidden>Check answer</button></div><div id="oralControls" class="controls" hidden><button type="button" id="incorrectBtn" class="incorrect">Incorrect</button><button type="button" id="correctBtn" class="correct">Correct</button></div></section>
 <div class="controls"><button id="startBtn" type="button">Start</button><button id="stopBtn" type="button" disabled>Stop assessment</button><button id="resetBtn" type="button">Reset check</button></div><p id="feedback" aria-live="polite"></p><div class="stats"><span id="attempts" data-beard-correct="0">Attempts: 0</span><span id="score">Score: 0%</span><span id="timer">Time: 0s</span></div><section id="summary" aria-live="polite"></section></main>
 <script>
 (() => {
   'use strict';
-  const $=id=>document.getElementById(id), skill=$('skill'),range=$('range'),problem=$('problem'),visual=$('visual'),choices=$('choices'),answer=$('answer'),feedback=$('feedback'),summary=$('summary');
-  const labels={name:'Numeral identification',count:'Counting objects',match:'Numeral–quantity matching',compare:'Number comparison',missing:'Missing numbers',bonds:'Number bonds',place:'Tens and ones'};
-  let active=false,locked=true,current=null,correct=0,attempts=0,history=[],startedAt=0,stoppedAt=0,timerId=null,nextTimer=null,bag=[];
+  const $=id=>document.getElementById(id), skill=$('skill'),range=$('range'),skipStep=$('skipStep'),problem=$('problem'),visual=$('visual'),choices=$('choices'),answer=$('answer'),feedback=$('feedback'),summary=$('summary');
+  const labels={name:'Numeral identification',count:'Counting objects',match:'Numeral–quantity matching',compare:'Number comparison',order:'Number ordering',missing:'Missing numbers',beforeafter:'Number before or after',skip:'Skip counting',bonds:'Number bonds',place:'Tens and ones'};
+  let active=false,locked=true,current=null,correct=0,attempts=0,history=[],startedAt=0,stoppedAt=0,timerId=null,nextTimer=null,bag=[],taskBags=new Map();
   const random=()=>typeof window.BeardRun?.random==='function'?window.BeardRun.random():Math.random();
   const integer=(min,max)=>min+Math.floor(random()*(max-min+1));
   function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=integer(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;}
-  function level(){return labels[skill.value]+' · within '+range.value;}
-  function syncLevel(){document.body.dataset.beardLevel=level();for(const option of range.options)option.disabled=['count','match'].includes(skill.value)&&Number(option.value)>20;if(['count','match'].includes(skill.value)&&Number(range.value)>20)range.value='20';document.body.dataset.beardLevel=level();$('directions').textContent=skill.value==='name'?"An adult marks the child's spoken number name. Use the buttons or keys 1 and 2.":'Respond independently using the number box or choices. Changing a level starts a fresh check.';}
+  function balanced(options,key){let items=taskBags.get(key);if(!items?.length){items=shuffle(options);taskBags.set(key,items);}return items.pop();}
+  function level(){return labels[skill.value]+(skill.value==='skip'?' · by '+skipStep.value:'')+' · within '+range.value;}
+  function syncLevel(){
+    for(const option of range.options)option.disabled=['count','match'].includes(skill.value)&&Number(option.value)>20;
+    if(['count','match'].includes(skill.value)&&Number(range.value)>20)range.value='20';
+    for(const option of skipStep.options)option.disabled=2*Number(option.value)>Number(range.value);
+    if([...skipStep.options].some(option=>option.value===skipStep.value&&option.disabled))skipStep.value='2';
+    $('skipSettings').hidden=skill.value!=='skip';
+    document.body.dataset.beardLevel=level();
+    $('directions').textContent=skill.value==='name'?"An adult marks the child's spoken number name. Use the buttons or keys 1 and 2.":skill.value==='order'?'Choose the row that puts all three numbers in order from least to greatest. Changing a level starts a fresh check.':skill.value==='skip'?'Count by the selected step and fill in the missing number. All numbers stay within the selected range. Changing a level starts a fresh check.':'Respond independently using the number box or choices. Changing a level starts a fresh check.';
+  }
   function updateStats(){const percent=attempts?Math.round(correct/attempts*100):0;$('attempts').textContent='Attempts: '+attempts;$('attempts').dataset.beardCorrect=String(correct);$('score').textContent='Score: '+percent+'%';}
   function elapsed(){return startedAt?Math.max(0,((stoppedAt||Date.now())-startedAt)/1000):0;}
   function dots(count){let shapes='';for(let i=0;i<count;i++){const x=34+(i%5)*75,y=35+Math.floor(i/5)*54;shapes+='<circle cx="'+x+'" cy="'+y+'" r="12" fill="#244e65"/>'; }return '<svg viewBox="0 0 380 220" role="img" aria-label="A group of '+count+' dots"><rect x="2" y="2" width="376" height="216" rx="12" fill="#fffdf7" stroke="#d0e2e8"/>'+shapes+'</svg>';}
@@ -32,25 +41,62 @@
   function setPrompt(text){problem.textContent=text;problem.dataset.beardProblem=text;}
   function optionButton(label,value,html){const button=document.createElement('button');button.type='button';if(html)button.innerHTML=html;else button.textContent=label;button.setAttribute('aria-label',label);button.addEventListener('click',()=>respond(value));choices.appendChild(button);}
   function nextQuestion(){
-    if(!active)return;clearTimeout(nextTimer);locked=false;feedback.textContent='';visual.innerHTML='';choices.replaceChildren();answer.value='';answer.type=skill.value==='name'||skill.value==='match'||skill.value==='compare'?'hidden':'number';answer.hidden=['name','match','compare'].includes(skill.value);$('submitBtn').hidden=answer.hidden;$('oralControls').hidden=skill.value!=='name';const max=Number(range.value);let target=quantity();
+    if(!active)return;clearTimeout(nextTimer);locked=false;feedback.textContent='';visual.innerHTML='';choices.replaceChildren();answer.value='';answer.hidden=['name','match','compare','order'].includes(skill.value);answer.type=answer.hidden?'hidden':'number';$('submitBtn').hidden=answer.hidden;$('oralControls').hidden=skill.value!=='name';const max=Number(range.value);let target=quantity();
     if(skill.value==='name'){setPrompt('Name this number: '+target);visual.innerHTML='<div class="number" aria-hidden="true">'+target+'</div>';current={answer:target,prompt:'Name the numeral '+target,oral:true};}
     else if(skill.value==='count'){setPrompt('Count the dots. How many?');visual.innerHTML=dots(target);current={answer:target,prompt:'Count '+target+' dots'};}
     else if(skill.value==='match'){setPrompt('Which group matches the numeral '+target+'?');const distractors=shuffle(Array.from({length:max+1},(_,i)=>i).filter(n=>n!==target)).slice(0,3);for(const n of shuffle([target,...distractors]))optionButton(n+' dots',n,dots(n));current={answer:target,prompt:'Match numeral '+target+' to a dot group'};}
-    else if(skill.value==='compare'){let other=integer(0,max-1);if(other>=target)other++;setPrompt('Which of these two numbers is greater: '+target+' or '+other+'?');for(const n of shuffle([target,other]))optionButton(String(n),n);current={answer:Math.max(target,other),prompt:'Greater number: '+target+' or '+other};}
+    else if(skill.value==='compare'){
+      const kind=balanced(['greater','less','equal'],'comparison-kind');
+      let other=integer(0,max-1);if(other>=target)other++;
+      if(kind==='equal'){
+        const equal=balanced([true,false],'equality-outcome');if(equal)other=target;
+        setPrompt('Are '+target+' and '+other+' equal?');
+        for(const label of shuffle(['Yes','No']))optionButton(label,label);
+        current={answer:equal?'Yes':'No',prompt:'Are '+target+' and '+other+' equal?'};
+      }else{
+        setPrompt('Which number is '+kind+': '+target+' or '+other+'?');
+        for(const n of shuffle([target,other]))optionButton(String(n),n);
+        current={answer:kind==='greater'?Math.max(target,other):Math.min(target,other),prompt:(kind==='greater'?'Greater':'Lesser')+' number: '+target+' or '+other};
+      }
+    }
+    else if(skill.value==='order'){
+      const ordered=shuffle(Array.from({length:max+1},(_,i)=>i)).slice(0,3).sort((a,b)=>a-b),[a,b,c]=ordered;
+      const correctOrder=ordered.join(' → '),permutations=[[a,b,c],[a,c,b],[b,a,c],[b,c,a],[c,a,b],[c,b,a]].map(row=>row.join(' → '));
+      const prompt='Order from least to greatest: '+shuffle(ordered).join(', ');
+      setPrompt(prompt);for(const label of shuffle([correctOrder,...shuffle(permutations.filter(row=>row!==correctOrder)).slice(0,3)]))optionButton(label,label);
+      current={answer:correctOrder,prompt};
+    }
     else if(skill.value==='missing'){const start=integer(0,Math.max(0,max-3));setPrompt(start+', '+(start+1)+', _____, '+(start+3));current={answer:start+2,prompt:'Missing number: '+start+', '+(start+1)+', __, '+(start+3)};}
+    else if(skill.value==='beforeafter'){
+      const direction=balanced(['before','after'],'before-after'),number=integer(direction==='before'?1:0,direction==='before'?max:max-1);
+      const prompt='What number comes just '+direction+' '+number+'?';setPrompt(prompt);
+      current={answer:number+(direction==='before'?-1:1),prompt};
+    }
+    else if(skill.value==='skip'){
+      const step=Number(skipStep.value),start=integer(0,Math.floor(max/step)-2)*step,missing=balanced([0,1,2],'skip-position');
+      const numbers=[start,start+step,start+2*step],sequence=numbers.map((number,index)=>index===missing?'_____':number).join(', ');
+      const prompt='Count by '+step+': '+sequence;setPrompt(prompt);current={answer:numbers[missing],prompt};
+    }
     else if(skill.value==='bonds'){const known=integer(0,target);setPrompt('The whole is '+target+'. One part is '+known+'. What is the missing part?');visual.innerHTML='<svg viewBox="0 0 380 220" role="img" aria-label="Number bond: whole '+target+', known part '+known+', missing other part"><path d="M190 75L110 150M190 75L270 150" fill="none" stroke="#81aabc" stroke-width="4"/><g fill="#fffdf7" stroke="#648797" stroke-width="3"><circle cx="190" cy="55" r="42"/><circle cx="100" cy="166" r="42"/><circle cx="280" cy="166" r="42"/></g><g fill="#244e65" text-anchor="middle" font-family="sans-serif" font-size="35" font-weight="700"><text x="190" y="67">'+target+'</text><text x="100" y="178">'+known+'</text><text x="280" y="178">?</text></g></svg>';current={answer:target-known,prompt:'Number bond: whole '+target+', known part '+known};}
     else{const tens=Math.floor(target/10),ones=target%10;setPrompt(tens+' tens and '+ones+' ones make what number?');current={answer:target,prompt:tens+' tens and '+ones+' ones'};}
     problem.dataset.beardProblem=current.prompt;if(!answer.hidden)answer.focus();
   }
   function respond(value,oralOutcome){if(!active||locked||!current)return;if(value===undefined){const raw=answer.value.trim();if(raw==='')return;value=Number(raw);if(!Number.isFinite(value))return;}locked=true;const outcome=oralOutcome===undefined?value===current.answer:oralOutcome;answer.value=current.oral?'Oral response (adult marked)':String(value);attempts++;if(outcome)correct++;history.push({problem:current.prompt,answer:answer.value,expected:current.answer,correct:outcome,elapsedSeconds:elapsed()});updateStats();feedback.textContent=outcome?'Correct!':'Incorrect. The correct answer is '+current.answer+'.';feedback.style.color=outcome?'#237f4e':'#bd4141';choices.querySelectorAll('button').forEach(b=>b.disabled=true);nextTimer=setTimeout(nextQuestion,700);}
-  function clearRun(){clearTimeout(nextTimer);clearInterval(timerId);active=false;locked=true;current=null;correct=0;attempts=0;history=[];bag=[];startedAt=0;stoppedAt=0;summary.style.display='none';summary.replaceChildren();feedback.textContent='';$('workArea').hidden=false;updateStats();$('timer').textContent='Time: 0s';$('stopBtn').disabled=true;$('startBtn').disabled=false;choices.replaceChildren();visual.innerHTML='';answer.hidden=true;$('submitBtn').hidden=true;$('oralControls').hidden=true;setPrompt('Choose a skill, then press Start.');}
+  function clearRun(){clearTimeout(nextTimer);clearInterval(timerId);active=false;locked=true;current=null;correct=0;attempts=0;history=[];bag=[];taskBags=new Map();startedAt=0;stoppedAt=0;summary.style.display='none';summary.replaceChildren();feedback.textContent='';$('workArea').hidden=false;updateStats();$('timer').textContent='Time: 0s';$('stopBtn').disabled=true;$('startBtn').disabled=false;choices.replaceChildren();visual.innerHTML='';answer.hidden=true;$('submitBtn').hidden=true;$('oralControls').hidden=true;setPrompt('Choose a skill, then press Start.');}
   function start(){clearRun();syncLevel();active=true;locked=false;startedAt=Date.now();$('stopBtn').disabled=false;$('startBtn').disabled=true;timerId=setInterval(()=>{$('timer').textContent='Time: '+Math.floor(elapsed())+'s';},250);nextQuestion();}
   function stop(){if(!active)return;const seconds=elapsed();stoppedAt=Date.now();active=false;locked=true;clearTimeout(nextTimer);clearInterval(timerId);$('workArea').hidden=true;$('stopBtn').disabled=true;$('startBtn').disabled=false;feedback.textContent='';summary.innerHTML='<h2>Assessment Results</h2><p>Attempts: '+attempts+' · Correct: '+correct+' · Score: '+(attempts?Math.round(correct/attempts*100):0)+'% · Total time: '+seconds.toFixed(1)+' seconds</p>';summary.style.display='block';}
   $('startBtn').addEventListener('click',start);$('resetBtn').addEventListener('click',clearRun);$('stopBtn').addEventListener('click',stop);$('submitBtn').addEventListener('click',()=>respond());$('correctBtn').addEventListener('click',()=>respond(current?.answer,true));$('incorrectBtn').addEventListener('click',()=>respond(current?.answer,false));answer.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();respond();}});
   document.addEventListener('keydown',event=>{if(event.repeat||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;if(skill.value==='name'&&event.key==='1')respond(current?.answer,true);else if(skill.value==='name'&&event.key==='2')respond(current?.answer,false);});
-  for(const select of [skill,range])select.addEventListener('change',()=>{syncLevel();clearRun();document.dispatchEvent(new CustomEvent('beard:settings-changed',{detail:{level:level()}}));});
+  for(const select of [skill,range,skipStep])select.addEventListener('change',()=>{syncLevel();clearRun();document.dispatchEvent(new CustomEvent('beard:settings-changed',{detail:{level:level()}}));});
   document.addEventListener('beard:run-start',start);
-  window.BeardAssessment={start,reset:clearRun,stop,getState:()=>({assessment:'Early Number Skills',level:level(),correct,attempts,errors:attempts-correct,seconds:elapsed(),responses:history.slice()})};syncLevel();clearRun();
+  window.BeardAssessment={start,reset:clearRun,stop,getState:()=>({assessment:'Early Number Skills',level:level(),correct,attempts,errors:attempts-correct,seconds:elapsed(),responses:history.slice()})};
+  if(typeof location==='object'&&typeof URLSearchParams==='function'){
+    const params=new URLSearchParams(location.search||''),requestedSkill=params.get('skill'),requestedRange=params.get('range'),requestedStep=params.get('step');
+    if(Object.prototype.hasOwnProperty.call(labels,requestedSkill))skill.value=requestedSkill;
+    if([...range.options].some(option=>option.value===requestedRange))range.value=requestedRange;
+    if([...skipStep.options].some(option=>option.value===requestedStep))skipStep.value=requestedStep;
+  }
+  syncLevel();clearRun();
 })();
 </script>
 </body></html>

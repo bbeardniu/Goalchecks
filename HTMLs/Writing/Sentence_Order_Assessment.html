@@ -107,6 +107,7 @@
 
   <section class="assessment-workspace" id="workArea" aria-label="Sentence ordering activity">
     <p class="instructions">Tap the cut-out words in the order that makes a complete sentence. Tap a word in <strong>My sentence</strong> to put it back. When every word is in place, choose <strong>Check order</strong>.</p>
+    <p class="task-tip">Some word sets have more than one sensible order. Reviewed alternatives are accepted. An adult can approve another complete, grammatical sentence after checking its meaning.</p>
     <div class="progress-row">
       <p id="progress">Sentence 1 of 200</p>
       <p class="task-tip">One sentence at a time</p>
@@ -123,6 +124,7 @@
       <button type="button" id="clearBtn" class="secondary">Clear sentence</button>
       <button type="button" id="mixBtn" class="secondary">Mix all words</button>
       <button type="button" id="checkBtn" class="check">Check order</button>
+      <button type="button" id="acceptOrderBtn" class="secondary" hidden>Teacher: accept alternate order</button>
       <button type="button" id="nextBtn" class="next" hidden disabled>Next sentence</button>
       <button type="button" id="stopBtn" class="danger">Stop assessment</button>
       <button type="button" id="resetBtn" class="reset">Reset check</button>
@@ -136,8 +138,11 @@
   <section id="summary" data-beard-hide-auto-history aria-live="polite"></section>
 </main>
 
+<script src="Sentence_Order_Accepted.js"></script>
 <script>
 (function(){
+  document.body.dataset.beardRunAware='true';
+  document.body.dataset.beardLevel='Sentence ordering';
   const sentenceBank = [
   "The puppy chased a red ball.",
   "Our class planted yellow seeds.",
@@ -355,6 +360,7 @@
   const nextBtn=document.getElementById('nextBtn');
   const stopBtn=document.getElementById('stopBtn');
   const resetBtn=document.getElementById('resetBtn');
+  const acceptOrderBtn=document.getElementById('acceptOrderBtn');
   const isEmbedded=window.top!==window;
   let remaining=[];
   let currentSentence='';
@@ -369,11 +375,14 @@
   let startedAt=Date.now();
   let responseStartedAt=startedAt;
   let directTimerId=null;
+  let runSettings={},stoppedSeconds=0;
+  function reportState(){const pending=false;return {assessment:document.title,skill:'Supported sentence construction',level:'Sentence ordering',mode:runSettings.mode||'practice',formId:runSettings.formId||'',scoreType:'Accuracy',score:attempts?correct/attempts:null,attempts,correct,errors:attempts-correct,percentage:attempts?Math.round(correct/attempts*100):null,pending,seconds:runActive?elapsedSeconds(startedAt):stoppedSeconds,responses:answerLog.map(entry=>({...entry,prompt:entry.target,outcome:entry.correct}))};}
 
   function shuffle(items){
     const next=items.slice();
     for(let index=next.length-1;index>0;index--){
-      const swapIndex=Math.floor(Math.random()*(index+1));
+      const random=window.BeardRun&&typeof window.BeardRun.random==='function'?window.BeardRun.random:Math.random;
+      const swapIndex=Math.floor(random()*(index+1));
       const temporary=next[index];
       next[index]=next[swapIndex];
       next[swapIndex]=temporary;
@@ -455,11 +464,14 @@
     if(bankWords.length){
       bankWords.forEach(function(word){bankEl.append(makeTile(word,'bank'));});
     }else if(itemSolved){
-      addEmptyNote(bankEl,'Nice work! Choose Next sentence when you are ready.');
+      addEmptyNote(bankEl,'Choose Next sentence when you are ready.');
     }else{
       addEmptyNote(bankEl,'Every word is in your sentence. Check the order!');
     }
-    stripEl.classList.toggle('is-correct',itemSolved);
+    const practice=(runSettings.mode||'practice')==='practice';
+    const last=answerLog[answerLog.length-1];
+    acceptOrderBtn.hidden=!(runActive&&last&&last.target===currentSentence&&!last.correct&&last.answer===currentOrder());
+    stripEl.classList.toggle('is-correct',practice&&itemSolved&&Boolean(last&&last.correct));
     stripEl.classList.toggle('is-incorrect',feedbackEl.classList.contains('bad')&&!itemSolved);
     answerEl.value=currentOrder();
     const completed=sentenceBank.length-remaining.length;
@@ -533,20 +545,25 @@
     }
     const answer=currentOrder();
     answerEl.value=answer;
-    const isCorrect=answer===currentSentence;
+    const alternatives=window.BeardSentenceOrderAlternatives&&window.BeardSentenceOrderAlternatives[currentSentence]||[];
+    const isCorrect=answer===currentSentence||alternatives.includes(answer);
     const seconds=elapsedSeconds(responseStartedAt);
     attempts++;
     if(isCorrect) correct++;
-    answerLog.push({target:currentSentence,answer:answer,correct:isCorrect,seconds:seconds});
+    answerLog.push({target:currentSentence,answer:answer,correct:isCorrect,seconds:seconds,elapsedSeconds:elapsedSeconds(startedAt),firstAttempt:!answerLog.some(entry=>entry.target===currentSentence)});
     responseStartedAt=Date.now();
     if(isCorrect){
       itemSolved=true;
       setFeedback('Correct! The sentence is in the right order.','good');
     }else{
       setFeedback('Incorrect — rearrange the word tiles and try again.','bad');
+      if((runSettings.mode||'practice')!=='practice')itemSolved=true;
     }
+    feedbackEl.hidden=(runSettings.mode||'practice')!=='practice';
     render();
   }
+
+  function acceptAlternate(){const last=answerLog[answerLog.length-1];if(!runActive||!last||last.target!==currentSentence||last.correct||last.answer!==currentOrder())return;if(!window.confirm('Does this order make a grammatical sentence with a sensible meaning? Accept it only after checking the complete sentence.'))return;last.correct=true;last.acceptedByTeacher=true;correct++;itemSolved=true;setFeedback('Teacher-approved alternate order.','neutral');render();document.dispatchEvent(new CustomEvent('beard:report-updated'));}
 
   function renderReport(){
     const score=attempts?Math.round(correct/attempts*100):0;
@@ -568,13 +585,16 @@
   function stopAssessment(){
     if(!runActive) return;
     runActive=false;
+    stoppedSeconds=elapsedSeconds(startedAt);
     clearInterval(directTimerId);
     if(feedbackEl.textContent) setFeedback('','neutral');
     workArea.hidden=true;
     renderReport();
+    document.dispatchEvent(new CustomEvent('beard:report-updated'));
   }
 
-  function resetAssessment(){
+  function resetAssessment(settings){
+    runSettings=settings&&settings.mode?{...settings}:{...(window.BeardRunSettings||runSettings)};stoppedSeconds=0;
     clearInterval(directTimerId);
     attempts=0;
     correct=0;
@@ -610,12 +630,15 @@
   clearBtn.addEventListener('click',clearSentence);
   mixBtn.addEventListener('click',mixAllWords);
   checkBtn.addEventListener('click',checkOrder);
+  acceptOrderBtn.addEventListener('click',acceptAlternate);
   nextBtn.addEventListener('click',function(){
     if(!itemSolved) return;
     loadNextSentence();
   });
   stopBtn.addEventListener('click',stopAssessment);
   resetBtn.addEventListener('click',resetAssessment);
+  document.addEventListener('beard:run-start',event=>resetAssessment(event.detail&&event.detail.settings));
+  window.BeardAssessmentState={getReport:reportState,reset:()=>resetAssessment(),stop:stopAssessment};
 
   try{
     validateBank();

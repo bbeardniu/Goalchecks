@@ -83,6 +83,7 @@
 <!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -103,6 +104,7 @@ function newProblem() {
   document.getElementById("feedback").textContent = "";
   document.getElementById("answer").value = "";
 
+  if(window.BeardMathLevels){const p=window.BeardMathLevels.factPair(true);num1=p.a;num2=p.b;operation=p.op;correctAnswer=p.answer;}else{
   const isMultiplication = Math.random() < 0.5;
 
   if (isMultiplication) {
@@ -118,6 +120,7 @@ function newProblem() {
     correctAnswer = quotient;
   }
 
+  }
   document.getElementById("problem").textContent = `${num1} ${operation} ${num2} = ?`;
   document.getElementById("answer").focus();
 }
@@ -287,6 +290,7 @@ document.getElementById("answer").addEventListener("keyup", function(event) {
 
 newProblem();
 startTimer();
+if(window.BeardMathLevels) window.BeardMathLevels.bind(resetAll);
 </script>
 </body>
 </html>
