@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Score Export Tools</title>
+<style>
+:root{--ink:#26394b;--green:#2f5b57;--line:#d2e1d8;--paper:#fffdf7}*{box-sizing:border-box}body{margin:0;padding:1.25rem;background:#edf5f0;color:var(--ink);font:16px/1.5 "Segoe UI",Arial,sans-serif}.shell{max-width:1050px;margin:auto;background:var(--paper);padding:clamp(1rem,4vw,2.5rem);border:3px solid #fff;border-radius:20px;box-shadow:0 8px 28px #24463b15}h1,h2{color:var(--green);line-height:1.15}h1{font-size:clamp(1.9rem,5vw,2.7rem);margin:.35rem 0 1rem}h2{font-size:1.18rem;margin-top:1.5rem}.eyebrow{font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800}a{color:#256b7c}.help{background:#eaf5ed;padding:1rem 1.15rem;border-left:4px solid #76a98b;border-radius:8px}.help ol{padding-left:1.2rem;margin:.3rem 0}.help li{margin:.4rem 0}.upload{display:block;margin:1.3rem 0 1rem;font-weight:800}.upload input{display:block;max-width:100%;font:inherit;margin-top:.5rem;padding:.75rem;border:2px dashed #aac7b7;border-radius:9px;background:#fff}button{min-height:44px;padding:.7rem .9rem;border:0;border-radius:9px;background:#2f6c58;color:#fff;font:800 .95rem "Segoe UI",sans-serif;cursor:pointer}button.secondary{background:#657b70}button:disabled{opacity:.45;cursor:default}.actions{display:flex;gap:.65rem;flex-wrap:wrap}.status{font-weight:800;white-space:pre-line}.status.error{color:#a23f3f}.status.good{color:#2d6b4f}.table-wrap{overflow:auto;margin-top:1rem;border:1px solid var(--line);border-radius:9px}table{width:100%;border-collapse:collapse;font-size:.87rem}th,td{text-align:left;vertical-align:top;padding:.6rem .65rem;border-bottom:1px solid var(--line)}th{background:#e3efe6;white-space:nowrap}td{overflow-wrap:anywhere}.fallback{width:100%;min-height:130px;margin-top:1rem;font:.85rem/1.3 monospace}.small{font-size:.87rem;color:#557064}#files{padding-left:1.2rem;overflow-wrap:anywhere}#conflicts{padding-left:1.2rem;color:#a23f3f}summary{cursor:pointer;font-weight:800;color:#365f50}@media(max-width:550px){body{padding:.65rem}.actions{display:grid;grid-template-columns:1fr}.shell{border-radius:14px}}@media print{.upload,.actions,.fallback,#files{display:none!important}body{padding:0;background:#fff}.shell{max-width:none;box-shadow:none;border:0}.table-wrap{overflow:visible}}
+</style>
+</head>
+<body><main class="shell">
+<p class="eyebrow">Beard's Classroom · Teacher data tools</p>
+<h1>Combine score exports</h1>
+<p>Bring together the CSV score files collected by you and your paras, then copy their rows into your shared Excel <strong>Score Log</strong> table.</p>
+<div class="help"><ol>
+<li>Use <strong>Download Score CSV</strong> on each completed assessment report.</li>
+<li>Select one or more of those CSV files below. Identical Record IDs are included once.</li>
+<li>Choose <strong>Copy Excel Rows</strong>, then paste into the next empty row of the shared <strong>Score Log</strong> table. The copied rows do not include another header.</li>
+</ol></div>
+<p class="small">Student entries are processed in this page's memory. This tool does not upload them, automatically save them, or change a shared OneDrive/Excel file. Copying or downloading exports is your choice. Close or clear the page when finished. New dates, students, and goal revisions are recorded as new rows.</p>
+<label class="upload">Choose score CSV files<input id="csvFiles" type="file" accept=".csv,text/csv" multiple></label>
+<ul id="files" aria-label="Selected CSV files"></ul>
+<div class="actions"><button id="copyRows" disabled>Copy Excel Rows</button><button id="downloadCombined" disabled>Download Combined CSV</button><button id="clearFiles" class="secondary">Clear files</button></div>
+<p id="status" class="status" role="status" aria-live="polite">Select files to begin.</p>
+<ul id="conflicts" hidden></ul>
+<textarea id="copyFallback" class="fallback" aria-label="Combined Excel rows to select and copy" readonly hidden></textarea>
+<section id="preview" hidden><h2>Rows ready to copy</h2><p id="previewNote" class="small"></p><div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Subtest</th><th>Goal revision</th><th>Mode</th><th>Score type</th><th>Score</th></tr></thead><tbody id="previewBody"></tbody></table></div></section>
+<details><summary>How this fits changing months and IEP goals</summary><p>Keep all new results in the same Score Log table. Date identifies the month; Student identifies the student; Goal ID and Goal Version identify the target being monitored. When an IEP goal changes, enter a new goal revision instead of combining different targets under one unexplained trend. Your existing monthly worksheets can remain alongside the log.</p><p>Do not paste the same export twice into Excel. Combining the CSV files here removes duplicates within the selected files; it cannot inspect rows already pasted in your shared workbook.</p></details>
+</main>
+<script src="../../assets/js/score-export.js"></script>
+<script>
+(() => {
+  const api=window.BeardScoreExport;
+  const $=id=>document.getElementById(id);
+  const picker=$('csvFiles'),status=$('status'),copy=$('copyRows'),download=$('downloadCombined'),fallback=$('copyFallback'),preview=$('preview'),body=$('previewBody'),issues=$('conflicts');
+  let records=[],generation=0;
+  function setStatus(message,type=''){status.textContent=message;status.className='status'+(type?' '+type:'');}
+  function renderPreview(){
+    body.replaceChildren();
+    records.slice(0,100).forEach(record=>{const tr=document.createElement('tr');for(const key of ['Date','Student','Subtest','Goal Version','Mode','Score Type','Score']){const td=document.createElement('td');const value=record[key];td.textContent=key==='Score'&&value!==''&&/^(Accuracy|Rubric)$/.test(record['Score Type'])?(Number(value)*100).toFixed(1)+'%':String(value);tr.appendChild(td);}body.appendChild(tr);});
+    $('previewNote').textContent=records.length>100?`Showing the first 100 of ${records.length} rows. All rows will be exported.`:`${records.length} row${records.length===1?'':'s'} ready.`;
+    preview.hidden=!records.length;
+  }
+  picker.addEventListener('change',async()=>{
+    const current=++generation;records=[];copy.disabled=true;download.disabled=true;fallback.hidden=true;issues.hidden=true;issues.replaceChildren();body.replaceChildren();preview.hidden=true;
+    const selected=[...picker.files];$('files').replaceChildren(...selected.map(file=>{const li=document.createElement('li');li.textContent=file.name;return li;}));
+    if(!selected.length){setStatus('Select files to begin.');return;}
+    setStatus('Reading selected files…');
+    const loaded=await Promise.all(selected.map(async file=>{try{return {name:file.name,text:await file.text()};}catch{return {name:file.name,text:''};}}));
+    if(current!==generation)return;
+    const merged=api.mergeCsv(loaded);
+    if(merged.errors.length||merged.conflicts.length){
+      for(const error of merged.errors){const li=document.createElement('li');li.textContent=`${error.source}: ${error.message}`;issues.appendChild(li);}
+      for(const conflict of merged.conflicts){const li=document.createElement('li');li.textContent=`Record ID ${conflict.id} has different rows in ${[...new Set(conflict.versions.map(item=>item.source))].join(', ')}.`;issues.appendChild(li);}
+      issues.hidden=false;setStatus('Files were not combined. Resolve the file errors or conflicting Record IDs, then select the files again. No row has been overwritten.','error');return;
+    }
+    records=merged.records;copy.disabled=!records.length;download.disabled=!records.length;renderPreview();
+    setStatus(`${records.length} unique row${records.length===1?'':'s'} ready. ${merged.duplicateCount} duplicate row${merged.duplicateCount===1?'':'s'} omitted.`,'good');
+  });
+  copy.addEventListener('click',async()=>{if(!records.length)return;const value=api.tsv(records);if(await api.copyText(value))setStatus('Copied. Paste into the next empty row of the shared Score Log table.','good');else{fallback.value=value;fallback.hidden=false;fallback.focus();fallback.select();setStatus('Select and copy the rows below, then paste into Score Log.');}});
+  download.addEventListener('click',()=>{if(!records.length)return;api.downloadFile(`GoalCheck_Combined_${api.localDate()}.csv`,'\uFEFF'+api.csv(records));setStatus('Combined CSV downloaded.','good');});
+  $('clearFiles').addEventListener('click',()=>{generation++;picker.value='';records=[];$('files').replaceChildren();issues.replaceChildren();issues.hidden=true;fallback.value='';fallback.hidden=true;body.replaceChildren();preview.hidden=true;copy.disabled=true;download.disabled=true;setStatus('Select files to begin.');});
+})();
+</script>
+</body></html>
