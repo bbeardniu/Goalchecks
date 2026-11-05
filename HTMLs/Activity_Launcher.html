@@ -188,7 +188,7 @@
       let startedAt=null,timer=null,rang=false,pausedAt=null,pausedMs=0;
       let audioContext=null;
       const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-      function unlock(){try{audioContext??=new (doc.defaultView.AudioContext||doc.defaultView.webkitAudioContext)();audioContext.resume?.()}catch{}}
+      function unlock(){try{audioContext??=new (doc.defaultView.AudioContext||doc.defaultView.webkitAudioContext)();audioContext.resume?.()?.catch?.(()=>{})}catch{}}
       function chime(){if(rang)return;rang=true;try{unlock();if(!audioContext)return;const now=audioContext.currentTime,gain=audioContext.createGain();gain.gain.setValueAtTime(.001,now);gain.gain.exponentialRampToValueAtTime(.22,now+.03);gain.gain.exponentialRampToValueAtTime(.001,now+.8);gain.connect(audioContext.destination);[740,988].forEach((frequency,index)=>{const osc=audioContext.createOscillator();osc.type='sine';osc.frequency.setValueAtTime(frequency,now+index*.12);osc.connect(gain);osc.start(now+index*.12);osc.stop(now+.8)});}catch{}}
       function elapsedMilliseconds(){if(!startedAt)return 0;const end=pausedAt??Date.now();return Math.max(0,end-startedAt-pausedMs)}
       function elapsed(){return Math.floor(elapsedMilliseconds()/1000)}
@@ -198,7 +198,8 @@
       function stop(){if(!startedAt||pausedAt)return;pausedAt=Date.now();if(timer){clearInterval(timer);timer=null}render()}
       function reset(){startedAt=null;pausedAt=null;pausedMs=0;rang=false;if(timer){clearInterval(timer);timer=null}hud.countdown.textContent='Countdown: 1:00'}
       doc.addEventListener('pointerdown',unlock,{once:true,capture:true});doc.addEventListener('keydown',unlock,{once:true,capture:true});
-      return{start,stop,reset,elapsed,elapsedMilliseconds,render};
+      function restore(seconds){if(timer){clearInterval(timer);timer=null}const now=Date.now();startedAt=now-Math.max(0,Number(seconds)||0)*1000;pausedAt=now;pausedMs=0;rang=seconds>=60;render()}
+      return{start,stop,reset,restore,elapsed,elapsedMilliseconds,render};
     }
 
     function enhanceAssessment(doc,win,hud,clock,frame,sourceUrl,{supportsLetterformPractice=false}={}){
@@ -267,7 +268,7 @@
         const restartButton=doc.createElement('button');
         restartButton.type='button';
         restartButton.className='beard-report-restart';
-        restartButton.textContent='Start a New Check';
+        restartButton.textContent='New check';
         restartButton.addEventListener('click',()=>{
           reset();
           if(restartSource)restartSource.click();
@@ -437,8 +438,8 @@
     function enhanceFluency(doc,win,hud,clock){
       const passage=doc.querySelector('#passage'),colorSelect=doc.querySelector('#colorSelect'),studentSelect=doc.querySelector('#studentSelect'),counter=doc.querySelector('#counter');
       const colors=['red','green','blue','purple','pink'],names={red:'Monday',green:'Tuesday',blue:'Wednesday',purple:'Thursday',pink:'Friday'};
-      const hint=doc.createElement('p');hint.className='beard-fluency-hint';hint.innerHTML='<strong>Quick fluency tools:</strong> start when the reader is ready. At the chime, click the last word read and choose <strong>Save minute mark</strong>. Reading may continue; a later final-word mark will not replace the saved one-minute endpoint. Click the same final word again to undo it. Right-click a word to toggle an error; press <strong>2</strong> to mark the selected word as an error.';(doc.querySelector('#rightColumn')||passage.parentElement).prepend(hint);
-      const errorsByStudent=new Map(),elapsedByStudent=new Map(),endpointsByStudent=new Map(),minuteEndpointsByStudent=new Map();let activeWord=null,feedbackTimer,session=null;
+      const hint=doc.createElement('p');hint.className='beard-fluency-hint';hint.innerHTML='<strong>Quick fluency tools:</strong> a new read starts automatically. At the chime, click the last word read and choose <strong>Save minute mark</strong>. Reading may continue; a later final-word mark will not replace the saved one-minute endpoint. Click the same final word again to undo it. Right-click a word to toggle an error; press <strong>2</strong> to mark the selected word as an error. Previously recorded reads stay saved when switching student or day.';(doc.querySelector('#rightColumn')||passage.parentElement).prepend(hint);
+      const errorsByStudent=new Map(),elapsedByStudent=new Map(),endpointsByStudent=new Map(),minuteEndpointsByStudent=new Map();let activeWord=null,feedbackTimer,session=null,selection=null;
       function studentKey(){return studentSelect.value||'__current_read__'}
       function recordFor(store,key){if(!store.has(key))store.set(key,{red:new Set(),green:new Set(),blue:new Set(),purple:new Set(),pink:new Set()});return store.get(key)}
       function valuesFor(store,key){if(!store.has(key))store.set(key,Object.fromEntries(colors.map(color=>[color,null])));return store.get(key)}
@@ -452,6 +453,8 @@
       function setError(word,{toggle=false}={}){if(!word)return;const color=colorSelect.value,set=recordFor(errorsByStudent,studentKey())[color],index=Number(word.dataset.index);if(toggle&&set.has(index)){set.delete(index);toast('Error mark removed','neutral')}else{set.add(index);toast('Error marked on word '+(index+1),'bad')}activeWord=word;refresh()}
       function clearCurrent(){const key=studentKey();errorsByStudent.delete(key);elapsedByStudent.delete(key);endpointsByStudent.delete(key);minuteEndpointsByStudent.delete(key);activeWord=null;clearPrintReport();refresh()}
       function startRead(){if(session)session.begin();else{clearPrintReport();valuesFor(elapsedByStudent,studentKey())[colorSelect.value]=null;clock.start({restart:true})}toast('One-minute read started','neutral')}
+      function saveActiveRead(){if(selection&&session?.phase==='running'&&((valuesFor(endpointsByStudent,selection.student)[selection.color]||0)>0||recordFor(errorsByStudent,selection.student)[selection.color].size))valuesFor(elapsedByStudent,selection.student)[selection.color]=clock.elapsedMilliseconds()/1000}
+      function switchRead(){saveActiveRead();activeWord=null;selection=null;win.stopTimer?.();const seconds=valuesFor(elapsedByStudent,studentKey())[colorSelect.value];if(seconds!==null)session?.review?.(seconds);else session?.showReady();setTimeout(refresh,0)}
       function minuteRead(){const last=valuesFor(minuteEndpointsByStudent,studentKey())[colorSelect.value];if(last===null)return null;const errors=[...recordFor(errorsByStudent,studentKey())[colorSelect.value]].filter(index=>index<last).length;return {attempts:last,correct:Math.max(0,last-errors),errors,accuracy:last?(last-errors)/last:null,seconds:60}}
       function finish(){
         clock.stop();session?.finish();const color=colorSelect.value;valuesFor(elapsedByStudent,studentKey())[color]=clock.elapsedMilliseconds()/1000;
@@ -469,14 +472,14 @@
       const minuteButton=doc.createElement('button');minuteButton.type='button';minuteButton.id='beard-save-minute';minuteButton.textContent='Save minute mark';minuteButton.setAttribute('data-beard-review-action','true');minuteButton.addEventListener('click',()=>{if(clock.elapsedMilliseconds()<60000){toast('Wait for the one-minute chime, then click the last word read and save its mark.','neutral');return}valuesFor(minuteEndpointsByStudent,studentKey())[colorSelect.value]=statsFor(colorSelect.value).last;toast('One-minute endpoint saved. You may keep reading.','neutral')});(doc.querySelector('#rightColumn')||passage.parentElement).append(minuteButton);
       passage.addEventListener('click',event=>{const word=event.target.closest('.word');if(!word||!studentSelect.value)return;const endpoints=valuesFor(endpointsByStudent,studentKey()),color=colorSelect.value,last=Number(word.dataset.index)+1;endpoints[color]=endpoints[color]===last?0:last;activeWord=endpoints[color]?word:null;setTimeout(refresh,0)},true);
       passage.addEventListener('contextmenu',event=>{const word=event.target.closest('.word');if(!word)return;event.preventDefault();setError(word,{toggle:true})},true);
-      colorSelect.addEventListener('change',()=>{activeWord=null;session?.showReady();setTimeout(refresh,0)});studentSelect.addEventListener('change',()=>{activeWord=null;session?.showReady();setTimeout(refresh,0)});
+      colorSelect.addEventListener('change',switchRead);studentSelect.addEventListener('change',switchRead);
       doc.addEventListener('keydown',event=>{if(event.repeat||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;if(event.key==='2'){event.preventDefault();event.stopImmediatePropagation();setError(activeWord)}else if(event.key==='1'){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(event.key==='3'){event.preventDefault();event.stopImmediatePropagation();clock.reset();session?.showReady();refresh();toast('Timer reset to 1:00','neutral')}else if(event.key==='4'){event.preventDefault();event.stopImmediatePropagation();clearCurrent();clock.reset();win.resetPassage?.();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(event.key==='5'){event.preventDefault();event.stopImmediatePropagation();errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();win.resetAll?.();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}},{capture:true});
-      doc.addEventListener('click',event=>{const button=event.target.closest('button');if(!button||button.id==='beard-finish-read')return;const lower=(button.textContent||'').toLowerCase();if(/start timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(/stop timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();finish()}else if(/reset passage/.test(lower)){clearCurrent();clock.reset();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset all/.test(lower)){errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset timer/.test(lower)){clock.reset();session?.showReady()}else if(/^add$/.test(lower)){session?.showReady();setTimeout(refresh,0)}},{capture:true});
+      doc.addEventListener('click',event=>{const button=event.target.closest('button');if(!button||button.id==='beard-finish-read')return;const lower=(button.textContent||'').toLowerCase();if(/start timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(/stop timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();finish()}else if(/reset passage/.test(lower)){clearCurrent();clock.reset();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset all/.test(lower)){errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset timer/.test(lower)){clock.reset();session?.showReady()}else if(/^add$/.test(lower)){saveActiveRead();setTimeout(switchRead,0)}},{capture:true});
       if(typeof window!=='undefined'&&window.BeardSessions)session=window.BeardSessions.create({doc,win,clock,hud,sourceUrl:win.location.href,isFluency:true,onStart:settings=>{
         clearPrintReport();if(!studentSelect.value){const input=doc.querySelector('#newStudent');if(settings.student&&input&&typeof win.addStudent==='function'){input.value=settings.student;win.addStudent()}else{const option=doc.createElement('option');option.value='Current read';option.textContent='Current read';studentSelect.append(option);studentSelect.value='Current read'}}
-        const color=colorSelect.value;recordFor(errorsByStudent,studentKey())[color].clear();valuesFor(endpointsByStudent,studentKey())[color]=0;valuesFor(elapsedByStudent,studentKey())[color]=null;valuesFor(minuteEndpointsByStudent,studentKey())[color]=null;activeWord=null;refresh();
+        const color=colorSelect.value;recordFor(errorsByStudent,studentKey())[color].clear();valuesFor(endpointsByStudent,studentKey())[color]=0;valuesFor(elapsedByStudent,studentKey())[color]=null;valuesFor(minuteEndpointsByStudent,studentKey())[color]=null;activeWord=null;selection={student:studentKey(),color};refresh();setTimeout(refresh,0);
       },onReady:()=>clock.reset()});
-      doc.addEventListener('beard:settings-changed',()=>{errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();refresh()});
+      doc.addEventListener('beard:settings-changed',()=>{errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;selection=null;clearPrintReport();refresh()});
       refresh();
     }
 

@@ -111,7 +111,7 @@
     $('workArea').hidden=false;summary.style.display='none';summary.replaceChildren();$('timer').textContent='Time: 0s · Ready';$('startBtn').hidden=false;$('stopBtn').disabled=true;$('hideBtn').disabled=true;level.disabled=false;reading.disabled=false;format.disabled=false;renderFormat();renderPassage();
   }
   function start(runSettings){
-    settings=runSettings&&runSettings.mode?{...runSettings}:{...(window.BeardRunSettings||{})};reset();active=true;startedAt=Date.now();answer.disabled=false;$('startBtn').hidden=true;$('stopBtn').disabled=false;$('hideBtn').disabled=false;level.disabled=true;reading.disabled=true;format.disabled=true;$('timer').textContent='Time: 0s';timer=setInterval(()=>{$('timer').textContent='Time: '+Math.floor(elapsed())+'s';},1000);
+    settings=runSettings&&runSettings.mode?{...runSettings}:{...(window.BeardRunSettings||{})};reset();active=true;startedAt=Date.now();answer.disabled=false;$('startBtn').hidden=true;$('stopBtn').disabled=false;$('hideBtn').disabled=false;level.disabled=false;reading.disabled=false;format.disabled=false;$('timer').textContent='Time: 0s';timer=setInterval(()=>{$('timer').textContent='Time: '+Math.floor(elapsed())+'s';},1000);
   }
   function requestReset(){reset();document.dispatchEvent(new CustomEvent('beard:settings-changed',{detail:{level:levelNames[level.value],skill:'Story retell',responseFormat:format.value,readingCondition:reading.value}}))}
   $('startBtn').addEventListener('click',()=>start());$('stopBtn').addEventListener('click',finish);$('resetBtn').addEventListener('click',requestReset);

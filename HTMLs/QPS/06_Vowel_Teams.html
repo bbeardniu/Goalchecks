@@ -24,7 +24,7 @@
  function build(){const groups=select.value==='mixed'?Object.values(banks).map(bank=>shuffle(bank.groups.flat())):banks[select.value].groups.map(shuffle);const result=[];while(groups.some(g=>g.length))for(const group of groups)if(group.length)result.push(group.pop());return result;}
  function elapsed(){return active?Math.max(0,(Date.now()-startedAt)/1000):seconds;}
  function state(){const correct=history.filter(h=>h.correct).length;return{assessment:document.title,level:label(),attempts:history.length,correct,errors:history.length-correct,seconds:elapsed(),responses:history.slice(),active};}
- function controls(){for(const id of ['btnCorrect','btnIncorrect'])$('#'+id).disabled=!active||locked;$('#stopBtn').disabled=!active;select.disabled=active;}
+ function controls(){for(const id of ['btnCorrect','btnIncorrect'])$('#'+id).disabled=!active||locked;$('#stopBtn').disabled=!active;select.disabled=false;}
  function clearTimers(){clearTimeout(nextTimeout);nextTimeout=null;clearInterval(timerInterval);timerInterval=null;}
  function show(){if(index>=items.length){stop();return;}locked=false;word.textContent=items[index];questionStartedAt=Date.now();feedback.textContent='';feedback.className='';$('#progress').textContent='Word '+(index+1)+' of '+items.length;controls();}
  function start(){clearTimers();sync();items=build();history=[];index=0;seconds=0;startedAt=Date.now();active=true;locked=false;summary.style.display='none';summary.replaceChildren();work.hidden=false;timerInterval=setInterval(()=>$('#timer').textContent='Time: '+Math.floor(elapsed())+'s',1000);show();}
