@@ -53,6 +53,7 @@
     <button id="startBtn">Start</button>
     <button id="nextBtn" class="secondary">Next</button>
     <button id="resetBtn" class="secondary">Reset</button>
+    <button id="stopBtn" class="secondary" disabled>Stop assessment</button>
     <div id="progress" aria-live="polite">0 / 100</div>
     <div id="timer">Time: 0s</div>
   </div>
@@ -352,32 +353,44 @@
      correct:3},
     {passage:"The team watered the garden each morning and removed weeds. Over time, vegetables grew bigger and healthier.", 
      choices:["The garden failed because no one cared for it.", "Regular care helped the plants grow and produce vegetables.", "The veggies disappeared overnight.", "The team planted only rocks."],
-     correct:2}
+     correct:2},
+    {passage:"Mina put a bookmark between the pages and closed her book. She said, 'I will finish this chapter tomorrow.'",
+     choices:["Mina plans to keep reading later.", "Mina has finished every chapter.", "Mina is throwing the book away.", "Mina is making a paper airplane."],
+     correct:1},
+    {passage:"Owen looked at a plant's dry soil. He filled a watering can and carried it toward the pot.",
+     choices:["Owen will put the plant in a dark cupboard.", "Owen is about to water the plant.", "Owen will use the can to bake a cake.", "Owen is leaving the plant dry."],
+     correct:2},
+    {passage:"The room became quiet as the actors walked onto the stage. Families stopped talking and turned toward the curtain.",
+     choices:["The families are leaving for home.", "The room is empty.", "A performance is about to begin.", "The actors are shopping for food."],
+     correct:3},
+    {passage:"Nia put on a helmet and pushed her scooter to the front gate. She asked Dad to come outside with her.",
+     choices:["Nia is getting ready for a nap.", "Nia is preparing to swim.", "Nia is putting her scooter away for winter.", "Nia plans to ride her scooter with Dad nearby."],
+     correct:4},
+    {passage:"A puppy stood beside its empty water bowl and licked the last drop. Kai carried the bowl to the sink.",
+     choices:["Kai is likely to refill the puppy's water bowl.", "Kai is likely to hide the puppy's leash.", "The puppy has a full bowl of water.", "The puppy is about to learn to read."],
+     correct:1}
   ];
 
-  // Ensure we have 100 questions. If less, duplicate mild variations to reach 100.
-  while(questions.length < 100){
-    // Create simple variations by slightly changing names or small details
-    const i = questions.length % questions.length; // zero-based
-    const q = JSON.parse(JSON.stringify(questions[i])); // clone
-    // modify passage to add a small phrase to vary it
-    q.passage = q.passage.replace(/\.$/, '') + " It happened again.";
-    questions.push(q);
-    if (questions.length >= 100) break;
+  if(questions.length !== 100 || new Set(questions.map(q=>q.passage)).size !== 100){
+    throw new Error('The inference bank must contain 100 unique passages.');
   }
-  // If still less (edge), slice or duplicate more
-  if(questions.length > 100) questions.length = 100;
 
   // App state
   let pool = [], currentIndex = -1, total = 0, correctCount = 0, started = false;
-  let history = [], startTime = null, timerInterval = null;
+  let history = [], startTime = null, timerInterval = null, nextQuestionTimer = null;
 
   const passageEl = document.getElementById('passage');
+  passageEl.setAttribute('data-beard-prompt', '');
+  const answerEl = document.createElement('input');
+  answerEl.id = 'answer';
+  answerEl.type = 'hidden';
+  passageEl.insertAdjacentElement('afterend', answerEl);
   const cEls = [document.getElementById('c1'), document.getElementById('c2'), document.getElementById('c3'), document.getElementById('c4')];
   const cTextEls = document.querySelectorAll('.ctext');
   const startBtn = document.getElementById('startBtn');
   const nextBtn = document.getElementById('nextBtn');
   const resetBtn = document.getElementById('resetBtn');
+  const stopBtn = document.getElementById('stopBtn');
   const feedbackEl = document.getElementById('feedback');
   const progressEl = document.getElementById('progress');
   const timerEl = document.getElementById('timer');
@@ -386,7 +399,11 @@
   function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
   function startSession(){
-    pool = shuffle(questions.map((q, idx) => ({...q, id: idx})));
+    clearTimeout(nextQuestionTimer);
+    pool = shuffle(questions.map((q, idx) => {
+      const options = shuffle(q.choices.map((text, index) => ({text, correct:index + 1 === q.correct})));
+      return {...q, id:idx, choices:options.map(option=>option.text), correct:options.findIndex(option=>option.correct) + 1};
+    }));
     currentIndex = -1;
     total = 0; correctCount = 0; history = [];
     started = true;
@@ -399,6 +416,7 @@
     }, 1000);
     nextQuestion();
     startBtn.disabled = true;
+    stopBtn.disabled = false;
   }
 
   function stopTimer(){
@@ -406,16 +424,20 @@
   }
 
   function nextQuestion(){
+    clearTimeout(nextQuestionTimer);
+    if(!started) return;
     currentIndex++;
     if(currentIndex >= pool.length) return endSession();
     displayQuestion(pool[currentIndex]);
     progressEl.textContent = `${currentIndex+1} / ${questions.length}`;
     feedbackEl.textContent = '';
     enableChoices(true);
+    nextBtn.disabled = true;
   }
 
   function displayQuestion(q){
     passageEl.textContent = q.passage;
+    answerEl.value = '';
     // set choices
     for(let i=0;i<4;i++){
       cTextEls[i].textContent = q.choices[i];
@@ -437,9 +459,10 @@
   }
 
   function markAnswer(choice){
-    if(!started) startSession();
+    if(!started || cEls[0].style.pointerEvents === 'none') return;
     const q = pool[currentIndex];
     const correct = q.correct === choice;
+    answerEl.value = q.choices[choice - 1];
     total++;
     if(correct) { correctCount++; feedbackEl.textContent = "✅ Correct"; feedbackEl.className = 'correct'; }
     else {
@@ -454,8 +477,9 @@
     }
     history.push({q: q.passage, selected: choice, correct: q.correct});
     enableChoices(false);
+    nextBtn.disabled = false;
     // small delay then next
-    setTimeout(()=>{
+    nextQuestionTimer = setTimeout(()=>{
       if(currentIndex+1 >= questions.length) endSession();
       else nextQuestion();
     }, 700);
@@ -481,17 +505,24 @@
   });
 
   function endSession(){
+    if(!started) return;
+    clearTimeout(nextQuestionTimer);
     stopTimer();
     started = false;
     startBtn.disabled = false;
+    stopBtn.disabled = true;
+    nextBtn.disabled = true;
+    enableChoices(false);
+    feedbackEl.textContent = '';
     passageEl.textContent = "Session complete.";
-    progressEl.textContent = `${questions.length} / ${questions.length}`;
+    progressEl.textContent = `${total} answered / ${questions.length}`;
     const elapsed = Math.floor((Date.now()-startTime)/1000);
-    const score = Math.round((correctCount / questions.length) * 100);
+    const score = total ? Math.round((correctCount / total) * 100) : 0;
     let html = `<h2 style="margin-top:0">Summary</h2>`;
     html += `<p><strong>Time:</strong> ${elapsed}s</p>`;
-    html += `<p><strong>Correct:</strong> ${correctCount} / ${questions.length} (${score}%)</p>`;
-    html += `<p><strong>Incorrect:</strong> ${questions.length - correctCount}</p>`;
+    html += `<p><strong>Attempted:</strong> ${total}</p>`;
+    html += `<p><strong>Correct:</strong> ${correctCount} / ${total} (${score}%)</p>`;
+    html += `<p><strong>Incorrect:</strong> ${total - correctCount}</p>`;
     html += `<hr><div><strong>Responses</strong></div><ol>`;
     history.forEach(item=>{
       const ok = item.selected === item.correct;
@@ -512,7 +543,9 @@
   }
 
   function resetAll(){
+    clearTimeout(nextQuestionTimer);
     stopTimer();
+    started = false;
     pool = []; currentIndex = -1; total = 0; correctCount = 0; history = [];
     passageEl.textContent = "Press Start to begin.";
     feedbackEl.textContent = '';
@@ -521,12 +554,16 @@
     for(let i=0;i<4;i++){ cEls[i].classList.remove('correct','incorrect'); cTextEls[i].textContent = ''; }
     enableChoices(false);
     startBtn.disabled = false;
+    stopBtn.disabled = true;
+    nextBtn.disabled = true;
+    answerEl.value = '';
   }
 
   // wire buttons
   startBtn.addEventListener('click', ()=>{ summaryEl.style.display='none'; startSession(); });
   nextBtn.addEventListener('click', ()=>{ if(!started) startSession(); else if(cEls[0].style.pointerEvents === 'none'){ if(currentIndex+1 < questions.length) nextQuestion(); else endSession(); } });
   resetBtn.addEventListener('click', ()=>{ if(confirm('Reset the session?')) resetAll(); });
+  stopBtn.addEventListener('click', endSession);
 
   // initialize page
   resetAll();

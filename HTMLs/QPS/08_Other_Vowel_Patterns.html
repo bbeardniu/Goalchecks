@@ -208,6 +208,25 @@
   let timerInterval = null;
   let elapsed = 0;
 
+  let runActive = true;
+  let nextWordTimeout = null;
+
+  function clearPendingWord(){
+    clearTimeout(nextWordTimeout);
+    nextWordTimeout = null;
+  }
+
+  function setScoringControls(active){
+    document.querySelectorAll('.teacher-buttons button').forEach(button=>{button.disabled=!active;});
+    const controls=document.querySelector('.teacher-buttons');
+    if(controls){
+      controls.classList.toggle('is-hidden',!active);
+      if(active) controls.style.removeProperty('display');
+      else controls.style.setProperty('display','none','important');
+    }
+  }
+
+
   function shuffle(a){
     for(let i=a.length-1;i>0;i--){
       const j = Math.floor(Math.random()*(i+1));
@@ -229,6 +248,7 @@
   }
 
   function startTimer(){
+    if(!runActive) return;
     if(started) return;
     started = true;
     startTime = Date.now();
@@ -244,6 +264,7 @@
   }
 
   function markAnswer(isCorrect){
+    if(!runActive || answered) return;
     if(!started) startTimer();
     if(answered) return;
     answered = true;
@@ -257,11 +278,11 @@
       feedbackEl.style.color='var(--red)';
     }
     history.push({word:currentWord,correct:isCorrect});
-    setTimeout(()=>{showWord(pickNext());},350);
+    nextWordTimeout=setTimeout(()=>{nextWordTimeout=null;if(runActive)showWord(pickNext());},350);
   }
 
   document.addEventListener('keydown',(e)=>{
-    if(e.repeat) return;
+    if(e.repeat || e.target?.matches?.('input,textarea,select,[contenteditable="true"]')) return;
     if(e.key==='1') markAnswer(true);
     else if(e.key==='2') markAnswer(false);
   });
@@ -270,6 +291,9 @@
   teacherIncorrect.addEventListener('click',()=>markAnswer(false));
 
   function stopSession(){
+    if(!runActive) return;
+    runActive=false; answered=true; clearPendingWord(); setScoringControls(false);
+    if(startTime!==null) elapsed=Math.max(0,Math.floor((Date.now()-startTime)/1000));
     stopTimer();
     mainWrap.style.display='none';
     const percent = total?Math.round((correctCount/total)*100):0;
@@ -301,6 +325,7 @@
   }
 
   function resetAll(){
+    clearPendingWord(); runActive=true; setScoringControls(true); startTime=null;
     stopTimer();
     started=false; answered=false;
     total=0; correctCount=0; history=[];

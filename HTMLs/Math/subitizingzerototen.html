@@ -121,13 +121,15 @@
 <button id="stop" onclick="stopSession()">Stop</button>
 
 <div id="feedback"></div>
-<div id="attempts">Attempts: 0</div>
+<div id="attempts" data-beard-correct="0">Attempts: 0</div>
 <div id="timer">Time: 0s</div>
 
 <div id="summary"></div>
 
 <script>
-  const { jsPDF } = window.jspdf;
+let assessmentActive = true;
+let nextProblemTimer = null;
+let questionGeneration = 0;
 
   let ans = 0;
   let totalQuestions = 0;
@@ -172,6 +174,11 @@
   }
 
   function newProblem() {
+  if (!assessmentActive) return;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  const activeQuestion = ++questionGeneration;
+
     ans = Math.floor(Math.random() * 11);
     answered = false;
     document.getElementById("answer").value = "";
@@ -186,10 +193,12 @@
     dotBoard.style.display = "none";
 
     setTimeout(() => {
+      if (!assessmentActive || activeQuestion !== questionGeneration) return;
       message.textContent = "";
       dotBoard.style.display = "block";
       draw(ans);
       setTimeout(() => {
+      if (!assessmentActive || activeQuestion !== questionGeneration) return;
         dotBoard.innerHTML = "";
         dotBoard.style.display = "none";
         problemContainer.classList.add("black");
@@ -200,9 +209,11 @@
   }
 
   function submitAnswer() {
-    if (answered) return;
-    const userAnswer = parseInt(document.getElementById("answer").value);
-    if (isNaN(userAnswer)) return;
+    if (!assessmentActive || answered) return;
+    const rawAnswer = String(document.getElementById("answer").value).trim();
+  if (rawAnswer === "") return;
+  const userAnswer = Number(rawAnswer);
+  if (!Number.isFinite(userAnswer)) return;
     answered = true;
     totalQuestions++;
     let isCorrect = false;
@@ -225,16 +236,24 @@
     });
 
     updateStats();
-    setTimeout(newProblem, 1000);
+    nextProblemTimer = setTimeout(newProblem, 1000);
   }
 
   function updateStats() {
     const percent = totalQuestions === 0 ? 0 : Math.round((correctAnswers / totalQuestions) * 100);
     document.getElementById("score").textContent = `Score: ${percent}%`;
     document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
+  document.getElementById("attempts").dataset.beardCorrect = String(correctAnswers);
   }
 
   function resetAll() {
+  assessmentActive = true;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+  document.getElementById("attempts").dataset.beardCorrect = "0";
+  questionGeneration++;
+
     totalQuestions = 0;
     correctAnswers = 0;
     timeElapsed = 0;
@@ -253,6 +272,12 @@
   }
 
   function stopSession() {
+  assessmentActive = false;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = true;
+  questionGeneration++;
+
     clearInterval(timerInterval);
     timerInterval = null;
     document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
@@ -284,6 +309,8 @@
   }
 
   function generatePDF(percent) {
+    if (!window.jspdf || !window.jspdf.jsPDF) { window.print(); return; }
+    const { jsPDF } = window.jspdf;
 
     const confirmDownload = confirm(
       "Don't forget to put the PDF in the correct student's folder and record the results"

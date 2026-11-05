@@ -163,11 +163,31 @@
 
   let current=null,total=0,correctCount=0,history=[],started=false,answered=false,startTime=null,timerInterval=null,elapsed=0;
 
+  let runActive = true;
+  let nextWordTimeout = null;
+
+  function clearPendingWord(){
+    clearTimeout(nextWordTimeout);
+    nextWordTimeout = null;
+  }
+
+  function setScoringControls(active){
+    document.querySelectorAll('.teacher-buttons button').forEach(button=>{button.disabled=!active;});
+    const controls=document.querySelector('.teacher-buttons');
+    if(controls){
+      controls.classList.toggle('is-hidden',!active);
+      if(active) controls.style.removeProperty('display');
+      else controls.style.setProperty('display','none','important');
+    }
+  }
+
+
   function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
   function pickNext(){if(pool.length===0)pool=shuffle([...words]);return pool.pop();}
   function showWord(w){current=w;wordEl.textContent=w;feedbackEl.textContent='';answered=false;}
 
   function startTimer(){
+    if(!runActive) return;
     if(started)return;
     started=true;
     startTime=Date.now();
@@ -179,6 +199,7 @@
   function stopTimer(){if(timerInterval)clearInterval(timerInterval);timerInterval=null;}
 
   function markAnswer(isCorrect){
+    if(!runActive || answered) return;
     if(!started)startTimer();
     if(answered)return;
     answered=true;
@@ -186,12 +207,12 @@
     if(isCorrect){correctCount++;feedbackEl.textContent='✅ Correct';feedbackEl.style.color='var(--green)';}
     else{feedbackEl.textContent='❌ Incorrect';feedbackEl.style.color='var(--red)';}
     history.push({word:current,correct:!!isCorrect});
-    setTimeout(()=>{showWord(pickNext());},350);
+    nextWordTimeout=setTimeout(()=>{nextWordTimeout=null;if(runActive)showWord(pickNext());},350);
   }
 
   // UPDATED KEYBOARD SUPPORT (1, 2, 3)
   document.addEventListener('keydown',e=>{
-    if(e.repeat)return;
+    if(e.repeat || e.target?.matches?.('input,textarea,select,[contenteditable="true"]')) return;
 
     if(e.key==='1'){
       markAnswer(true);
@@ -208,6 +229,9 @@
   teacherIncorrect.addEventListener('click',()=>markAnswer(false));
 
   function stopSession(){
+    if(!runActive) return;
+    runActive=false; answered=true; clearPendingWord(); setScoringControls(false);
+    if(startTime!==null) elapsed=Math.max(0,Math.floor((Date.now()-startTime)/1000));
     stopTimer();
     wordEl.style.display='none';
     stopBtn.style.display='none';
@@ -232,6 +256,7 @@
   }
 
   function resetAll(){
+    clearPendingWord(); runActive=true; setScoringControls(true); startTime=null;
     stopTimer();started=false;answered=false;total=0;correctCount=0;history=[];elapsed=0;
     timerEl.textContent='Time: 0s';
     summaryDiv.style.display='none';

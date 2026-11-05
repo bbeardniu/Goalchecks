@@ -71,11 +71,14 @@
 
 <div id="feedback"></div>
 <div id="timer">Time: 0s</div>
-<div id="attempts">Attempts: 0</div>
+<div id="attempts" data-beard-correct="0">Attempts: 0</div>
 <div id="summary"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+let assessmentActive = true;
+let nextProblemTimer = null;
+let answered = false;
 const names = ["Liam","Emma","Noah","Olivia","Ava","Mia","Ethan","Sophia","Lucas","Isabella"];
 const items = ["apples","pencils","marbles","books","candies","balls","stickers","toys","blocks","coins"];
 
@@ -116,6 +119,11 @@ function randomWordProblem() {
 }
 
 function newProblem() {
+  if (!assessmentActive) return;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+
   currentProblem = randomWordProblem();
   document.getElementById("problem").textContent = currentProblem.question;
   document.getElementById("answer").value = "";
@@ -127,11 +135,17 @@ function updateScore() {
   const percent = attempts === 0 ? 0 : Math.round((correct / attempts) * 100);
   document.getElementById("score").textContent = `Score: ${percent}%`;
   document.getElementById("attempts").textContent = `Attempts: ${attempts}`;
+  document.getElementById("attempts").dataset.beardCorrect = String(correct);
 }
 
 function submitAnswer() {
-  const userAnswer = parseInt(document.getElementById("answer").value);
-  if (isNaN(userAnswer)) return;
+  if (!assessmentActive || answered) return;
+
+  const rawAnswer = String(document.getElementById("answer").value).trim();
+  if (rawAnswer === "") return;
+  const userAnswer = Number(rawAnswer);
+  if (!Number.isFinite(userAnswer)) return;
+  answered = true;
   
   attempts++;
   if (userAnswer === currentProblem.answer) {
@@ -146,10 +160,16 @@ function submitAnswer() {
   }
 
   updateScore();
-  setTimeout(newProblem, 1200);
+  nextProblemTimer = setTimeout(newProblem, 1200);
 }
 
 function resetAll() {
+  assessmentActive = true;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+  document.getElementById("attempts").dataset.beardCorrect = "0";
+
   stopTimer();
   correct = 0; attempts = 0; time = 0; questions = [];
   document.getElementById("score").textContent = "Score: 0%";
@@ -162,6 +182,11 @@ function resetAll() {
 }
 
 function stopAll() {
+  assessmentActive = false;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = true;
+
   stopTimer();
   document.getElementById("pdfBtn").style.display = "inline-block";
 

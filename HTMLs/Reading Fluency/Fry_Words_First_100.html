@@ -153,6 +153,18 @@ let incorrectWords = [];
 let startTime = null;
 let timerInterval = null;
 
+let runActive = true;
+let stoppedElapsed = 0;
+
+function setPracticeControls(active) {
+  document.querySelectorAll('#correctBtn,#incorrectBtn').forEach(button => {
+    button.disabled = !active;
+    if (active) button.style.removeProperty('display');
+    else button.style.setProperty('display', 'none', 'important');
+  });
+}
+
+
 const wordEl = document.getElementById("word");
 const timerEl = document.getElementById("timer");
 const summaryEl = document.getElementById("summary");
@@ -166,6 +178,7 @@ function shuffle(arr) {
 }
 
 function startTimer() {
+  if (!runActive) return;
   if (startTime) return;
   startTime = Date.now();
   timerInterval = setInterval(() => {
@@ -186,6 +199,7 @@ function showNextWord() {
 }
 
 function recordAnswer(isCorrect) {
+  if (!runActive || index >= words.length) return;
   if (!startTime) startTimer();
 
   if (isCorrect) correctWords.push(words[index]);
@@ -196,13 +210,17 @@ function recordAnswer(isCorrect) {
 }
 
 function stopPractice() {
+  if (!runActive) return;
+  runActive = false;
+  stoppedElapsed = startTime === null ? 0 : Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+  setPracticeControls(false);
   stopTimer();
   wordEl.style.display = "none";
   document.getElementById("stopButton").style.display = "none";
 
   const total = correctWords.length + incorrectWords.length;
   const percent = total ? Math.round((correctWords.length / total) * 100) : 0;
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const elapsed = stoppedElapsed;
 
   summaryEl.innerHTML = `
     <h2>Results</h2>
@@ -221,6 +239,9 @@ function stopPractice() {
 }
 
 function resetPractice() {
+  runActive = true;
+  stoppedElapsed = 0;
+  setPracticeControls(true);
   stopTimer();
   correctWords = [];
   incorrectWords = [];
@@ -239,6 +260,7 @@ function resetPractice() {
 
 /* KEYBOARD: 1=Correct, 2=Incorrect */
 document.addEventListener("keydown", (e) => {
+  if (!runActive || e.repeat || e.target?.matches?.('input,textarea,select,[contenteditable="true"]')) return;
   if (e.key === "1") recordAnswer(true);
   if (e.key === "2") recordAnswer(false);
 });

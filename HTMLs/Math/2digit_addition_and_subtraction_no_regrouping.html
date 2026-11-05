@@ -86,10 +86,13 @@
 </div>
 
 <div id="result"></div>
-<div id="attempts">Attempts: 0</div>
+<div id="attempts" data-beard-correct="0">Attempts: 0</div>
 <div id="summary"></div>
 
 <script>
+let assessmentActive = true;
+let nextProblemTimer = null;
+let answered = false;
 let correct = 0;
 let attempts = 0;
 let startTime;
@@ -97,8 +100,6 @@ let timerInterval;
 let currentAnswer;
 let currentProblem;
 let history = [];
-
-const { jsPDF } = window.jspdf;
 
 const problemEl = document.getElementById("problem");
 const resultEl = document.getElementById("result");
@@ -117,6 +118,11 @@ function startTimer() {
 }
 
 function generateNoRegroupingProblem() {
+  if (!assessmentActive) return;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+
   let a, b, op;
   const isAddition = Math.random() < 0.5;
 
@@ -149,8 +155,13 @@ function generateNoRegroupingProblem() {
 }
 
 function checkAnswer() {
-  const userAnswer = parseInt(answerInput.value);
-  if (isNaN(userAnswer)) return;
+  if (!assessmentActive || answered) return;
+
+  const rawAnswer = String(answerInput.value).trim();
+  if (rawAnswer === "") return;
+  const userAnswer = Number(rawAnswer);
+  if (!Number.isFinite(userAnswer)) return;
+  answered = true;
 
   attempts++;
 
@@ -167,7 +178,7 @@ function checkAnswer() {
 
   updateStats();
 
-  setTimeout(() => {
+  nextProblemTimer = setTimeout(() => {
     answerInput.value = "";
     resultEl.textContent = "";
     generateNoRegroupingProblem();
@@ -178,9 +189,16 @@ function updateStats() {
   const percent = attempts === 0 ? 0 : ((correct / attempts) * 100).toFixed(0);
   scoreEl.textContent = `Score: ${percent}%`;
   attemptsEl.textContent = `Attempts: ${attempts}`;
+  document.getElementById("attempts").dataset.beardCorrect = String(correct);
 }
 
 function resetGame() {
+  assessmentActive = true;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+  document.getElementById("attempts").dataset.beardCorrect = "0";
+
   clearInterval(timerInterval);
   correct = 0;
   attempts = 0;
@@ -198,6 +216,11 @@ function resetGame() {
 }
 
 function stopGame() {
+  assessmentActive = false;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = true;
+
   clearInterval(timerInterval);
   answerInput.disabled = true;
 
@@ -217,6 +240,8 @@ function stopGame() {
 }
 
 function generatePDF(elapsed, percent) {
+    if (!window.jspdf || !window.jspdf.jsPDF) { window.print(); return; }
+    const { jsPDF } = window.jspdf;
 
   const confirmDownload = confirm(
     "Don't forget to put the PDF in the correct student's folder and record the results."

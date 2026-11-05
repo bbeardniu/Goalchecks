@@ -69,11 +69,14 @@
   <button id="pdfBtn">Download PDF</button>
   <div id="feedback"></div>
   <div id="timer">Time: 0s</div>
-  <div id="attempts">Attempts: 0</div>
+  <div id="attempts" data-beard-correct="0">Attempts: 0</div>
   <div id="summary"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+let assessmentActive = true;
+let nextProblemTimer = null;
+let answered = false;
 const names = ["Liam","Emma","Noah","Olivia","Ava","Mia","Ethan","Sophia","Lucas","Isabella"];
 const items = ["apples","pencils","marbles","books","candies","balls","stickers","toys","blocks","coins"];
 
@@ -98,7 +101,8 @@ function generateTwoStepAddition() {
   const item = items[Math.floor(Math.random()*items.length)];
   const n1=Math.floor(Math.random()*30)+10;
   const n2=Math.floor(Math.random()*30)+5;
-  const n3=Math.floor(Math.random()*30)+5;
+  const maxN3=Math.min(34,100-n1-n2);
+  const n3=Math.floor(Math.random()*(maxN3-4))+5;
   const answer=n1+n2+n3;
   const question=`${name} had ${n1} ${item}. Then ${name} got ${n2} more ${item}. After that, ${name} received ${n3} more ${item}. How many ${item} does ${name} have now?`;
   return {question,answer};
@@ -108,7 +112,8 @@ function generateTwoStepSubtraction() {
   const item = items[Math.floor(Math.random()*items.length)];
   const n1=Math.floor(Math.random()*40)+60;
   const n2=Math.floor(Math.random()*30)+5;
-  const n3=Math.floor(Math.random()*30)+5;
+  const maxN3=Math.min(34,n1-n2);
+  const n3=Math.floor(Math.random()*(maxN3-4))+5;
   const answer=n1-n2-n3;
   const question=`${name} had ${n1} ${item}. ${name} used ${n2} ${item}. Later, ${name} gave away ${n3} ${item}. How many ${item} does ${name} have left?`;
   return {question,answer};
@@ -117,6 +122,11 @@ function randomTwoStepProblem(){ return Math.random()<0.5?generateTwoStepAdditio
 /* -------------------------------------------- */
 
 function newProblem() {
+  if (!assessmentActive) return;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+
   currentProblem = randomTwoStepProblem();
   document.getElementById("problem").textContent=currentProblem.question;
   document.getElementById("answer").value="";
@@ -128,11 +138,17 @@ function updateScore() {
   const percent = attempts===0?0:Math.round((correct/attempts)*100);
   document.getElementById("score").textContent=`Score: ${percent}%`;
   document.getElementById("attempts").textContent=`Attempts: ${attempts}`;
+  document.getElementById("attempts").dataset.beardCorrect = String(correct);
 }
 
 function submitAnswer() {
-  const userAnswer=parseInt(document.getElementById("answer").value);
-  if(isNaN(userAnswer))return;
+  if (!assessmentActive || answered) return;
+
+  const rawAnswer = String(document.getElementById("answer").value).trim();
+  if (rawAnswer === "") return;
+  const userAnswer = Number(rawAnswer);
+  if (!Number.isFinite(userAnswer)) return;
+  answered = true;
   attempts++;
   const isCorrect=userAnswer===currentProblem.answer;
   if(isCorrect) correct++;
@@ -140,10 +156,16 @@ function submitAnswer() {
   if(isCorrect){ document.getElementById("feedback").textContent="Correct!"; document.getElementById("feedback").style.color="green"; }
   else{ document.getElementById("feedback").textContent=`Incorrect. The correct answer was ${currentProblem.answer}.`; document.getElementById("feedback").style.color="red"; }
   updateScore();
-  setTimeout(newProblem,1200);
+  nextProblemTimer = setTimeout(newProblem,1200);
 }
 
 function resetAll() {
+  assessmentActive = true;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+  document.getElementById("attempts").dataset.beardCorrect = "0";
+
   stopTimer();
   correct=0; attempts=0; time=0; questions=[];
   document.getElementById("score").textContent="Score: 0%";
@@ -156,6 +178,11 @@ function resetAll() {
 }
 
 function stopAll() {
+  assessmentActive = false;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = true;
+
   stopTimer();
   const percent=attempts===0?0:Math.round((correct/attempts)*100);
   let summaryHTML=`<h2>Results</h2><p><strong>Time:</strong> ${time}s<br><strong>Attempts:</strong> ${attempts}<br><strong>Score:</strong> ${percent}%</p><ul>`;

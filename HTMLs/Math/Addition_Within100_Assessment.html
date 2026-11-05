@@ -99,10 +99,13 @@
 
 <div id="feedback"></div>
 <div id="results"></div>
-<div id="attempts">Attempts: 0</div>
+<div id="attempts" data-beard-correct="0">Attempts: 0</div>
 <div id="timer">Time: 0s</div>
 
 <script>
+let assessmentActive = true;
+let nextProblemTimer = null;
+let answered = false;
 let num1, num2;
 let totalQuestions = 0;
 let correctAnswers = 0;
@@ -110,8 +113,6 @@ let startTime;
 let timerInterval;
 let timeElapsed = 0;
 let problemHistory = [];
-
-const { jsPDF } = window.jspdf;
 
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
@@ -123,6 +124,11 @@ function startTimer() {
 }
 
 function newProblem() {
+  if (!assessmentActive) return;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+
   num1 = Math.floor(Math.random() * 101);
   num2 = Math.floor(Math.random() * 101);
   while (num1 + num2 > 100) {
@@ -136,8 +142,13 @@ function newProblem() {
 }
 
 function checkAnswer() {
-  const userAnswer = parseInt(document.getElementById("answer").value);
-  if (isNaN(userAnswer)) return;
+  if (!assessmentActive || answered) return;
+
+  const rawAnswer = String(document.getElementById("answer").value).trim();
+  if (rawAnswer === "") return;
+  const userAnswer = Number(rawAnswer);
+  if (!Number.isFinite(userAnswer)) return;
+  answered = true;
 
   totalQuestions++;
   let correct = false;
@@ -160,16 +171,23 @@ function checkAnswer() {
   });
 
   updateScore();
-  setTimeout(newProblem, 600);
+  nextProblemTimer = setTimeout(newProblem, 600);
 }
 
 function updateScore() {
   const percent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
   document.getElementById("score").textContent = `Score: ${percent}%`;
   document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
+  document.getElementById("attempts").dataset.beardCorrect = String(correctAnswers);
 }
 
 function resetAll() {
+  assessmentActive = true;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+  document.getElementById("attempts").dataset.beardCorrect = "0";
+
   totalQuestions = 0;
   correctAnswers = 0;
   problemHistory = [];
@@ -187,6 +205,11 @@ function resetAll() {
 }
 
 function stopPractice() {
+  assessmentActive = false;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = true;
+
   clearInterval(timerInterval);
 
   let percent = totalQuestions > 0
@@ -219,6 +242,8 @@ function stopPractice() {
 }
 
 function generatePDF(percent) {
+    if (!window.jspdf || !window.jspdf.jsPDF) { window.print(); return; }
+    const { jsPDF } = window.jspdf;
 
   const confirmDownload = confirm(
     "Don't forget to put the PDF in the correct student's folder and record the results"

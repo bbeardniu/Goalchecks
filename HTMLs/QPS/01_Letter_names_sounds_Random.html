@@ -208,6 +208,25 @@
   let timerInterval = null;
   let elapsed = 0;
 
+  let runActive = true;
+  let nextWordTimeout = null;
+
+  function clearPendingWord(){
+    clearTimeout(nextWordTimeout);
+    nextWordTimeout = null;
+  }
+
+  function setScoringControls(active){
+    document.querySelectorAll('.teacher-buttons button').forEach(button=>{button.disabled=!active;});
+    const controls=document.querySelector('.teacher-buttons');
+    if(controls){
+      controls.classList.toggle('is-hidden',!active);
+      if(active) controls.style.removeProperty('display');
+      else controls.style.setProperty('display','none','important');
+    }
+  }
+
+
   function showLetter(ch){
     currentChar = ch;
     letterEl.textContent = ch;
@@ -229,6 +248,7 @@
   }
 
   function startTimer(){
+    if(!runActive) return;
     if(started) return;
     started = true;
     startTime = Date.now();
@@ -244,6 +264,7 @@
   }
 
   function markAnswer(isCorrect){
+    if(!runActive || answered) return;
     if(answered) return;
     total++;
     if(isCorrect){
@@ -256,12 +277,12 @@
     }
     answered = true;
     history.push({char:currentChar,correct:!!isCorrect});
-    setTimeout(()=>{showLetter(pickNext());},350);
+    nextWordTimeout=setTimeout(()=>{nextWordTimeout=null;if(runActive)showLetter(pickNext());},350);
   }
 
  // keyboard support
 document.addEventListener('keydown',(e)=>{
-  if(e.repeat) return;
+  if(e.repeat || e.target?.matches?.('input,textarea,select,[contenteditable="true"]')) return;
 
   if(e.key === '1') {
     markAnswer(true);
@@ -275,6 +296,9 @@ document.addEventListener('keydown',(e)=>{
 });
 
   function stopSession(){
+    if(!runActive) return;
+    runActive=false; answered=true; clearPendingWord(); setScoringControls(false);
+    if(startTime!==null) elapsed=Math.max(0,Math.floor((Date.now()-startTime)/1000));
     stopTimer();
     letterEl.style.display='none';
     stopBtn.style.display='none';
@@ -313,6 +337,7 @@ document.addEventListener('keydown',(e)=>{
   }
 
   function resetAll(){
+    clearPendingWord(); runActive=true; setScoringControls(true); startTime=null;
     stopTimer();
     started=false; answered=false;
     total=0; correctCount=0; history=[];

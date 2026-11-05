@@ -99,13 +99,15 @@
 <button id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
 
 <div id="feedback"></div>
-<div id="attempts">Attempts: 0</div>
+<div id="attempts" data-beard-correct="0">Attempts: 0</div>
 <div id="timer">Time: 0s</div>
 <div id="summary"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
+let assessmentActive = true;
+let nextProblemTimer = null;
 let correctTime = "";
 let totalQuestions = 0;
 let correctAnswers = 0;
@@ -203,6 +205,10 @@ function drawHand(angle, length, width){
 
 // ===== NEW PROBLEM =====
 function newProblem() {
+  if (!assessmentActive) return;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+
   answered = false;
   document.getElementById("feedback").textContent = "";
 
@@ -217,10 +223,14 @@ function newProblem() {
 
 // ===== CHECK ANSWER =====
 function checkAnswer(){
-  if(answered) return;
+  if (!assessmentActive || answered) return;
 
-  const h = document.getElementById("hourSelect").value;
-  const m = document.getElementById("minuteSelect").value;
+  const rawHour = String(document.getElementById("hourSelect").value).trim();
+  const rawMinute = String(document.getElementById("minuteSelect").value).trim();
+  if (rawHour === "" || rawMinute === "") return;
+  const h = Number(rawHour);
+  const m = Number(rawMinute);
+  if (!Number.isInteger(h) || h < 1 || h > 12 || !Number.isInteger(m) || m < 0 || m > 59) return;
 
   totalQuestions++;
   answered = true;
@@ -244,7 +254,7 @@ function checkAnswer(){
   });
 
   updateStats();
-  setTimeout(newProblem, 1000);
+  nextProblemTimer = setTimeout(newProblem, 1000);
 }
 
 // ===== STATS =====
@@ -252,10 +262,17 @@ function updateStats(){
   let percent = totalQuestions===0?0:Math.round(correctAnswers/totalQuestions*100);
   document.getElementById("score").textContent = `Score: ${percent}%`;
   document.getElementById("attempts").textContent = `Attempts: ${totalQuestions}`;
+  document.getElementById("attempts").dataset.beardCorrect = String(correctAnswers);
 }
 
 // ===== RESET =====
 function resetAll(){
+  assessmentActive = true;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = false;
+  document.getElementById("attempts").dataset.beardCorrect = "0";
+
   totalQuestions=0;
   correctAnswers=0;
   timeElapsed=0;
@@ -271,6 +288,11 @@ function resetAll(){
 
 // ===== STOP =====
 function stopSession(){
+  assessmentActive = false;
+  clearTimeout(nextProblemTimer);
+  nextProblemTimer = null;
+  answered = true;
+
   clearInterval(timerInterval);
 
   let percent = totalQuestions===0?0:Math.round(correctAnswers/totalQuestions*100);
