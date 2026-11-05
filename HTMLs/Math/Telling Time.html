@@ -105,7 +105,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -214,8 +213,7 @@ function newProblem() {
   document.getElementById("feedback").textContent = "";
 
   let hour = Math.floor(Math.random()*12) + 1;
-  const minuteStep=window.BeardMathLevels?window.BeardMathLevels.settings().minuteStep:5;
-  let minute = Math.floor(Math.random()*(60/minuteStep)) * minuteStep;
+  let minute = Math.floor(Math.random()*12) * 5;
 
   correctTime = `${hour}:${minute}`;
   canvas.dataset.beardProblem = `Read the clock: ${hour}:${String(minute).padStart(2, "0")}`;
@@ -345,7 +343,6 @@ function downloadPDF(){
 populateDropdowns();
 newProblem();
 startTimer();
-if(window.BeardMathLevels) window.BeardMathLevels.bind(resetAll);
 </script>
 
 </body>

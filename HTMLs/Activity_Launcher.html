@@ -17,8 +17,6 @@
 <body>
   <header class="launcher-header"><a class="home-link" href="../index.html">← Home</a><strong class="activity-name" id="activity-name">Opening activity…</strong></header>
   <main id="main"></main>
-  <script src="../assets/js/score-export.js"></script>
-  <script src="../assets/js/assessment-session.js"></script>
   <script>
     const main=document.querySelector('#main'),title=document.querySelector('#activity-name');
     const requested=new URLSearchParams(location.search).get('activity')||'';
@@ -31,8 +29,6 @@
       title.textContent=doc.title||decodeURIComponent(sourceUrl.split('/').pop().replace(/\.html(?:\.html)?$/i,'').replaceAll('_',' '));
       const isFluency=Boolean(doc.querySelector('#passage .word,#passage')&&doc.querySelector('#colorSelect')&&doc.querySelector('#studentSelect'));
       const isFluencyHub=/\/Reading Fluency\/Fluency Passages\.html$/i.test(decodeURIComponent(new URL(sourceUrl).pathname));
-      const isClassroomTool=/\/Classroom Tools\/|\/Thermometer\.html$|\/Sea Reading\.html$|\/Fry_Words_First_100_Game\.html$/i.test(decodeURIComponent(new URL(sourceUrl).pathname));
-      if(isClassroomTool){wireInternalLinks(doc,frame,sourceUrl);return}
       const supportsLetterformPractice=doesSupportLetterformPractice(sourceUrl,isFluency,isFluencyHub);
       if(doc.querySelector('.teacher-buttons'))doc.body.classList.add('beard-has-touch-controls');
       addShellStyles(doc,isFluency,isFluencyHub);
@@ -202,7 +198,7 @@
     }
 
     function enhanceAssessment(doc,win,hud,clock,frame,sourceUrl,{supportsLetterformPractice=false}={}){
-      let attempts=0,errors=0,unscored=false,feedbackTimer,ended=true,runId=0,feedbackQueued=false,nativeCorrect=0,answerHistory=[],questionStartedAt=0,session=null,lastChoiceText='';
+      let attempts=0,errors=0,unscored=false,feedbackTimer,ended=false,runId=0,feedbackQueued=false,nativeCorrect=0,answerHistory=[],questionStartedAt=0;
       const letterformPractice=makeLetterformPractice(doc,hud,supportsLetterformPractice);
       const isSentenceFill=/sentence fill/i.test(doc.title);
       const assessmentPath=decodeURIComponent(new URL(sourceUrl).pathname);
@@ -218,19 +214,19 @@
       const resultIsAssessment=resultEl&&doc.querySelector('#summary,#results,.summary,#score,#attempts');
       const questionFeedback=doc.querySelector('#feedback,[role="status"]')||(resultIsAssessment?resultEl:null);
       const feedbackTarget=isSentenceFill||usesNativeMathCounters?null:questionFeedback;
-      clock.reset();questionStartedAt=0;
+      clock.start({restart:true});questionStartedAt=clock.elapsedMilliseconds();
       const percentage=()=>attempts?Math.max(0,Math.round((attempts-errors)/attempts*100)):0;
       function secondsToAnswer(){const now=clock.elapsedMilliseconds(),seconds=Math.max(0,Math.round((now-questionStartedAt)/100)/10);questionStartedAt=now;return seconds}
       function escapeHtml(value){return String(value??'—').replace(/[&<>"']/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]))}
       function normalizedText(value){return String(value??'').replace(/\s+/g,' ').trim()}
       function capturedProblem(){if(!isMathAssessment)return '';const annotated=doc.querySelector('[data-beard-problem]'),annotation=normalizedText(annotated?.getAttribute('data-beard-problem'));if(annotation)return annotation;return normalizedText(doc.querySelector('#problem')?.textContent)||'—'}
-      function capturedPrompt(){const prompt=normalizedText(doc.querySelector('[data-beard-prompt],#letter,#word,#sentence,#question,#passage,#prompt')?.textContent);return prompt&&!/^(press\b|loading\b)/i.test(prompt)?prompt:'—'}
-      function capturedAnswer(){if(showsPromptInsteadOfAnswer)return capturedPrompt();const answer=doc.querySelector('#answer');if(answer&&String(answer.value??'').trim())return String(answer.value).trim();const hour=doc.querySelector('#hourSelect'),minute=doc.querySelector('#minuteSelect');if(hour&&minute&&hour.value!==''&&minute.value!=='')return `${hour.value}:${String(minute.value).padStart(2,'0')}`;const selected=doc.querySelector('input[type="radio"]:checked,input[type="checkbox"]:checked');if(selected)return String(selected.value||selected.labels?.[0]?.textContent||'Selected').trim();if(lastChoiceText)return lastChoiceText;const response=[...doc.querySelectorAll('textarea,input[type="text"],input[type="number"],input:not([type]),select')].find(field=>!field.closest('#beard-run-setup,.beard-score-export')&&String(field.value??'').trim());return response?String(response.value).trim():'—'}
-      function logAnswer(outcome){const item={outcome,problem:capturedProblem(),prompt:capturedPrompt(),answer:capturedAnswer(),seconds:secondsToAnswer(),elapsedSeconds:clock.elapsedMilliseconds()/1000};if(item.answer==='—'&&lastChoiceText)item.answer=lastChoiceText;answerHistory.push(item);session?.addResponse(item)}
+      function capturedPrompt(){const prompt=normalizedText(doc.querySelector('[data-beard-prompt],#letter,#word')?.textContent);return prompt&&!/^(press\b|loading\b)/i.test(prompt)?prompt:'—'}
+      function capturedAnswer(){if(showsPromptInsteadOfAnswer)return capturedPrompt();const answer=doc.querySelector('#answer');if(answer&&String(answer.value??'').trim())return String(answer.value).trim();const hour=doc.querySelector('#hourSelect'),minute=doc.querySelector('#minuteSelect');if(hour&&minute&&hour.value!==''&&minute.value!=='')return `${hour.value}:${String(minute.value).padStart(2,'0')}`;const selected=doc.querySelector('input[type="radio"]:checked,input[type="checkbox"]:checked');if(selected)return String(selected.value||selected.labels?.[0]?.textContent||'Selected').trim();const response=[...doc.querySelectorAll('textarea,input[type="text"],input[type="number"],input:not([type]),select')].find(field=>String(field.value??'').trim());return response?String(response.value).trim():'—'}
+      function logAnswer(outcome){answerHistory.push({outcome,problem:capturedProblem(),prompt:capturedPrompt(),answer:capturedAnswer(),seconds:secondsToAnswer()})}
       function render(){hud.percent.textContent=unscored?'Score: Pending':`Score: ${percentage()}%`;hud.attempts.textContent=`Attempts: ${attempts}`;hud.errors.textContent=`Errors: ${errors}`}
       function toast(text,outcome='neutral'){if(!text)return;hud.feedback.textContent=text;hud.feedback.className=`beard-feedback show ${outcome}`;clearTimeout(feedbackTimer);feedbackTimer=setTimeout(()=>hud.feedback.className='beard-feedback',1600)}
-      function record(outcome,text){if(ended||usesNativeMathCounters||outcome===undefined)return;logAnswer(outcome);attempts++;if(outcome===false)errors++;render();if(session?.settings?.mode==='practice')toast(text||(outcome?'✓ Correct':'✗ Incorrect'),outcome?'good':'bad')}
-      function reset({fromSession=false}={}){runId++;ended=false;attempts=0;errors=0;unscored=false;nativeCorrect=0;answerHistory=[];lastChoiceText='';clearCompactReportArtifacts();letterformPractice.resetRun();clock.reset();if(fromSession||session?.starting)clock.start({restart:true});else{ended=true;session?.showReady()}questionStartedAt=clock.elapsedMilliseconds();render()}
+      function record(outcome,text){if(ended||usesNativeMathCounters||outcome===undefined)return;logAnswer(outcome);attempts++;if(outcome===false)errors++;render();toast(text||(outcome?'✓ Correct':'✗ Incorrect'),outcome?'good':'bad')}
+      function reset(){runId++;ended=false;attempts=0;errors=0;unscored=false;nativeCorrect=0;answerHistory=[];clearCompactReportArtifacts();letterformPractice.resetRun();clock.reset();clock.start({restart:true});questionStartedAt=clock.elapsedMilliseconds();render();toast('Fresh start','neutral')}
       function decorateSummary(){const summary=[...doc.querySelectorAll('#summary,#results,.summary')].find(el=>el&&el.textContent.trim()&&win.getComputedStyle(el).display!=='none');if(!summary)return;if(!summary.querySelector('.beard-summary-meta')){const meta=doc.createElement('p');meta.className='beard-summary-meta';const printPresentation=letterformPractice.summaryText();meta.innerHTML=`<strong>Assessment:</strong> ${escapeHtml(doc.title||'Goal Check')}<br><strong>Date:</strong> ${new Date().toLocaleDateString()} &nbsp;•&nbsp; <strong>Total time:</strong> ${formatTime(clock.elapsed())}${printPresentation?` &nbsp;•&nbsp; <strong>Print:</strong> ${printPresentation}`:''}`;meta.style.cssText='margin:.8rem 0;padding:.65rem;border-radius:9px;background:#edf7fb;color:#1e4767;font-weight:800;';summary.prepend(meta)}if(summary.hasAttribute('data-beard-hide-auto-history')||!answerHistory.length||summary.querySelector('.beard-answer-history'))return;const showProblem=isMathAssessment,answerHeader=isPhonicsAssessment?'Word / letter shown':isFryWordAssessment?'Word shown':'Student answer',historyTitle=new Date().toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})+' • '+(unscored?'Score: Pending':'Score: '+percentage()+'%'),rows=answerHistory.map((item,index)=>{const label=item.outcome===true?'Correct':item.outcome===false?'Incorrect':'Teacher check',className=item.outcome===true?'good':item.outcome===false?'bad':'pending',problemCell=showProblem?`<td class="beard-problem">${escapeHtml(item.problem||'—')}</td>`:'';return `<tr><td>${index+1}</td>${problemCell}<td class="${className}">${escapeHtml(item.answer)}</td><td class="${className}">${label}</td><td>${item.seconds.toFixed(1)} s</td></tr>`}).join('');const history=doc.createElement('section');history.className=`beard-answer-history${showProblem?' beard-math-answer-history':''}`;const problemHeader=showProblem?'<th>Problem</th>':'';history.innerHTML=`<h3>${historyTitle}</h3><div class="beard-answer-history-scroll"><table><thead><tr><th>Attempt</th>${problemHeader}<th>${answerHeader}</th><th>Result</th><th>Seconds to answer</th></tr></thead><tbody>${rows}</tbody></table></div>`;summary.append(history)}
       const standardDecorateSummary=decorateSummary;
       function clearCompactReportArtifacts(){
@@ -252,8 +248,7 @@
         const printable=report.cloneNode(true);
         printable.id='beard-print-report';
         printable.classList.add('beard-print-report');
-        printable.querySelectorAll('.beard-report-actions,.beard-score-export,.beard-session-open').forEach(el=>el.remove());
-        const exportRecord=report._beardExportController?.toRecord?.();if(exportRecord){const identity=doc.createElement('p');identity.className='beard-compact-report-meta';identity.textContent=[['Student',exportRecord.Student],['Goal',exportRecord.Subtest],['Goal revision',exportRecord['Goal Version']],['Administrator',exportRecord.Administrator]].filter(([,value])=>value).map(([label,value])=>label+': '+value).join(' • ');if(identity.textContent)printable.prepend(identity)}
+        printable.querySelector('.beard-report-actions')?.remove();
         doc.body.append(printable);
         doc.body.classList.add('beard-has-print-report');
       }
@@ -264,7 +259,7 @@
         printButton.type='button';
         printButton.className='beard-report-print';
         printButton.textContent='Print / Save PDF';
-        printButton.addEventListener('click',()=>{makePrintReport(report);win.print()});
+        printButton.addEventListener('click',()=>win.print());
         const restartButton=doc.createElement('button');
         restartButton.type='button';
         restartButton.className='beard-report-restart';
@@ -278,21 +273,11 @@
         report.append(actions);
       }
       decorateSummary=function(){
-        if(session&&session.phase==='ready')return;
+        const compactTimingReport=isPhonicsAssessment||isFryWordAssessment||isMathAssessment||isSentenceCompletionAssessment;
+        if(!compactTimingReport){standardDecorateSummary();return}
         const summary=[...doc.querySelectorAll('#summary,#results,.summary')].find(el=>el&&el.textContent.trim()&&win.getComputedStyle(el).display!=='none');
         if(!summary){clearCompactReportArtifacts();return}
-        if(summary.hasAttribute('data-beard-hide-auto-history')){
-          standardDecorateSummary();
-          const raw=win.BeardAssessmentState?.getReport?.()||win.BeardAssessment?.getState?.();
-          if(raw){
-            const pending=raw.pending===true,totalSeconds=clock.elapsedMilliseconds()/1000,rows=(raw.responses||[]).map(row=>({...row,outcome:row.outcome??row.correct}));
-            attempts=raw.attempts??raw.total??0;errors=pending?0:raw.errors??Math.max(0,attempts-(raw.correct||0));unscored=pending;render();
-            const firstMinute=rows.some(row=>Number.isFinite(row.elapsedSeconds))?window.BeardSessions.minuteData(rows,totalSeconds):null;
-            session?.attachReport(summary,{assessment:doc.title,attempts,correct:pending?null:raw.correct,errors:pending?null:errors,scoreType:pending?'Pending':raw.scoreType||'Accuracy',score:pending?null:raw.score??(Number.isFinite(raw.percentage)?raw.percentage/100:null),responses:rows,firstMinute});
-          }else session?.attachReport(summary,{correct:unscored?null:attempts-errors,attempts,errors:unscored?null:errors,scoreType:unscored?'Pending':'Accuracy'});
-          if(!summary.querySelector('.beard-report-actions'))addReportActions(summary,nativeRestartControl(summary)||fallbackRestartControl());return;
-        }
-        if(summary.querySelector('.beard-unified-summary'))return;
+        if(summary.hasAttribute('data-beard-hide-auto-history')||summary.querySelector('.beard-unified-summary'))return;
         const restartSource=nativeRestartControl(summary)||fallbackRestartControl();
         if(restartSource&&summary.contains(restartSource))restartSource.remove();
         const cards=answerHistory.map((item,index)=>{
@@ -302,15 +287,15 @@
           const answer=item.answer||'—';
           const problem=item.problem||'Math problem';
           const prompt=item.prompt||'Sentence prompt';
-          const detailedPrompt=!(isPhonicsAssessment||isFryWordAssessment);
+          const detailedPrompt=isMathAssessment||isSentenceCompletionAssessment;
           const promptText=isMathAssessment?problem:prompt;
           const ariaLabel='Attempt '+(index+1)+': '+(detailedPrompt?promptText+', answer '+answer:answer)+', '+label+', '+seconds+' seconds';
           const content=isMathAssessment
             ?'<span class="beard-compact-timing-problem">'+escapeHtml(problem)+'</span><strong class="beard-compact-timing-answer '+className+'">'+escapeHtml(answer)+'</strong>'
-            :detailedPrompt
+            :isSentenceCompletionAssessment
               ?'<span class="beard-compact-timing-problem">'+escapeHtml(prompt)+'</span><strong class="beard-compact-timing-answer '+className+'">'+escapeHtml(answer)+'</strong>'
               :'<strong class="beard-compact-timing-prompt '+className+'">'+escapeHtml(answer)+'</strong>';
-          const rowClass=isMathAssessment?' is-math':detailedPrompt?' is-sentence-completion':'';
+          const rowClass=isMathAssessment?' is-math':isSentenceCompletionAssessment?' is-sentence-completion':'';
           return '<article class="beard-compact-timing-row'+rowClass+'" aria-label="'+escapeHtml(ariaLabel)+'"><span class="beard-compact-timing-number">'+(index+1)+'.</span><span class="beard-compact-timing-content">'+content+'</span><span class="beard-compact-timing-time">'+seconds+' s</span></article>';
         }).join('');
         const report=doc.createElement('section');
@@ -324,7 +309,6 @@
         const timingKey=isMathAssessment?'Problem · answer in green = correct · answer in red = incorrect · seconds':isSentenceCompletionAssessment?'Sentence · answer in green = correct · answer in red = incorrect · seconds':'Word or letter · green = correct · red = incorrect · seconds';
         history.innerHTML='<h3>Response timing</h3><p class="beard-compact-timing-key">'+timingKey+'</p>'+(cards?'<div class="beard-compact-timing-list">'+cards+'</div>':'<p class="beard-compact-timing-key">No responses recorded.</p>');
         report.append(history);
-        session?.attachReport(report,{assessment:doc.title,correct:unscored?null:attempts-errors,attempts,errors:unscored?null:errors,scoreType:unscored?'Pending':'Accuracy',score:unscored?null:attempts?(attempts-errors)/attempts:null,responses:answerHistory});
         addReportActions(report,restartSource);
         summary.replaceChildren(report);
         hideNativeReportDownloads();
@@ -335,32 +319,16 @@
       function syncNativeMath(){if(!usesNativeMathCounters)return;const attemptsMatch=(nativeAttemptsEl.textContent||'').match(/\d+/),scoreMatch=(nativeScoreEl.textContent||'').match(/\d+(?:\.\d+)?\s*%/);if(!attemptsMatch)return;const nextAttempts=Number(attemptsMatch[0]),exactCorrect=nativeAttemptsEl.dataset.beardCorrect,nextCorrect=exactCorrect!==undefined&&/^\d+$/.test(exactCorrect)&&Number(exactCorrect)<=nextAttempts?Number(exactCorrect):scoreMatch?Math.round(nextAttempts*Number(scoreMatch[0].replace('%','').trim())/100):0,previousAttempts=attempts;if(nextAttempts<previousAttempts){answerHistory=[];questionStartedAt=clock.elapsedMilliseconds()}else if(nextAttempts>previousAttempts){const added=nextAttempts-previousAttempts;if(added===1)logAnswer(nextCorrect>nativeCorrect);else for(let index=0;index<added;index++)logAnswer(null)}attempts=nextAttempts;nativeCorrect=nextCorrect;errors=Math.max(0,attempts-nextCorrect);unscored=false;render()}
       function inspectFeedback(currentRun){feedbackQueued=false;if(ended||currentRun!==runId||!feedbackTarget)return;const text=feedbackTarget.textContent.trim(),outcome=parseOutcome(text);if(outcome!==undefined)record(outcome,text)}
       if(feedbackTarget){const feedbackObserver=new win.MutationObserver(()=>{if(feedbackQueued)return;feedbackQueued=true;const currentRun=runId;if(win.queueMicrotask)win.queueMicrotask(()=>inspectFeedback(currentRun));else win.setTimeout(()=>inspectFeedback(currentRun),0)});feedbackObserver.observe(feedbackTarget,{subtree:true,childList:true,characterData:true})}
-      if(questionFeedback){const questionCueObserver=new win.MutationObserver(()=>{if(!ended&&!questionFeedback.textContent.trim()){questionStartedAt=clock.elapsedMilliseconds();lastChoiceText=''}});questionCueObserver.observe(questionFeedback,{subtree:true,childList:true,characterData:true})}
+      if(questionFeedback){const questionCueObserver=new win.MutationObserver(()=>{if(!ended&&!questionFeedback.textContent.trim())questionStartedAt=clock.elapsedMilliseconds()});questionCueObserver.observe(questionFeedback,{subtree:true,childList:true,characterData:true})}
       if(usesNativeMathCounters){let nativeQueued=false;const queueNativeSync=()=>{if(nativeQueued)return;nativeQueued=true;const currentRun=runId;const sync=()=>{nativeQueued=false;if(currentRun===runId&&!ended)syncNativeMath()};if(win.queueMicrotask)win.queueMicrotask(sync);else win.setTimeout(sync,0)};const nativeObserver=new win.MutationObserver(queueNativeSync);nativeObserver.observe(nativeAttemptsEl,{subtree:true,childList:true,characterData:true});nativeObserver.observe(nativeScoreEl,{subtree:true,childList:true,characterData:true});syncNativeMath()}
       if(hud.fontToggle)hud.fontToggle.addEventListener('click',()=>{const active=letterformPractice.toggle();toast(active?'Mixed letterforms on — alternate a and g forms will appear as prompts change.':'Standard print restored.','neutral')});
       doc.querySelectorAll('#summary,#results,.summary').forEach(summary=>{if(win.getComputedStyle(summary).position==='fixed')summary.classList.add('beard-scrollable-summary')});
-      let summaryQueued=false;
-      const queueSummary=()=>{if(summaryQueued)return;summaryQueued=true;setTimeout(()=>{summaryQueued=false;const visible=[...doc.querySelectorAll('#summary,#results,.summary')].find(el=>el.textContent.trim()&&win.getComputedStyle(el).display!=='none');if(!visible)return;if(session?.phase==='running'){if(usesNativeMathCounters)syncNativeMath();session.finish();ended=true;runId++}decorateSummary()},0)};
-      const summaryObserver=new win.MutationObserver(queueSummary);doc.querySelectorAll('#summary,#results,.summary').forEach(summary=>summaryObserver.observe(summary,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['style']}));
+      const summaryObserver=new win.MutationObserver(decorateSummary);doc.querySelectorAll('#summary,#results,.summary').forEach(summary=>summaryObserver.observe(summary,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['style']}));
       const manualMarking=!feedbackTarget&&!usesNativeMathCounters&&Boolean(doc.querySelector('#btnCorrect,#teacherCorrect,#correctBtn')&&doc.querySelector('#btnIncorrect,#teacherIncorrect,#incorrectBtn'));
       const sourceScriptText=[...doc.scripts].map(script=>script.textContent).join('\n');
       const supportsKeyboardStop=/(?:e|event)\.key\s*={2,3}\s*['"]3['"][\s\S]{0,120}(?:stop|finish|end)/i.test(sourceScriptText);
-      function choiceLabel(key){const options=[...doc.querySelectorAll('button,[data-choice],.choice')].filter(el=>!el.closest('#beard-run-setup,.beard-score-export,#beard-teacher-banner'));const chosen=options.find(el=>el.dataset.choice===String(key)||new RegExp('\\('+key+'(?:\\s*[,)]|$)').test(el.getAttribute('onclick')||'')||new RegExp('^'+key+'[.)\\s]').test(el.textContent.trim()));return normalizedText(chosen?.textContent)}
-      doc.addEventListener('click',event=>{
-        const button=event.target.closest('button,input[type="button"],input[type="submit"],.choice');if(!button||button.closest('#beard-run-setup,.beard-score-export,#beard-teacher-banner'))return;
-        const text=(button.textContent||button.value||'').trim(),lower=text.toLowerCase(),handler=(button.getAttribute('onclick')||'').toLowerCase();
-        const responseChoice=button.matches('.choice,.sentence-completion-option,.word-tile,[data-choice],[data-word-id]')||Boolean(button.closest('#options,#choices,#wordBank,#sentenceStrip'));
-        if(responseChoice){lastChoiceText=normalizedText(text);return}
-        if(/^(reset|play again|try again|start a new check)(\s|$)/.test(lower)){reset();return}
-        if(/^(stop|finish|end)(\s|$)/.test(lower)){ended=true;runId++;clock.stop();session?.finish();setTimeout(decorateSummary,100);return}
-        if(manualMarking){let outcome;if(/incorrect|wrong/.test(lower)||/markincorrect|markanswer\(false/.test(handler))outcome=false;else if(/(^|\s)correct(\s|$)|right/.test(lower)||/markcorrect|markanswer\(true/.test(handler))outcome=true;if(outcome!==undefined){record(outcome,outcome?'✓ Correct':'✗ Incorrect');return}}
-        if(!/^(next|check|submit|start)/.test(lower))lastChoiceText=normalizedText(text);
-        if(isSentenceFill&&/next/.test(lower)){const response=[...doc.querySelectorAll('textarea,input[type="text"],input:not([type])')].find(el=>!el.closest('#beard-run-setup,.beard-score-export'));if(response&&response.value.trim()){logAnswer(null);attempts++;unscored=true;render()}}
-      },true);
-      doc.addEventListener('keydown',event=>{if(event.repeat||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;if(event.key==='3'&&supportsKeyboardStop){ended=true;runId++;clock.stop();session?.finish();setTimeout(decorateSummary,100);return}if(/^[1-4]$/.test(event.key))lastChoiceText=choiceLabel(event.key);if(!manualMarking)return;if(event.key==='1'){record(true,'✓ Correct')}else if(event.key==='2'){record(false,'✗ Incorrect')}},true);
-      session=window.BeardSessions.create({doc,win,clock,hud,sourceUrl,onStart:()=>reset({fromSession:true}),onReady:()=>{ended=true;clock.reset()}});
-      doc.addEventListener('beard:assessment-stop',queueSummary);
-      doc.addEventListener('beard:report-updated',queueSummary);
+      doc.addEventListener('click',event=>{const button=event.target.closest('button,input[type="button"],input[type="submit"]');if(!button)return;const text=(button.textContent||button.value||'').trim(),lower=text.toLowerCase(),handler=(button.getAttribute('onclick')||'').toLowerCase();if(/reset|play again|try again/.test(lower)){reset();return}if(/stop|finish|end/.test(lower)){ended=true;runId++;clock.stop();setTimeout(decorateSummary,100);return}if(manualMarking){let outcome;if(/incorrect|wrong/.test(lower)||/markincorrect|markanswer\(false/.test(handler))outcome=false;else if(/(^|\s)correct(\s|$)|right/.test(lower)||/markcorrect|markanswer\(true/.test(handler))outcome=true;if(outcome!==undefined){record(outcome,outcome?'✓ Correct':'✗ Incorrect');return}}if(isSentenceFill&&/next/.test(lower)){const response=doc.querySelector('textarea,input[type="text"],input:not([type])');if(response&&response.value.trim()){logAnswer(null);attempts++;unscored=true;render();toast('Response saved — teacher check pending','neutral')}}},true);
+      doc.addEventListener('keydown',event=>{if(event.repeat||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;if(event.key==='3'&&supportsKeyboardStop){ended=true;runId++;clock.stop();setTimeout(decorateSummary,100);return}if(!manualMarking)return;if(event.key==='1'){record(true,'✓ Correct')}else if(event.key==='2'){record(false,'✗ Incorrect')}},true);
       render();
     }
 
@@ -437,8 +405,8 @@
     function enhanceFluency(doc,win,hud,clock){
       const passage=doc.querySelector('#passage'),colorSelect=doc.querySelector('#colorSelect'),studentSelect=doc.querySelector('#studentSelect'),counter=doc.querySelector('#counter');
       const colors=['red','green','blue','purple','pink'],names={red:'Monday',green:'Tuesday',blue:'Wednesday',purple:'Thursday',pink:'Friday'};
-      const hint=doc.createElement('p');hint.className='beard-fluency-hint';hint.innerHTML='<strong>Quick fluency tools:</strong> start when the reader is ready. At the chime, click the last word read and choose <strong>Save minute mark</strong>. Reading may continue; a later final-word mark will not replace the saved one-minute endpoint. Click the same final word again to undo it. Right-click a word to toggle an error; press <strong>2</strong> to mark the selected word as an error.';(doc.querySelector('#rightColumn')||passage.parentElement).prepend(hint);
-      const errorsByStudent=new Map(),elapsedByStudent=new Map(),endpointsByStudent=new Map(),minuteEndpointsByStudent=new Map();let activeWord=null,feedbackTimer,session=null;
+      const hint=doc.createElement('p');hint.className='beard-fluency-hint';hint.innerHTML='<strong>Quick fluency tools:</strong> click the last word read, then click that same word again to undo it. Right-click a word to toggle an error; press <strong>2</strong> to mark the selected word as an error. Use Start Timer to begin the one-minute countdown.';(doc.querySelector('#rightColumn')||passage.parentElement).prepend(hint);
+      const errorsByStudent=new Map(),elapsedByStudent=new Map(),endpointsByStudent=new Map();let activeWord=null,feedbackTimer;
       function studentKey(){return studentSelect.value||'__current_read__'}
       function recordFor(store,key){if(!store.has(key))store.set(key,{red:new Set(),green:new Set(),blue:new Set(),purple:new Set(),pink:new Set()});return store.get(key)}
       function valuesFor(store,key){if(!store.has(key))store.set(key,Object.fromEntries(colors.map(color=>[color,null])));return store.get(key)}
@@ -450,33 +418,15 @@
       function refresh(){paintEndpoints();applyErrors();const selectedColor=colorSelect.value,now=statsFor(selectedColor);hud.percent.textContent=now.last?'Accuracy: '+now.accuracy+'%':'Accuracy: —';hud.errors.textContent='Errors: '+now.errors;if(counter)counter.textContent=now.last?'Words read: '+now.last+' • Words correct: '+now.correct+' • '+now.wcpm+' WCPM':'Words read: 0';colors.forEach(color=>{const box=doc.getElementById((color==='red'?'monday':color==='green'?'tuesday':color==='blue'?'wednesday':color==='purple'?'thursday':'friday')+'Box');if(!box)return;const item=statsFor(color);box.textContent=item.last?names[color]+': '+item.wcpm+' WCPM • '+item.accuracy+'% accuracy • '+item.errors+' error'+(item.errors===1?'':'s'):names[color]+': 0'})}
       function toast(text,type='neutral'){hud.feedback.textContent=text;hud.feedback.className='beard-feedback show '+type;clearTimeout(feedbackTimer);feedbackTimer=setTimeout(()=>hud.feedback.className='beard-feedback',1600)}
       function setError(word,{toggle=false}={}){if(!word)return;const color=colorSelect.value,set=recordFor(errorsByStudent,studentKey())[color],index=Number(word.dataset.index);if(toggle&&set.has(index)){set.delete(index);toast('Error mark removed','neutral')}else{set.add(index);toast('Error marked on word '+(index+1),'bad')}activeWord=word;refresh()}
-      function clearCurrent(){const key=studentKey();errorsByStudent.delete(key);elapsedByStudent.delete(key);endpointsByStudent.delete(key);minuteEndpointsByStudent.delete(key);activeWord=null;clearPrintReport();refresh()}
-      function startRead(){if(session)session.begin();else{clearPrintReport();valuesFor(elapsedByStudent,studentKey())[colorSelect.value]=null;clock.start({restart:true})}toast('One-minute read started','neutral')}
-      function minuteRead(){const last=valuesFor(minuteEndpointsByStudent,studentKey())[colorSelect.value];if(last===null)return null;const errors=[...recordFor(errorsByStudent,studentKey())[colorSelect.value]].filter(index=>index<last).length;return {attempts:last,correct:Math.max(0,last-errors),errors,accuracy:last?(last-errors)/last:null,seconds:60}}
-      function finish(){
-        clock.stop();session?.finish();const color=colorSelect.value;valuesFor(elapsedByStudent,studentKey())[color]=clock.elapsedMilliseconds()/1000;
-        const item=statsFor(color),firstMinute=minuteRead(),modal=doc.createElement('section');doc.querySelectorAll('.beard-fluency-summary').forEach(el=>el.remove());modal.className='beard-fluency-summary';
-        modal.innerHTML='<div class="beard-fluency-summary-card"><h2>Fluency Read Summary</h2><p class="beard-passage-title"></p><p><strong></strong></p><div class="beard-summary-grid"><div><b>Total time</b>'+formatTime(Math.floor(item.seconds))+'</div><div><b>Last word mark</b>'+item.last+'</div><div><b>Words correct</b>'+item.correct+'</div><div><b>Errors</b>'+item.errors+'</div><div><b>Accuracy</b>'+(item.last?item.accuracy+'%':'—')+'</div><div><b>Whole-session rate</b>'+(item.seconds?item.wcpm+' WCPM':'—')+'</div></div><p class="beard-minute-note"></p><div class="beard-summary-actions"><button type="button" data-print>Print</button><button type="button" data-close>Close</button></div></div>';
-        const card=modal.querySelector('.beard-fluency-summary-card');card.style.maxHeight='calc(100vh - 2rem)';card.style.overflowY='auto';
-        modal.querySelector('.beard-passage-title').textContent=doc.title||'Reading passage';modal.querySelector('p strong').textContent=(studentSelect.value||'Student')+' • '+names[color]+' • '+new Date().toLocaleDateString();
-        modal.querySelector('.beard-minute-note').textContent=firstMinute?'One-minute WCPM: '+firstMinute.correct+' • '+(firstMinute.accuracy==null?'No words read':Math.round(firstMinute.accuracy*100)+'% accuracy'):'No one-minute endpoint saved. The Excel one-minute Score stays blank; total-read data and normalized rate remain available.';
-        session?.attachReport(card,{assessment:doc.title,student:session.settings?.student||(studentSelect.value==='Current read'?'':studentSelect.value),level:(doc.body.dataset.beardLevel||'Passage fluency')+' · '+(doc.body.dataset.beardPassageId||doc.title),scoreType:'WCPM',score:firstMinute?firstMinute.correct:null,correct:item.correct,attempts:item.last,errors:item.errors,totalSeconds:item.seconds,firstMinute,responses:[{passage:doc.title,day:names[color],lastWord:item.last,errors:item.errors,correct:item.correct,seconds:item.seconds,wholeSessionWcpm:item.wcpm,firstMinute}],notes:firstMinute?'Teacher saved the one-minute endpoint.':'One-minute endpoint not saved; one-minute Score is blank.'});
-        modal.querySelector('[data-print]').addEventListener('click',()=>{clearPrintReport();const printable=card.cloneNode(true);printable.id='beard-print-report';printable.querySelectorAll('.beard-summary-actions,.beard-score-export').forEach(el=>el.remove());doc.body.append(printable);doc.body.classList.add('beard-has-print-report');win.print()});
-        modal.querySelector('[data-close]').addEventListener('click',()=>{modal.remove();clearPrintReport()});doc.body.append(modal);refresh();
-      }
+      function clearCurrent(){const key=studentKey();errorsByStudent.delete(key);elapsedByStudent.delete(key);endpointsByStudent.delete(key);activeWord=null;clearPrintReport();refresh()}
+      function startRead(){clearPrintReport();valuesFor(elapsedByStudent,studentKey())[colorSelect.value]=null;clock.start({restart:true});toast('One-minute read started','neutral')}
+      function finish(){clock.stop();const color=colorSelect.value;valuesFor(elapsedByStudent,studentKey())[color]=clock.elapsed();const item=statsFor(color),modal=doc.createElement('section');modal.className='beard-fluency-summary';modal.innerHTML='<div class="beard-fluency-summary-card"><h2>Fluency Read Summary</h2><p class="beard-passage-title"></p><p><strong></strong></p><div class="beard-summary-grid"><div><b>Total time</b>'+formatTime(item.seconds)+'</div><div><b>Last word mark</b>'+item.last+'</div><div><b>Words correct</b>'+item.correct+'</div><div><b>Errors</b>'+item.errors+'</div><div><b>Accuracy</b>'+(item.last?item.accuracy+'%':'—')+'</div><div><b>Rate</b>'+(item.last?item.wcpm+' WCPM':'—')+'</div></div><div class="beard-summary-actions"><button type="button" data-print>Print</button><button type="button" data-close>Close</button></div></div>';modal.querySelector('.beard-passage-title').textContent=doc.title||'Reading passage';modal.querySelector('p strong').textContent=(studentSelect.value||'Student')+' • '+names[color]+' • '+new Date().toLocaleDateString();modal.querySelector('[data-print]').addEventListener('click',()=>{clearPrintReport();const printable=modal.querySelector('.beard-fluency-summary-card').cloneNode(true);printable.id='beard-print-report';printable.querySelector('.beard-summary-actions')?.remove();doc.body.append(printable);doc.body.classList.add('beard-has-print-report');win.print()});modal.querySelector('[data-close]').addEventListener('click',()=>{modal.remove();clearPrintReport()});doc.body.append(modal);refresh()}
       const finishButton=doc.createElement('button');finishButton.type='button';finishButton.id='beard-finish-read';finishButton.className='beard-chip beard-bottom-right';finishButton.textContent='Finish read';finishButton.style.cursor='pointer';finishButton.addEventListener('click',finish);doc.body.append(finishButton);
-      finishButton.setAttribute('data-beard-review-action','true');
-      const minuteButton=doc.createElement('button');minuteButton.type='button';minuteButton.id='beard-save-minute';minuteButton.textContent='Save minute mark';minuteButton.setAttribute('data-beard-review-action','true');minuteButton.addEventListener('click',()=>{if(clock.elapsedMilliseconds()<60000){toast('Wait for the one-minute chime, then click the last word read and save its mark.','neutral');return}valuesFor(minuteEndpointsByStudent,studentKey())[colorSelect.value]=statsFor(colorSelect.value).last;toast('One-minute endpoint saved. You may keep reading.','neutral')});(doc.querySelector('#rightColumn')||passage.parentElement).append(minuteButton);
       passage.addEventListener('click',event=>{const word=event.target.closest('.word');if(!word||!studentSelect.value)return;const endpoints=valuesFor(endpointsByStudent,studentKey()),color=colorSelect.value,last=Number(word.dataset.index)+1;endpoints[color]=endpoints[color]===last?0:last;activeWord=endpoints[color]?word:null;setTimeout(refresh,0)},true);
       passage.addEventListener('contextmenu',event=>{const word=event.target.closest('.word');if(!word)return;event.preventDefault();setError(word,{toggle:true})},true);
-      colorSelect.addEventListener('change',()=>{activeWord=null;session?.showReady();setTimeout(refresh,0)});studentSelect.addEventListener('change',()=>{activeWord=null;session?.showReady();setTimeout(refresh,0)});
-      doc.addEventListener('keydown',event=>{if(event.repeat||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;if(event.key==='2'){event.preventDefault();event.stopImmediatePropagation();setError(activeWord)}else if(event.key==='1'){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(event.key==='3'){event.preventDefault();event.stopImmediatePropagation();clock.reset();session?.showReady();refresh();toast('Timer reset to 1:00','neutral')}else if(event.key==='4'){event.preventDefault();event.stopImmediatePropagation();clearCurrent();clock.reset();win.resetPassage?.();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(event.key==='5'){event.preventDefault();event.stopImmediatePropagation();errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();win.resetAll?.();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}},{capture:true});
-      doc.addEventListener('click',event=>{const button=event.target.closest('button');if(!button||button.id==='beard-finish-read')return;const lower=(button.textContent||'').toLowerCase();if(/start timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(/stop timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();finish()}else if(/reset passage/.test(lower)){clearCurrent();clock.reset();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset all/.test(lower)){errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();session?.showReady();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset timer/.test(lower)){clock.reset();session?.showReady()}else if(/^add$/.test(lower)){session?.showReady();setTimeout(refresh,0)}},{capture:true});
-      if(typeof window!=='undefined'&&window.BeardSessions)session=window.BeardSessions.create({doc,win,clock,hud,sourceUrl:win.location.href,isFluency:true,onStart:settings=>{
-        clearPrintReport();if(!studentSelect.value){const input=doc.querySelector('#newStudent');if(settings.student&&input&&typeof win.addStudent==='function'){input.value=settings.student;win.addStudent()}else{const option=doc.createElement('option');option.value='Current read';option.textContent='Current read';studentSelect.append(option);studentSelect.value='Current read'}}
-        const color=colorSelect.value;recordFor(errorsByStudent,studentKey())[color].clear();valuesFor(endpointsByStudent,studentKey())[color]=0;valuesFor(elapsedByStudent,studentKey())[color]=null;valuesFor(minuteEndpointsByStudent,studentKey())[color]=null;activeWord=null;refresh();
-      },onReady:()=>clock.reset()});
-      doc.addEventListener('beard:settings-changed',()=>{errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();minuteEndpointsByStudent.clear();activeWord=null;clearPrintReport();refresh()});
+      colorSelect.addEventListener('change',()=>{activeWord=null;setTimeout(refresh,0)});studentSelect.addEventListener('change',()=>{activeWord=null;setTimeout(refresh,0)});
+      doc.addEventListener('keydown',event=>{if(event.repeat||event.target.matches('input,textarea,select,[contenteditable="true"]'))return;if(event.key==='2'){event.preventDefault();event.stopImmediatePropagation();setError(activeWord)}else if(event.key==='1'){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(event.key==='3'){event.preventDefault();event.stopImmediatePropagation();clock.reset();refresh();toast('Timer reset to 1:00','neutral')}else if(event.key==='4'){event.preventDefault();event.stopImmediatePropagation();clearCurrent();clock.reset();win.resetPassage?.();setTimeout(()=>{clock.render();refresh()},0)}else if(event.key==='5'){event.preventDefault();event.stopImmediatePropagation();errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();win.resetAll?.();setTimeout(()=>{clock.render();refresh()},0)}},{capture:true});
+      doc.addEventListener('click',event=>{const button=event.target.closest('button');if(!button||button.id==='beard-finish-read')return;const lower=(button.textContent||'').toLowerCase();if(/start timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();startRead()}else if(/stop timer/.test(lower)){event.preventDefault();event.stopImmediatePropagation();finish()}else if(/reset passage/.test(lower)){clearCurrent();clock.reset();setTimeout(()=>{clock.render();refresh()},0)}else if(/reset all/.test(lower)){errorsByStudent.clear();elapsedByStudent.clear();endpointsByStudent.clear();activeWord=null;clearPrintReport();clock.reset();setTimeout(()=>{clock.render();refresh()},0)}else if(/^add$/.test(lower)){setTimeout(refresh,0)}},{capture:true});
       refresh();
     }
 

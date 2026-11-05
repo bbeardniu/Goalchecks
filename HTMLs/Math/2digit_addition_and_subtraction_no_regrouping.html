@@ -89,7 +89,6 @@
 <div id="attempts" data-beard-correct="0">Attempts: 0</div>
 <div id="summary"></div>
 
-<script src="../../assets/js/math-levels.js"></script>
 <script>
 let assessmentActive = true;
 let nextProblemTimer = null;
@@ -125,7 +124,7 @@ function generateNoRegroupingProblem() {
   answered = false;
 
   let a, b, op;
-  const isAddition = window.BeardMathLevels ? (window.BeardMathLevels.settings().operation === "mixed" ? window.BeardMathLevels.choose([true,false],"no-regroup-operations") : window.BeardMathLevels.settings().operation === "add") : Math.random() < 0.5;
+  const isAddition = Math.random() < 0.5;
 
   while (true) {
     a = Math.floor(Math.random() * 90) + 10;
@@ -301,7 +300,6 @@ answerInput.addEventListener("keydown", e => {
 
 startTimer();
 generateNoRegroupingProblem();
-if(window.BeardMathLevels) window.BeardMathLevels.bind(resetGame);
 </script>
 </body>
 </html>
