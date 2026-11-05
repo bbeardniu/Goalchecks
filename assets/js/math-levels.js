@@ -13,6 +13,9 @@
   const additionOnly = /^Addition_/.test(file);
   const defaultMax = isThousand ? 1000 : isTwenty ? 20 : 100;
   const values = {max:defaultMax,operation:additionOnly?'add':'mixed',regrouping:isNoRegroup?'without':'any',factMax:9,fact:0,minuteStep:5,structure:'result',sequence:'same',arrangement:'scattered'};
+  // Deep links only select settings that this assessment already exposes.
+  // They never start a check or override an addition-only assessment's operation.
+  const initialParams = typeof URLSearchParams === 'function' ? new URLSearchParams(location.search || '') : null;
   let bags = new Map();
   let resetNative = null;
   const panel = document.createElement('section');
@@ -51,12 +54,26 @@
     if(reset)reset.click(); else if(resetNative)resetNative();
     document.dispatchEvent(new CustomEvent('beard:settings-changed',{detail:{level:description(),settings:settings()}}));
   }
+  function syncFactFamilies() {
+    const input=document.getElementById('math-level-fact');
+    if(!input)return;
+    for(const option of input.options)option.disabled=Number(option.value)>values.factMax;
+    if(values.fact>values.factMax)values.fact=0;
+    input.value=String(values.fact);
+  }
   function select(label,key,options) {
     const field=document.createElement('label');field.textContent=label;
     const input=document.createElement('select');input.id='math-level-'+key;
     for(const [value,text] of options){const option=document.createElement('option');option.value=String(value);option.textContent=text;input.appendChild(option);}
+    const requested=initialParams?.get(key);
+    if(options.some(([value])=>String(value)===requested))values[key]=typeof values[key]==='number'?Number(requested):requested;
     input.value=String(values[key]);
-    input.addEventListener('change',()=>{values[key]=typeof values[key]==='number'?Number(input.value):input.value;if(key==='factMax'&&values.fact>values.factMax){values.fact=0;document.getElementById('math-level-fact').value='0';}restartThroughControl();});
+    input.addEventListener('change',()=>{
+      const option=[...input.options].find(option=>option.value===input.value&&!option.disabled);
+      if(!option){input.value=String(values[key]);return;}
+      values[key]=typeof values[key]==='number'?Number(input.value):input.value;
+      syncFactFamilies();restartThroughControl();
+    });
     field.appendChild(input);panel.appendChild(field);return input;
   }
   if (isClock) select('Read time to','minuteStep',[[60,'The hour'],[30,'The half-hour'],[15,'The quarter-hour'],[5,'Five minutes'],[1,'One minute']]);
@@ -76,6 +93,7 @@
   }
   const note=document.createElement('p');note.textContent='Changing a level starts a fresh check. Weekly forms use balanced operation groups within the selected level.';panel.appendChild(note);
   const heading=document.querySelector('h1');if(heading)heading.insertAdjacentElement('afterend',panel);else document.body.prepend(panel);
+  syncFactFamilies();
   sync();
 
   function operation() { return values.operation==='mixed'?choose(['add','subtract'],'operations'):values.operation; }

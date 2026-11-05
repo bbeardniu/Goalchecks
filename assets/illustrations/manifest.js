@@ -1237,7 +1237,7 @@ window.BeardStorybookManifest = {
       "sheet": 6,
       "index": 2,
       "alt": "A girl wearing boots.",
-      "sentence": "Marcus put his boots ____ the muddy porch."
+      "sentence": "Marcus put his boots on the ____ porch."
     },
     {
       "sheet": 5,
@@ -1249,19 +1249,19 @@ window.BeardStorybookManifest = {
       "sheet": 2,
       "index": 0,
       "alt": "Rain falling.",
-      "sentence": "We could not play outside ____ it was raining."
+      "sentence": "We stayed inside because ____ the rain."
     },
     {
       "sheet": 14,
       "index": 14,
       "alt": "A chef stirring a pot of soup with a wooden spoon.",
-      "sentence": "The chef ____ the soup with a wooden spoon."
+      "sentence": "Yesterday, the chef ____ the soup with a wooden spoon."
     },
     {
       "sheet": 14,
       "index": 7,
       "alt": "A rabbit hiding among tall green grass.",
-      "sentence": "The rabbit hid ____ the tall grass."
+      "sentence": "The rabbit was ____ in the tall grass."
     },
     {
       "sheet": 7,
@@ -1285,7 +1285,7 @@ window.BeardStorybookManifest = {
       "sheet": 6,
       "index": 3,
       "alt": "A boy finding shells.",
-      "sentence": "I found a shiny shell ____ the beach."
+      "sentence": "At the beach, I found a ____ shell."
     },
     {
       "sheet": 9,
@@ -1315,19 +1315,19 @@ window.BeardStorybookManifest = {
       "sheet": 14,
       "index": 6,
       "alt": "A bushy-tailed squirrel carrying an acorn toward its nest in a tree.",
-      "sentence": "The squirrel carried an acorn ____ its nest."
+      "sentence": "The squirrel will ____ an acorn to its nest."
     },
     {
       "sheet": 12,
       "index": 12,
       "alt": "A child brushing teeth at a bathroom sink before bed.",
-      "sentence": "Nora ____ her teeth before bed."
+      "sentence": "Yesterday, Nora ____ her teeth before bed."
     },
     {
       "sheet": 7,
       "index": 7,
       "alt": "A baker placing two golden bread loaves into an oven.",
-      "sentence": "The baker made ____ loaves of bread."
+      "sentence": "The baker made two ____ of bread."
     },
     {
       "sheet": 12,
@@ -1339,19 +1339,19 @@ window.BeardStorybookManifest = {
       "sheet": 11,
       "index": 4,
       "alt": "An adult hanging a framed drawing neatly on a wall.",
-      "sentence": "Dad hung the picture ____ the wall."
+      "sentence": "Dad used a hook to ____ the picture on the wall."
     },
     {
       "sheet": 3,
       "index": 12,
       "alt": "A turtle walking.",
-      "sentence": "The turtle moved ____ across the path."
+      "sentence": "The turtle moved ____ along the path."
     },
     {
       "sheet": 11,
       "index": 7,
       "alt": "Two siblings fitting pieces into a colorful simple jigsaw puzzle.",
-      "sentence": "My brother and I ____ a puzzle after dinner."
+      "sentence": "Yesterday, my brother and I ____ a puzzle after dinner."
     },
     {
       "sheet": 10,
@@ -1375,13 +1375,13 @@ window.BeardStorybookManifest = {
       "sheet": 10,
       "index": 2,
       "alt": "A child putting on a warm jacket on a chilly day.",
-      "sentence": "I wore a jacket ____ the air was chilly."
+      "sentence": "I wore a jacket because ____ the chilly weather."
     },
     {
       "sheet": 10,
       "index": 1,
       "alt": "Children smiling and cheering beside a cheerful small ice-cream truck.",
-      "sentence": "The children ____ when the ice cream truck arrived."
+      "sentence": "Yesterday, the children ____ when the ice cream truck arrived."
     },
     {
       "sheet": 9,
@@ -1399,7 +1399,7 @@ window.BeardStorybookManifest = {
       "sheet": 12,
       "index": 3,
       "alt": "A snowman with a carrot nose and a knitted scarf wrapped around its neck.",
-      "sentence": "The snowman had a carrot ____ its nose."
+      "sentence": "The snowman's nose was ____ from a carrot."
     },
     {
       "sheet": 12,
@@ -1417,13 +1417,13 @@ window.BeardStorybookManifest = {
       "sheet": 12,
       "index": 2,
       "alt": "A child saving coins in a jar beside a colorful skateboard.",
-      "sentence": "Carlos saved his coins ____ he could buy a skateboard."
+      "sentence": "Carlos saved coins so that he could ____ a skateboard."
     },
     {
       "sheet": 1,
       "index": 3,
       "alt": "A fish swimming.",
-      "sentence": "The fish swam ____ the clear water."
+      "sentence": "The fish will ____ through the clear water."
     },
     {
       "sheet": 8,
@@ -1453,7 +1453,7 @@ window.BeardStorybookManifest = {
       "sheet": 10,
       "index": 4,
       "alt": "An open lunchbox holding a sandwich, an apple and a small snack.",
-      "sentence": "I ate an apple ____ a sandwich for lunch."
+      "sentence": "For lunch, I ate both an apple ____ a sandwich."
     },
     {
       "sheet": 2,
@@ -1471,7 +1471,7 @@ window.BeardStorybookManifest = {
       "sheet": 10,
       "index": 6,
       "alt": "A friendly stage magician pulling a white rabbit from a top hat.",
-      "sentence": "The magician pulled a rabbit ____ the hat."
+      "sentence": "The magician pulled a rabbit out ____ a hat."
     },
     {
       "sheet": 3,
@@ -1489,19 +1489,19 @@ window.BeardStorybookManifest = {
       "sheet": 11,
       "index": 6,
       "alt": "A child in muddy shoes standing beside a puddle after rain.",
-      "sentence": "I stepped in a puddle, ____ my shoes got wet."
+      "sentence": "I stepped in a puddle, and my shoes were ____."
     },
     {
       "sheet": 8,
       "index": 13,
       "alt": "A kind dentist checking a child's teeth in a bright friendly dental room.",
-      "sentence": "The dentist ____ my teeth at the checkup."
+      "sentence": "Yesterday, the dentist ____ my teeth at the checkup."
     },
     {
       "sheet": 8,
       "index": 0,
       "alt": "A cozy canvas tent and a small safe campfire beside a lake.",
-      "sentence": "The campers built a fire ____ the lake."
+      "sentence": "The campers will ____ a fire near the lake."
     },
     {
       "sheet": 8,
@@ -1513,7 +1513,7 @@ window.BeardStorybookManifest = {
       "sheet": 10,
       "index": 10,
       "alt": "Children finishing pencil-and-paper mathematics at classroom desks.",
-      "sentence": "The class ____ their math test before recess."
+      "sentence": "Yesterday, the class ____ its math test before recess."
     },
     {
       "sheet": 13,
@@ -1549,13 +1549,13 @@ window.BeardStorybookManifest = {
       "sheet": 13,
       "index": 2,
       "alt": "A child opening a colorful umbrella while rain falls.",
-      "sentence": "I will bring an umbrella ____ the forecast says rain."
+      "sentence": "I will bring an umbrella because of the ____."
     },
     {
       "sheet": 8,
       "index": 14,
       "alt": "A child detective using a magnifying glass to examine small clues on the ground.",
-      "sentence": "The detective searched for ____ clues."
+      "sentence": "The detective found clues that had been ____."
     },
     {
       "sheet": 7,
@@ -1573,7 +1573,7 @@ window.BeardStorybookManifest = {
       "sheet": 14,
       "index": 2,
       "alt": "A gardener watering rosebushes with a small watering can.",
-      "sentence": "The gardener ____ the roses every morning."
+      "sentence": "The gardener is ____ the roses."
     },
     {
       "sheet": 9,
@@ -1585,25 +1585,25 @@ window.BeardStorybookManifest = {
       "sheet": 12,
       "index": 8,
       "alt": "A child trying to lift a heavy old suitcase, clearly heavy but not distressed.",
-      "sentence": "The old suitcase was too ____ to lift."
+      "sentence": "The old suitcase was ____ than the backpack."
     },
     {
       "sheet": 12,
       "index": 4,
       "alt": "A small rocket spaceship traveling through a starry sky.",
-      "sentence": "The spaceship traveled far ____ the stars."
+      "sentence": "The spaceship has ____ far beyond the stars."
     },
     {
       "sheet": 3,
       "index": 2,
       "alt": "A teacher writing words.",
-      "sentence": "The teacher smiled ____ everyone had shared an idea."
+      "sentence": "The teacher was ____ after everyone shared an idea."
     },
     {
       "sheet": 13,
       "index": 6,
       "alt": "A playful kitten chasing a ball of yarn.",
-      "sentence": "The kitten chased a ball ____ yarn."
+      "sentence": "The kitten played with ____ ball of yarn."
     },
     {
       "sheet": 12,
@@ -1615,13 +1615,13 @@ window.BeardStorybookManifest = {
       "sheet": 11,
       "index": 11,
       "alt": "A winding blue river flowing through a green valley.",
-      "sentence": "The river flowed ____ the valley."
+      "sentence": "The river is ____ through the valley."
     },
     {
       "sheet": 8,
       "index": 8,
       "alt": "A child's hand holding an open compass on a woodland walk.",
-      "sentence": "A compass points ____ north."
+      "sentence": "A compass helps hikers find the right ____."
     },
     {
       "sheet": 11,
@@ -1645,7 +1645,7 @@ window.BeardStorybookManifest = {
       "sheet": 10,
       "index": 11,
       "alt": "Two child hikers in warm gloves climbing a gentle snowy mountain trail.",
-      "sentence": "The mountain climbers wore ____ gloves."
+      "sentence": "The mountain climbers wore gloves to keep their hands ____."
     },
     {
       "file": "ship-harbor.webp",
@@ -1658,13 +1658,13 @@ window.BeardStorybookManifest = {
       "sheet": 10,
       "index": 5,
       "alt": "A child packing a simple lunchbox with a sandwich and fruit.",
-      "sentence": "I packed my lunch ____ night before school."
+      "sentence": "I packed ____ lunch in a box before school."
     },
     {
       "sheet": 8,
       "index": 7,
       "alt": "A shiny coin rolling off the edge of a wooden table.",
-      "sentence": "The coin rolled ____ the table."
+      "sentence": "The coin has ____ off the table."
     },
     {
       "sheet": 9,
@@ -1688,7 +1688,7 @@ window.BeardStorybookManifest = {
       "sheet": 7,
       "index": 11,
       "alt": "An open storybook with a ribbon bookmark lying between its pages.",
-      "sentence": "Sam placed the bookmark ____ the pages."
+      "sentence": "Sam put a bookmark between the book's ____."
     },
     {
       "sheet": 12,
@@ -1706,7 +1706,7 @@ window.BeardStorybookManifest = {
       "sheet": 8,
       "index": 9,
       "alt": "Three happy children in simple homemade Halloween costumes, a pumpkin, a star, and a wizard.",
-      "sentence": "We wore costumes ____ Halloween."
+      "sentence": "We wore ____ costumes for Halloween."
     },
     {
       "sheet": 2,
@@ -1748,13 +1748,13 @@ window.BeardStorybookManifest = {
       "sheet": 14,
       "index": 3,
       "alt": "A child cyclist riding a bicycle across a wooden bridge over a river.",
-      "sentence": "The cyclist rode ____ the bridge to the other side of the river."
+      "sentence": "The cyclist is ____ across the bridge."
     },
     {
       "sheet": 12,
       "index": 14,
       "alt": "A family looking at a trail map at the start of a forest hike, no legible text.",
-      "sentence": "Our family ____ the trail map before hiking."
+      "sentence": "Yesterday, our family ____ the trail map before hiking."
     },
     {
       "sheet": 7,
@@ -1778,7 +1778,7 @@ window.BeardStorybookManifest = {
       "sheet": 14,
       "index": 4,
       "alt": "Ocean waves splashing against dark rocks on the shore.",
-      "sentence": "The waves crashed ____ the rocks."
+      "sentence": "The ____ waves crashed against the rocks."
     },
     {
       "sheet": 7,
@@ -1790,7 +1790,7 @@ window.BeardStorybookManifest = {
       "sheet": 5,
       "index": 3,
       "alt": "A baby holding blocks.",
-      "sentence": "The baby reached ____ the colorful blocks."
+      "sentence": "The baby held ____ colorful block."
     },
     {
       "sheet": 13,
@@ -1802,7 +1802,7 @@ window.BeardStorybookManifest = {
       "sheet": 9,
       "index": 6,
       "alt": "A child runner crossing a ribbon finish line as friends cheer.",
-      "sentence": "We cheered ____ our friend crossed the finish line."
+      "sentence": "Our friend was ____ as we cheered at the finish line."
     },
     {
       "sheet": 12,
