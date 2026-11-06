@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="beard-phonics-root">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -161,17 +161,18 @@
   .teacher-btn.incorrect { background: var(--red); }
 
 </style>
+<link rel="stylesheet" href="../../assets/css/phonics-layout.css?v=01.0009">
+<script defer src="../../assets/js/phonics-layout.js?v=01.0009"></script>
 </head>
-<body>
+<body class="beard-phonics-page">
   <div class="wrap" role="application" aria-label="Letter names and sounds goal check">
     <h1>Letter Names &amp; Sounds Goal Check</h1>
+    <div id="letter" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
     <div class="skill-settings" aria-label="Letter skill settings">
       <label for="letterTask">Skill<select id="letterTask"><option value="names">Letter names</option><option value="sounds">Letter sounds</option></select></label>
       <label for="letterCase">Letters<select id="letterCase"><option value="mixed">Uppercase and lowercase</option><option value="upper">Uppercase only</option><option value="lower">Lowercase only</option></select></label>
     </div>
     <p id="taskDirections" class="hint">Say the name of each letter.</p>
-
-    <div id="letter" aria-live="polite">Press 1 (correct) or 2 (incorrect) to start</div>
 
     <div class="controls" aria-hidden="false">
       <button class="btn-red" id="resetBtn">Reset</button>
