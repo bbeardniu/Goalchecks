@@ -1,0 +1,93 @@
+name: Publish website from ZIP
+
+on:
+  push:
+    paths:
+      - site.zip
+      - .github/workflows/publish-site.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - name: Read repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Unpack site.zip
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import shutil
+          import stat
+          import zipfile
+
+          archive = Path('site.zip')
+          if not archive.is_file():
+              raise SystemExit('Upload the file named site.zip to the repository root first.')
+
+          destination = Path('_site')
+          if destination.exists():
+              shutil.rmtree(destination)
+          destination.mkdir()
+
+          with zipfile.ZipFile(archive) as package:
+              entries = package.infolist()
+              if len(entries) > 5000 or sum(item.file_size for item in entries) > 200 * 1024 * 1024:
+                  raise SystemExit('This ZIP is larger than the expected website package.')
+              for item in entries:
+                  path = PurePosixPath(item.filename)
+                  if path.is_absolute() or '..' in path.parts or '\\' in item.filename:
+                      raise SystemExit('The ZIP contains an invalid file path.')
+                  if stat.S_ISLNK(item.external_attr >> 16):
+                      raise SystemExit('The website ZIP must contain regular files, not symbolic links.')
+                  if not path.parts or '__MACOSX' in path.parts or path.name == '.DS_Store':
+                      continue
+                  target = destination.joinpath(*path.parts)
+                  if item.is_dir():
+                      target.mkdir(parents=True, exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with package.open(item) as source, target.open('wb') as output:
+                          shutil.copyfileobj(source, output)
+
+          if not (destination / 'index.html').is_file():
+              raise SystemExit('The ZIP must contain index.html at its top level. Upload the supplied site.zip, not the setup bundle.')
+          print('Website unpacked and ready to publish.')
+          PY
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish GitHub Pages site
+        id: deployment
+        uses: actions/deploy-pages@v4
