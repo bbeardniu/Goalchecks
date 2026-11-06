@@ -1,0 +1,159 @@
+/* One layout for every phonics check, embedded or opened directly. */
+html.beard-phonics-root {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+}
+body.beard-phonics-page {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 24px 20px calc(112px + env(safe-area-inset-bottom, 0px)) !important;
+  text-align: center;
+}
+body.beard-phonics-page[data-beard-auto-start] {
+  padding-top: 88px !important;
+}
+body.beard-phonics-page *,
+body.beard-phonics-page *::before,
+body.beard-phonics-page *::after { box-sizing: border-box; }
+body.beard-phonics-page > .wrap,
+body.beard-phonics-page > #container,
+body.beard-phonics-page > .shell {
+  flex: 0 0 auto;
+  width: min(100%, 720px) !important;
+  max-width: 720px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: clamp(20px, 4vw, 36px) !important;
+  text-align: center;
+}
+body.beard-phonics-page h1 {
+  max-width: 100%;
+  margin: 0 0 18px;
+  font-size: clamp(1.3rem, 4.4vw, 1.8rem);
+  line-height: 1.3;
+}
+body.beard-phonics-page #word {
+  max-width: 100%;
+  margin: 24px auto !important;
+  padding: 18px 8px !important;
+  font-size: var(--beard-phonics-word-size, clamp(2.5rem, 10vw, 4.5rem)) !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+  white-space: nowrap;
+}
+body.beard-phonics-page #letter {
+  margin: 26px auto !important;
+  font-size: clamp(5rem, 20vw, 8rem) !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+}
+body.beard-phonics-page .controls,
+body.beard-phonics-page .settings,
+body.beard-phonics-page .skill-settings {
+  justify-content: center;
+  max-width: 100%;
+}
+body.beard-phonics-page .hint { line-height: 1.5; }
+body.beard-phonics-page select { max-width: 100%; }
+body.beard-phonics-page #administrator { text-align: left; }
+
+/* Anchors are explicit on desktop, touch devices, and narrow windows alike. */
+body.beard-phonics-page .teacher-buttons {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  z-index: 10001 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 12px max(12px, calc((100vw - 720px) / 2)) calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  border-top: 1px solid #d3e4ed;
+  background: #fffdf7;
+  box-shadow: 0 -4px 16px #1e476718;
+  pointer-events: none !important;
+}
+body.beard-phonics-page .teacher-buttons .teacher-btn {
+  display: block;
+  width: 100%;
+  min-width: 0 !important;
+  min-height: 60px !important;
+  margin: 0 !important;
+  padding: 14px 8px !important;
+  border: 0;
+  border-radius: 12px;
+  color: #fff !important;
+  font: 800 clamp(1rem, 4.3vw, 1.2rem)/1.2 "Segoe UI", Arial, sans-serif !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent;
+}
+body.beard-phonics-page .teacher-buttons .teacher-btn.incorrect { background: #bd4141 !important; }
+body.beard-phonics-page .teacher-buttons .teacher-btn.correct { background: #237f4e !important; }
+body.beard-phonics-page .teacher-buttons .teacher-btn:focus-visible {
+  outline: 3px solid #f4ba3f !important;
+  outline-offset: 3px !important;
+}
+body.beard-phonics-page .teacher-buttons .teacher-btn:disabled { opacity: .55; }
+/* Native Stop/reset handlers still control when scoring is available. */
+body.beard-phonics-page .teacher-buttons.is-hidden,
+body.beard-phonics-page .teacher-buttons[hidden] { display: none !important; }
+
+body.beard-phonics-page #summary {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  width: 100% !important;
+  max-width: 1100px !important;
+  overflow: visible !important;
+}
+@supports (min-height: 100dvh) {
+  body.beard-phonics-page { min-height: 100dvh !important; }
+}
+@media (max-width: 620px) {
+  body.beard-phonics-page { padding-left: 12px !important; padding-right: 12px !important; }
+  body.beard-phonics-page[data-beard-auto-start] { padding-top: 124px !important; }
+  body.beard-phonics-page > .wrap,
+  body.beard-phonics-page > #container,
+  body.beard-phonics-page > .shell { padding: 20px 16px !important; }
+}
+@media (max-height: 650px) {
+  body.beard-phonics-page > .wrap,
+  body.beard-phonics-page > #container,
+  body.beard-phonics-page > .shell { padding: 16px !important; }
+  body.beard-phonics-page h1 { margin-bottom: 12px; font-size: 1.15rem; }
+  body.beard-phonics-page #letter { margin: 14px auto !important; font-size: 4rem !important; }
+  body.beard-phonics-page #word { margin: 14px auto !important; padding: 12px 8px !important; }
+  body.beard-phonics-page .wrap > .hint:not(#taskDirections) { display: none; }
+  body.beard-phonics-page .skill-settings { margin: 10px 0; }
+}
+@media (max-height: 450px) {
+  body.beard-phonics-page > h1,
+  body.beard-phonics-page .wrap > h1 { display: none; }
+}
+@media print {
+  body.beard-phonics-page,
+  body.beard-phonics-page[data-beard-auto-start] { display: block !important; min-height: 0 !important; padding: 0 !important; }
+  body.beard-phonics-page .teacher-buttons { display: none !important; }
+}
