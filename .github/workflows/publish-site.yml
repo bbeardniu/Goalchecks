@@ -1,36 +1,34 @@
-name: Publish website from ZIP
+name: Publish Beard's Classroom
 
 on:
   push:
     paths:
       - site.zip
+      - 'passages/**'
       - .github/workflows/publish-site.yml
   workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  publish:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Read repository
+      - name: Check out repository
         uses: actions/checkout@v6
-        with:
-          persist-credentials: false
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Unpack site.zip
+      - name: Prepare website ZIP and passage text files
         shell: bash
         run: |
           python3 - <<'PY'
@@ -40,54 +38,75 @@ jobs:
           import zipfile
 
           archive = Path('site.zip')
-          if not archive.is_file():
-              raise SystemExit('Upload the file named site.zip to the repository root first.')
-
           destination = Path('_site')
-          if destination.exists():
-              shutil.rmtree(destination)
+          if not archive.is_file():
+              raise SystemExit('Upload the website ZIP to the repository root and name it site.zip.')
+          if destination.is_symlink():
+              destination.unlink()
+          elif destination.exists():
+              if destination.is_dir():
+                  shutil.rmtree(destination)
+              else:
+                  destination.unlink()
           destination.mkdir()
-
-          with zipfile.ZipFile(archive) as package:
-              entries = package.infolist()
-              if len(entries) > 5000 or sum(item.file_size for item in entries) > 200 * 1024 * 1024:
-                  raise SystemExit('This ZIP is larger than the expected website package.')
-              for item in entries:
+          with zipfile.ZipFile(archive) as source:
+              members = source.infolist()
+              if len(members) > 10000 or sum(item.file_size for item in members) > 100_000_000:
+                  raise SystemExit('The website ZIP is too large to publish (100 MB extracted limit).')
+              checked = []
+              seen = set()
+              for item in members:
                   path = PurePosixPath(item.filename)
-                  if path.is_absolute() or '..' in path.parts or '\\' in item.filename:
-                      raise SystemExit('The ZIP contains an invalid file path.')
-                  if stat.S_ISLNK(item.external_attr >> 16):
-                      raise SystemExit('The website ZIP must contain regular files, not symbolic links.')
-                  if not path.parts or '__MACOSX' in path.parts or path.name == '.DS_Store':
-                      continue
-                  target = destination.joinpath(*path.parts)
-                  if item.is_dir():
-                      target.mkdir(parents=True, exist_ok=True)
-                  else:
-                      target.parent.mkdir(parents=True, exist_ok=True)
-                      with package.open(item) as source, target.open('wb') as output:
-                          shutil.copyfileobj(source, output)
-
+                  if path.is_absolute() or '..' in path.parts or chr(92) in item.filename:
+                      raise SystemExit('Unsafe ZIP filename: ' + item.filename)
+                  if path.parts and (':' in path.parts[0] or path.parts[0] == '.github'):
+                      if path.parts[0] == '.github':
+                          continue
+                      raise SystemExit('Unsafe ZIP filename: ' + item.filename)
+                  mode = item.external_attr >> 16
+                  if stat.S_ISLNK(mode) or item.flag_bits & 1:
+                      raise SystemExit('Links and encrypted entries are not supported: ' + item.filename)
+                  if not item.is_dir():
+                      normalized = path.as_posix()
+                      if normalized in seen:
+                          raise SystemExit('Duplicate ZIP filename: ' + item.filename)
+                      seen.add(normalized)
+                  checked.append(item)
+              for item in checked:
+                  source.extract(item, destination)
           if not (destination / 'index.html').is_file():
-              raise SystemExit('The ZIP must contain index.html at its top level. Upload the supplied site.zip, not the setup bundle.')
-          print('Website unpacked and ready to publish.')
+              raise SystemExit('Zip the website contents, with index.html at the ZIP root.')
+          overlay = Path('passages')
+          if overlay.exists() or overlay.is_symlink():
+              if overlay.is_symlink() or not overlay.is_dir():
+                  raise SystemExit('The repository passages path must be an ordinary folder.')
+              bundled_passages = destination / 'passages'
+              if bundled_passages.is_dir():
+                  shutil.rmtree(bundled_passages)
+              elif bundled_passages.exists():
+                  bundled_passages.unlink()
+              bundled_passages.mkdir(parents=True)
+              for item in overlay.rglob('*'):
+                  if item.is_symlink():
+                      raise SystemExit('Symbolic links are not supported in passages: ' + str(item))
+                  if item.is_file():
+                      target = destination / 'passages' / item.relative_to(overlay)
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      shutil.copyfile(item, target)
+          builder = destination / 'scripts' / 'build_custom_fluency.py'
+          if not builder.is_file():
+              raise SystemExit('Use site.zip version v01.0016 or later; it contains the custom-passage builder.')
           PY
+          python3 _site/scripts/build_custom_fluency.py --site-root _site
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload website
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Publish GitHub Pages site
+      - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v4
