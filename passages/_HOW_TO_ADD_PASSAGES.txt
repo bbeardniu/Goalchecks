@@ -1,0 +1,21 @@
+ADD A FLUENCY PASSAGE
+
+1. Copy _TEMPLATE.txt. Rename the copy with your passage title, such as A Walk to the Pond.txt.
+2. Open the copy in Notepad. Replace ALL of its text with your passage. Do not type the title in the body; the filename supplies the title.
+3. Save as plain text (.txt), using UTF-8. Do not use a Word document (.docx) or PDF.
+4. Upload the file inside the passages folder in your GitHub repository. You may also use subfolders, such as passages/Grade 2/A Walk to the Pond.txt.
+5. Commit the upload. When the publishing action finishes, open Reading Fluency > Custom Passages on the homepage. Choose your title from the dropdown.
+
+Only reading text belongs in this folder. Keep student save-string files in your student records, not in passages.
+
+Files and folders beginning with _ or . are ignored. This keeps this instruction file and the template out of the student passage list. Empty files and non-.txt files are also omitted.
+
+The repository's passages folder is the collection used by the site. Once this folder exists in GitHub, adding a new passage only requires uploading the new .txt file there; you do not need to upload the website ZIP again. Deleting a story file from this folder removes it from the dropdown after publishing.
+
+Advanced ZIP-only option: if there is NO passages folder in the GitHub repository, the workflow uses the passages folder inside site.zip. Re-zip the SITE CONTENTS, with index.html at the top of the ZIP. If both folders exist, the repository folder replaces the ZIP's passage collection completely.
+
+Keep a passage's filename and words unchanged after you begin collecting data for it. Make a new copy for revised text. Changing its words or filename creates a different passage for save-code matching; changing only spacing does not.
+
+The site uses the same timer, student/day controls, word and error marks, calculations, and save-code tools as the existing passages. Continue exporting a save string when you want to keep student progress.
+
+ONE-TIME SETUP: upload site.zip to the repository root, place the supplied passages folder at the repository root, and replace .github/workflows/publish-site.yml with the supplied publish-site.yml. The workflow stays OUTSIDE site.zip. See START-HERE.txt in the setup download or CUSTOM_PASSAGES_README.txt in the site files.
